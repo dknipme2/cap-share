@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VENXXIVA (Tiopronin) — Cystinuria Claims Analytics</title>
+<meta name="description" content="VENXXIVA (tiopronin delayed-release) from Cycle Pharmaceuticals — cystinuria disease profile, patient journey, testing pathway, and claims-based identification opportunities. The strongest claims-based analytical substrate in Cycle Pharmaceuticals' rare-disease portfolio. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+  .tag.good { background: rgba(127,184,129,0.12); color: var(--good); border-color: rgba(127,184,129,0.4); }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a> · ← <a href="cluster_cystinuria.html">Cystinuria Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Rare Disease · Claims-Based Analytics</div>
+  <h1>VENXXIVA (Tiopronin) — Cystinuria Claims Analytics</h1>
+  <p class="sub">VENXXIVA (tiopronin delayed-release) from Cycle Pharmaceuticals — a cystine-binding thiol agent that prevents cystine-stone formation in adults and pediatric patients with severe homozygous cystinuria. Indicated as an add-on to high fluid intake, urinary alkalinization, and dietary modification in patients who fail conservative therapy alone. A branded generic; tiopronin has been in clinical use since 1988.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> VENXXIVA (tiopronin delayed-release, oral)</span>
+    <span><strong>Indication:</strong> Cystinuria (SLC3A1 / SLC7A9)</span>
+    <span><strong>Regulatory:</strong> ANDA (AB-rated branded generic of Thiola EC, Travere)</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> Vanscoy Rare (exclusive) · <strong>Hub:</strong> Cycle Vita</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US Prevalence</div><div class="v">~33K–47K</div></div>
+  <div class="card"><div class="k">Primary ICD-10</div><div class="v">E72.01</div></div>
+  <div class="card"><div class="k">Treatment Threshold</div><div class="v sm">Urine cystine &gt;250 mg/day</div></div>
+  <div class="card"><div class="k">On Pharmacotherapy</div><div class="v">~22K–31K (67% of diagnosed)</div></div>
+  <div class="card"><div class="k">Conservative-Managed</div><div class="v">~33%</div></div>
+  <div class="card"><div class="k">Surgery Cadence (Untreated)</div><div class="v sm">~1 / 3 yrs; ~7 by mid-life</div></div>
+  <div class="card"><div class="k">Recurrence 3 mo Post-Surgery</div><div class="v" style="color:var(--warn)">45% without prophylaxis</div></div>
+  <div class="card"><div class="k">Recurrence w/ Prophylaxis</div><div class="v" style="color:var(--good)">25% at 3 yrs</div></div>
+</div>
+
+<div class="callout good">
+  <div class="title">Core insight</div>
+  <p style="margin:0">VENXXIVA has the strongest claims-based substrate in Cycle Pharmaceuticals' portfolio. The diagnosis code (<code>E72.01</code>) is specific, every stone procedure is coded, every tiopronin fill is visible in Part D, and stone-composition analysis yields a lab signal. The commercial challenge for VENXXIVA is not finding patients — it is converting prescribing away from commodity generics of the same molecule (and from Thiola EC, the Travere reference) and converting untreated patients with stone burden onto pharmacotherapy. Vanscoy Rare's exclusive distribution plus Cycle Vita hub services are the primary service differentiators.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Cystinuria is an <strong>autosomal recessive</strong> inherited metabolic disorder caused by mutations in <em>SLC3A1</em> and <em>SLC7A9</em>, which encode subunits of the renal proximal-tubular amino acid transporter responsible for reabsorbing cystine and the dibasic amino acids ornithine, lysine, and arginine ("COLA"). Defective transport drives excessive urinary cystine excretion; cystine is poorly soluble — especially at acidic pH — and precipitates as hexagonal crystals that aggregate into kidney and ureteral stones. Disease course is recurrent stone formation from childhood through adulthood, with progressive renal damage in severely affected patients.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical hallmarks</h3>
+    <ul>
+      <li><strong>Recurrent kidney and ureter stones</strong> — typically starting in childhood or adolescence</li>
+      <li><strong>Hematuria, flank pain, renal colic</strong> — classic acute presentation</li>
+      <li><strong>Cystine crystals</strong> in urine (hexagonal, pathognomonic under polarized light)</li>
+      <li><strong>Urinary tract infections</strong> secondary to obstruction and instrumentation</li>
+      <li><strong>Progressive renal insufficiency</strong> in chronically undertreated patients</li>
+      <li><strong>2:1 male : female</strong> severity skew — males have higher urinary cystine excretion on average</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>Global incidence</td><td>~1 : 7,000</td></tr>
+      <tr><td>US prevalence</td><td>~33K–47K</td></tr>
+      <tr><td>% of all kidney stones</td><td>1–2%</td></tr>
+      <tr><td>% of pediatric stones</td><td>6–8%</td></tr>
+      <tr><td>Median age of first stone</td><td>22 years</td></tr>
+      <tr><td>First stone before age 20</td><td>80% of patients</td></tr>
+      <tr><td>Needing pharmacotherapy</td><td>~67% of diagnosed</td></tr>
+      <tr><td>Managed conservatively</td><td>~33%</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>Most patients present first to emergency care with acute renal colic in childhood or adolescence. The workup is shaped by whether the first stone is analyzed and whether the patient is routed to nephrology for chronic management or left with episodic urology follow-up only.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Childhood / adolescence</div>
+    <div class="t">First stone — acute presentation</div>
+    <div class="d">Flank pain, hematuria, dysuria. ER visit. Imaging (CT KUB or ultrasound) identifies stone; urology consulted for intervention if obstructing.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">First workup</div>
+    <div class="t">Stone composition → cystinuria suspected</div>
+    <div class="d">Cystine stones have a characteristic hexagonal crystal morphology under polarized light. Stone composition analysis is the highest-yield diagnostic cue — if the first stone is analyzed, diagnosis is often made at the index event.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Confirmation</div>
+    <div class="t">24-hour urine cystine quantification</div>
+    <div class="d">Values &gt;250 mg/day in a non-pediatric patient confirm treatment indication. Urine pH, sodium, and volume are assessed concurrently to plan conservative management.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Recurrence window</div>
+    <div class="t">Conservative management trial (fluid, alkali, diet)</div>
+    <div class="d">Sodium restriction (&lt;2 g/day), low-methionine diet, hydration to &gt;3 L urine/day, potassium citrate to urine pH 7.0–7.5. ~33% of patients are maintained on conservative measures alone.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Escalation</div>
+    <div class="t">Pharmacotherapy — tiopronin first-line (VENXXIVA / Thiola EC / commodity generic)</div>
+    <div class="d">If conservative measures fail after ~3 months, or if cystine excretion exceeds ~500 mg/day, first-line thiol agent is tiopronin — dispensed as VENXXIVA (Cycle, via Vanscoy Rare), Thiola EC (Travere reference), or commodity generic; 800 mg/day divided TID, titrated to urine cystine &lt;250 mg/L. D-penicillamine is the second-line alternative for tiopronin-intolerant patients.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Ongoing</div>
+    <div class="t">Chronic Rx + urology co-management for stone events</div>
+    <div class="d">Nephrology manages medical therapy; urology handles episodic surgical intervention (ureteroscopy, laser lithotripsy, PCNL). Multidisciplinary clinics cut surgical intervention rates roughly in half.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Adherence challenges</div>
+    <div class="t">Sulfur-related side effects drive discontinuation</div>
+    <div class="d">Tiopronin discontinuation rate ~31% driven by nausea, oral ulcers, rash, arthralgia, proteinuria. Patient-support services targeting adherence (Cycle Vita + Vanscoy Rare for VENXXIVA) are the primary commercial differentiator in a commoditized molecule.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Diagnostic pathway</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>Stone composition analysis</td><td><strong>Gold standard entry point.</strong> Cystine crystals have characteristic hexagonal morphology.</td></tr>
+      <tr><td>24-hour urine cystine</td><td><strong>Confirmatory and ongoing monitoring.</strong> Target &lt;250 mg/L on therapy.</td></tr>
+      <tr><td>Urine cystine / creatinine ratio</td><td>Spot-urine alternative; useful in pediatric patients.</td></tr>
+      <tr><td>Genetic testing (SLC3A1, SLC7A9)</td><td>Confirmatory in ambiguous cases; useful in pediatric/family counseling.</td></tr>
+      <tr><td>CT KUB / ultrasound</td><td>Stone imaging, stone size, surgical planning.</td></tr>
+      <tr><td>Cyanide-nitroprusside screen</td><td>Older qualitative screen; largely replaced by quantitative urine cystine.</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who orders testing and prescribes?</h3>
+    <ul>
+      <li><strong>Urologists</strong> — first point of contact at stone events; order stone composition analysis; perform surgical interventions.</li>
+      <li><strong>Nephrologists</strong> — primary ongoing prescribers; monitor 24-hr urine cystine; titrate tiopronin.</li>
+      <li><strong>Pediatric nephrologists</strong> — meaningful subset given 80% first-stone-before-20 statistic.</li>
+      <li><strong>Emergency medicine / PCP</strong> — entry point but not longitudinal manager.</li>
+      <li><strong>Multidisciplinary stone clinics</strong> — co-located nephrology + urology + dietetics; gold-standard model (AUA data: ~50% reduction in surgical intervention rates).</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>E72.01</code> &ldquo;Cystinuria&rdquo; is very specific with low coding noise. No shared-bucket problem. Textbook cohort anchor.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag hi">strong</span></td><td>Urology and nephrology prescribers are concentrated and sit well above CMS suppression thresholds. Prescriber-level counts usable directly from the Public-Use File.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>VENXXIVA, Thiola EC, and commodity-generic tiopronin carry distinct NDCs &mdash; molecule-internal share splits are computable from Part D.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag md">moderate</span></td><td>Vanscoy Rare exclusive distribution for VENXXIVA &mdash; panel-reporting status determines retail-analytics feasibility. Other tiopronin products (Thiola EC, commodity generics) have mixed SP networks.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag hi">low-moderate distortion</span></td><td>Branded-generic positioning keeps premium modest, so PAP distortion on share calculations is contained &mdash; unlike premium branded launches where PAP materially under-reports true volume.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Procedure codes for lithotripsy, PCNL, and ureteroscopy function as treatment-failure proxies. 24-hr urine labs and stone-composition analysis add clinical signal. Specialty + procedure + Rx = rare triangulation.</td></tr>
+</table>
+
+<div class="callout good">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">VENXXIVA has <strong>the cleanest claims substrate in Cycle Pharmaceuticals' portfolio</strong>. Specific ICD + specific procedure codes + concentrated prescriber universe + NDC-level within-molecule resolution = textbook claims-based commercial analytics. This is the product where &ldquo;rare but identifiable&rdquo; is the template &mdash; every downstream question (prescriber map, referral pathway, surgery-burden segmentation, VENXXIVA-vs-Thiola EC-vs-generic share) is answerable on public data alone, without Xponent or hub dependence.</p>
+</div>
+
+<h2>Claims-Based Identification Opportunities</h2>
+
+<p class="lead">VENXXIVA has <strong>the strongest claims substrate in Cycle Pharmaceuticals' rare-disease portfolio</strong>. Every step in the journey leaves a code: the diagnosis is specific, the procedures are specific, the labs are orderable, and the Rx is visible at NDC level in Part D. Four complementary approaches, all of which can run without hub data:</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Primary ICD-10 Lookup — The Named Cohort</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Cystinuria has a billable, highly specific ICD-10 code. This is the single cleanest starting point for any rare-disease claims analysis in the portfolio.</p>
+    <ul>
+      <li>Primary: <code>E72.01</code> — Cystinuria</li>
+      <li>Concurrent stone diagnoses: <code>N20.0</code> kidney stone, <code>N20.1</code> ureter stone, <code>N20.2</code> both, <code>N21.*</code> lower-tract stone</li>
+      <li>Renal insufficiency / CKD secondary to recurrent obstruction: <code>N18.*</code></li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> high. Unlike alkaptonuria's shared bucket, <code>E72.01</code> is disease-specific and non-overlapping with adjacent conditions.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Stone-Procedure Code Cascade — The Burden Signal</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Stone procedures quantify unmet treatment need. Every procedure on an <code>E72.01</code>-diagnosed patient is prima facie evidence of medical-therapy failure or non-initiation.</p>
+    <ul>
+      <li><code>CPT 50080</code> / <code>50081</code> — Percutaneous nephrolithotomy (PCNL)</li>
+      <li><code>CPT 50590</code> — Extracorporeal shock wave lithotripsy (ESWL)</li>
+      <li><code>CPT 52352</code> — Ureteroscopy with lithotripsy</li>
+      <li><code>CPT 52353</code> — Ureteroscopy with laser lithotripsy</li>
+      <li><code>CPT 52356</code> — Ureteroscopy with laser lithotripsy + stent</li>
+      <li>DRGs <code>691</code>/<code>692</code> — urinary stones with ESWL (with / without CC/MCC); <code>693</code>/<code>694</code> — without ESWL</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> very high. Providers with high stone-procedure volume on <code>E72.01</code>-diagnosed patients are the highest-priority outreach segment — their patients are surgicating more because medical therapy is failing, absent, or uninitiated.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Laboratory Signals — The Workup Trail</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Labs specific to the cystinuria workup surface both diagnosed patients and undiagnosed patients under workup. Useful as a complement to ICD-based cohorting.</p>
+    <ul>
+      <li>24-hour urine cystine quantification (LOINC codes for cystine urinary excretion)</li>
+      <li>Stone composition analysis — panel cascade (cystine, calcium oxalate, uric acid, struvite)</li>
+      <li>Urine pH (concurrent monitoring of alkali therapy adherence)</li>
+      <li>Urinary sodium (adherence proxy for dietary counseling)</li>
+      <li>SLC3A1 / SLC7A9 genetic testing orders (pediatric and ambiguous adults)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> high-precision. Patients with repeat 24-hr urine cystine orders are actively being monitored; those with a single order and no follow-through are the highest-value re-engagement targets.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Pharmacy Signals — Brand / Generic / Alternate Splits</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Part D captures every tiopronin fill at NDC granularity, separating VENXXIVA from Thiola EC, commodity generics, and the older alternative D-penicillamine. This is the competitive-share dataset.</p>
+    <ul>
+      <li>Tiopronin NDCs — VENXXIVA (Cycle branded generic) + commodity generics</li>
+      <li>Thiola, Thiola EC (Travere) — reference brands</li>
+      <li>D-penicillamine (Cuprimine) — second-line thiol; ~69% discontinuation rate drives low share</li>
+      <li>Potassium citrate — alkali therapy marker (all cystinuria patients)</li>
+      <li>Captopril — rare off-label thiol use; weak evidence</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> NDC-level share visibility across every prescriber in the US with Part D activity. Commercial-plan share requires Xponent or equivalent retail Rx panel.</p>
+  </div>
+</div>
+
+<h2>Commercial Analytics</h2>
+
+<table>
+  <tr><th>Commercial analytic</th><th>What it produces</th><th>Relevance for VENXXIVA</th></tr>
+  <tr><td>Prescriber mapping (Part D)</td><td>Every tiopronin prescriber in the US ranked by volume, with specialty mix and geography</td><td><span class="tag hi">primary</span> — direct input to Cycle Pharmaceuticals field-force targeting</td></tr>
+  <tr><td>VENXXIVA vs Thiola EC vs generic share</td><td>NDC-level Part D splits by prescriber and by territory</td><td><span class="tag hi">primary</span> — the commercial question is share within the tiopronin molecule</td></tr>
+  <tr><td>Referral pathway mapping</td><td>ER → urology → nephrology → chronic Rx journey quantified in claims sequence</td><td><span class="tag hi">primary</span> — names multidisciplinary centers and referral bottlenecks</td></tr>
+  <tr><td>High-surgery-rate prescriber targeting</td><td>Providers with high lithotripsy / ureteroscopy volume per <code>E72.01</code> patient</td><td><span class="tag hi">primary</span> — highest-yield VENXXIVA outreach segment (treatment failure proxy)</td></tr>
+  <tr><td>Undertreated-patient identification</td><td><code>E72.01</code> diagnosis + no tiopronin Rx in 12 months</td><td><span class="tag hi">primary</span> — VENXXIVA conversion opportunity (conservative-management failures not yet escalated)</td></tr>
+  <tr><td>Call planning, reach &amp; frequency</td><td>Standard territory-level call optimization on decile-ranked prescribers</td><td><span class="tag md">standard</span> — applicable given the prescriber universe is thousands, not tens</td></tr>
+  <tr><td>Adherence / persistence analytics</td><td>Refill-gap and discontinuation curves on VENXXIVA vs Thiola EC vs commodity generic</td><td><span class="tag md">standard</span> — Cycle Vita + Vanscoy Rare service-differentiated adherence is the VENXXIVA brand thesis</td></tr>
+  <tr><td>Open Payments / KOL mapping</td><td>Historical payment patterns for tiopronin-related speaking and advisory work</td><td><span class="tag md">useful</span> — very small KOL universe; David Goldfarb (NYU) and Marshall Stoller (UCSF) are primary</td></tr>
+</table>
+
+<h2>Competitive Positioning</h2>
+
+<p class="lead">VENXXIVA competes in a crowded genericized tiopronin market. Tiopronin is the same molecule across all vendors — the commercial differentiation is entirely services (Vanscoy Rare exclusive SP, Cycle Vita hub, copay assistance, adherence support) rather than clinical.</p>
+
+<table>
+  <tr><th>Dimension</th><th>VENXXIVA (Cycle Pharmaceuticals)</th><th>Commodity generics (Endo, Teva, others)</th><th>Thiola EC (Travere)</th><th>D-penicillamine</th></tr>
+  <tr><td>Molecule</td><td>Tiopronin DR</td><td>Tiopronin DR (same)</td><td>Tiopronin DR (same)</td><td>D-penicillamine</td></tr>
+  <tr><td>AB-rating</td><td>AB-rated to Thiola EC</td><td>AB-rated</td><td>Reference</td><td>Separate molecule</td></tr>
+  <tr><td>Differentiation</td><td>Vanscoy Rare exclusive SP + Cycle Vita hub + patient support</td><td>Price only</td><td>Brand franchise; reportedly in structural decline</td><td>Second-line only (tolerability)</td></tr>
+  <tr><td>Efficacy vs D-pen</td><td>~1.5× more effective at reducing urinary cystine</td><td>Same as branded</td><td>Same as branded</td><td>Baseline</td></tr>
+  <tr><td>Discontinuation rate</td><td>~31%</td><td>~31%</td><td>~31%</td><td>~69% (AEs)</td></tr>
+  <tr><td>Guideline position</td><td>First-line</td><td>First-line</td><td>First-line</td><td>Second-line</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Market trajectory</div>
+  <p style="margin:0">Published industry analyses project tiopronin-category revenue declining at roughly <strong>-15.8% CAGR through 2038</strong>, driven by generic entry (the first AB-rated generics launched in 2024) and the underlying Shkreli/Retrophin pricing-controversy legacy. The commercial play for VENXXIVA is not category growth — it is <strong>capturing and retaining share of a shrinking branded pie</strong>, with Vanscoy Rare + Cycle Vita services as the moat.</p>
+</div>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>VENXXIVA value proposition vs commodity generic tiopronin.</strong> Is the differentiation price-at-parity-plus-services, premium-price-with-services, or service-only at generic price?</li>
+  <li><strong>Formulary positioning.</strong> Is VENXXIVA preferred, non-preferred, or step-edit behind commodity generic? Drives the share opportunity ceiling.</li>
+  <li><strong>Field-force size and cross-coverage.</strong> Dedicated cystinuria reps vs shared nephrology coverage with adjacent Cycle Pharmaceuticals portfolio products.</li>
+  <li><strong>Vanscoy Rare panel reporting.</strong> Does Vanscoy Rare report to Xponent? Determines how tightly VENXXIVA conversion from commodity generic can be measured.</li>
+  <li><strong>Alpha-lipoic-acid Phase 3 readout.</strong> Adjunct or substitute on a 5–10-year horizon; reshapes long-term VENXXIVA share projections if positive.</li>
+  <li><strong>Pricing-controversy legacy.</strong> How much Shkreli-era sentiment still drives payer and prescriber behavior; informs VENXXIVA communications posture.</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (VENXXIVA / tiopronin DR labeling, ANDA216990 and Thiola EC NDA 211843), StatPearls cystinuria (NCBI NBK470527), GeneReviews cystinuria (NCBI NBK619248), Springer systematic review of thiol agents (doi.org/10.1007/s40620-023-01795-6), AUA guidelines for medical management of kidney stones, ClinicalTrials.gov NCT02910531 (alpha-lipoic acid Phase 2), CMS Part D prescriber and drug dispense files, CMS Open Payments, Cycle Pharmaceuticals VENXXIVA launch materials.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Based on internal research brief <code>knowledge/research/domain/briefs/RB_RC_venxxiva_tiopronin_cystinuria_2026-03-19.md</code>. Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026).</p>
+</footer>
+
+</div>
+</body>
+</html>

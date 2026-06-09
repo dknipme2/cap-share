@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — The Go-to-Market Lens</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --panel-3: #1a2238;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.12);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.12);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.12);
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.12);
+    --green: #4ade80;
+    --green-soft: rgba(74, 222, 128, 0.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 16px/1.62 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 48px 28px 96px; }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 24px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  .topnav a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+
+  /* Narrative-first typography */
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 40px;
+    margin-bottom: 48px;
+  }
+  h1 {
+    margin: 0 0 22px;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.14;
+    color: #ffffff;
+    max-width: 26ch;
+  }
+  .scene-setter {
+    color: var(--ink);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 62ch;
+    margin: 0 0 14px;
+  }
+  .scene-setter em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+  .pill {
+    background: var(--panel);
+    border: 1px solid var(--rule-soft);
+    color: var(--ink-soft);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-family: "SF Mono", monospace;
+  }
+
+  /* Story-chapter headers */
+  .chapter {
+    margin: 72px 0 32px;
+  }
+  .chapter-kicker {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .chapter-kicker .chap-num {
+    color: var(--teal-ink);
+    font-family: "SF Mono", monospace;
+    margin-right: 10px;
+  }
+  .chapter h2 {
+    margin: 0 0 14px;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    max-width: 26ch;
+    line-height: 1.2;
+  }
+  .chapter .chapter-lede {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  /* Prose blocks */
+  .prose {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    line-height: 1.65;
+    max-width: 62ch;
+    margin: 0 0 18px;
+  }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+  .prose code { background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 13px; color: var(--ink); font-family: "SF Mono", monospace; }
+  .prose .mechanism {
+    color: var(--ink-faint);
+    font-family: "SF Mono", monospace;
+    font-size: 12.5px;
+    margin-left: 6px;
+  }
+  .prose .mechanism::before { content: "·"; color: var(--ink-dim); margin-right: 6px; }
+
+  /* Timeline (vertical) */
+  .timeline {
+    margin: 24px 0 32px;
+    border-left: 2px solid var(--rule-soft);
+    padding-left: 0;
+  }
+  .tl-step {
+    position: relative;
+    padding: 0 0 22px 28px;
+  }
+  .tl-step:last-child { padding-bottom: 0; }
+  .tl-step::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--panel-3);
+    border: 2px solid var(--teal);
+  }
+  .tl-step.muted::before { border-color: var(--ink-dim); }
+  .tl-step .tl-when {
+    font-family: "SF Mono", monospace;
+    font-size: 11.5px;
+    color: var(--teal-ink);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .tl-step.muted .tl-when { color: var(--ink-faint); }
+  .tl-step .tl-title {
+    font-size: 15.5px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .tl-step .tl-body {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .tl-step .tl-body code {
+    background: var(--panel-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--ink);
+    font-family: "SF Mono", monospace;
+  }
+  .tl-step .tl-body .mechanism-line {
+    margin-top: 6px;
+    color: var(--ink-faint);
+    font-family: "SF Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Before/after compact contrast block */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 32px 0;
+  }
+  @media (max-width: 760px) { .comparison { grid-template-columns: 1fr; } }
+  .contrast-card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .contrast-card.before { border-left: 3px solid var(--rose); }
+  .contrast-card.after { border-left: 3px solid var(--teal); }
+  .contrast-card .tag {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .contrast-card.before .tag { color: var(--rose); }
+  .contrast-card.after .tag { color: var(--teal-ink); }
+  .contrast-card .headline {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .contrast-card .sub {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  /* Grounding disclosure · click-to-reveal */
+  details.grounding {
+    display: inline;
+    margin-left: 4px;
+  }
+  details.grounding summary {
+    display: inline;
+    cursor: pointer;
+    color: var(--teal-ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border-bottom: 1px dotted rgba(94, 234, 212, 0.45);
+    padding: 1px 2px;
+    list-style: none;
+    user-select: none;
+  }
+  details.grounding summary::-webkit-details-marker { display: none; }
+  details.grounding summary::marker { content: ""; }
+  details.grounding summary::after { content: " ↗"; color: var(--teal-ink); opacity: 0.7; }
+  details.grounding[open] summary::after { content: " ↓"; }
+  details.grounding[open] summary { color: var(--ink); border-bottom-color: var(--rule); }
+  details.grounding .grounding-body {
+    display: block;
+    margin: 10px 0 4px;
+    padding: 12px 16px;
+    background: var(--panel-2);
+    border-left: 2px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    font-style: normal;
+  }
+  details.grounding .grounding-body strong { color: var(--ink); font-weight: 600; }
+  details.grounding .grounding-body code {
+    background: var(--panel);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11.5px;
+  }
+  /* In-card variant for before/after card footer */
+  .contrast-card details.grounding {
+    display: block;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule-soft);
+  }
+  .contrast-card details.grounding summary {
+    font-size: 11.5px;
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .contrast-card details.grounding summary:hover { color: var(--teal-ink); }
+  .contrast-card details.grounding .grounding-body {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  /* Callout (decision moments, quotes) */
+  .callout-quote {
+    margin: 28px 0;
+    padding: 18px 22px;
+    background: var(--panel);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .callout-quote .who {
+    font-family: "SF Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 10px;
+  }
+  .callout-quote strong { color: var(--teal-ink); font-weight: 600; }
+
+  /* Pattern extends block */
+  .extends {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .extends h3 {
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+  .extends .extends-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 820px) { .extends .extends-list { grid-template-columns: 1fr; } }
+  .extends .ext-item {
+    padding: 10px 0;
+    border-top: 1px dashed var(--rule-soft);
+  }
+  @media (max-width: 820px) {
+    .extends .ext-item { border-top: 1px dashed var(--rule-soft); }
+  }
+  .extends .ext-item .ext-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .extends .ext-item p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Deeper nav */
+  .deeper {
+    margin-top: 56px;
+    padding: 24px 26px;
+    background: linear-gradient(180deg, rgba(20, 184, 166, 0.05), transparent 100%), var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+  }
+  .deeper h3 {
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .deeper-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 820px) { .deeper-links { grid-template-columns: 1fr; } }
+  .deeper-link {
+    background: var(--panel-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    display: block;
+    transition: border-color 0.15s;
+  }
+  .deeper-link:hover { border-color: var(--teal); }
+  .deeper-link .dl-label {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--teal-ink);
+    margin-bottom: 4px;
+  }
+  .deeper-link .dl-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .deeper-link .dl-q {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    text-align: center;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html" class="active">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · The Go-to-Market Lens · a story</div>
+  <h1>Three weeks to the board. One launch sizing question.</h1>
+  <p class="scene-setter">It is Monday morning. A specialty-pharma CCO has <em>three weeks</em> to defend a field-force-sizing recommendation at a board meeting. The launch is real. The team is one analyst. The consulting budget is already spent on something else. Here is what happens.</p>
+  <div class="pills">
+    <span class="pill">asset: pre-launch, specialty</span>
+    <span class="pill">deadline: 21 days</span>
+    <span class="pill">analyst: 1</span>
+    <span class="pill">prior FF sizings: 3</span>
+  </div>
+</header>
+
+<!-- CHAPTER 1 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 01</span>Before CAP · the 90-day cycle</div>
+  <h2>Consultants leave; the reasoning leaves with them</h2>
+  <p class="chapter-lede">Tight launch window. Defensible analysis required. Context-assembly swallows the calendar.</p>
+</section>
+
+<p class="prose">The question triggered a <strong>ninety-day FF optimization engagement</strong> at a <strong>$280K consulting fee</strong>.<details class="grounding"><summary>How this is grounded</summary><span class="grounding-body">Specialty-pharma FF optimization — TA research, data prep, segmentation &amp; targeting, response modeling, sizing, territory design. Industry range: <strong>$200K–$500K over 10–13 weeks</strong> at boutique firms (~$20–40K per consultant-week); <strong>2–4× higher</strong> at top-tier. Representative calendar: weeks 1–2 TA + briefing, 3–4 data prep + context, 5–7 segmentation + deciling + response modeling, 8–10 sizing + territory (half typically re-run after a late assumption), 11 deck + CCO briefing, 12 board.</span></details> Six weeks of CFO attention. Rounds of rework when assumptions surfaced late. And — most corrosively — when the consultants left, <em>the reasoning left with them</em>. Deck stayed. Thinking didn't. <strong>Next launch would start from scratch.</strong></p>
+
+<p class="prose">That is the pattern CAP is built to break.</p>
+
+<!-- CHAPTER 2 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 02</span>Day 1 — the analyst opens the engagement</div>
+  <h2>The context is already in the graph</h2>
+  <p class="chapter-lede">Monday morning. The analyst opens the Commercial Analytics Platform, names the engagement, and types the question. What happens in the first four hours is not a scramble. It is a re-use.</p>
+</section>
+
+<p class="prose">Because CAP has been running at this company for a year, the <strong>foundation entities already exist</strong>: the organization profile, the two in-line products, the therapy area, the market structure, the three primary data sources the team works with. None of this needs researching. It is in the graph, queryable, cross-referenced, versioned.</p>
+
+<div class="timeline">
+  <div class="tl-step">
+    <div class="tl-when">MONDAY · 9:14 AM</div>
+    <div class="tl-title">Engagement scoped · prior-art pre-check runs</div>
+    <div class="tl-body">The researcher dispatches the six per-entity research configs against the launch asset's neighborhood. Most come back <em>FULL</em> — already covered by last April's briefs. Three gaps identified: new indication-level scope, updated payer-mix, revised target universe.
+      <div class="mechanism-line">mechanism · per-entity research configs · KB pre-check via hybrid retrieval + rerank</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">MONDAY · 11:42 AM</div>
+    <div class="tl-title">Three subagents dispatch on the gaps</div>
+    <div class="tl-body">Each carries the research brief template — sources cited inline, claims flagged by confidence tier. Parent agent files the output verbatim (no editorial layer). Briefs land by noon.
+      <div class="mechanism-line">mechanism · researcher skill · RESEARCH_BRIEF_TEMPLATE · claim confidence system</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">MONDAY · 2:10 PM</div>
+    <div class="tl-title">Feasibility check runs on the data surface</div>
+    <div class="tl-body">Three data sources available. <code>tools/feasibility_check.py</code> matches the sources' analytical roles × grain against the FF-sizing method's requirements. Two return <em>FULL</em>. One returns <em>PARTIAL</em> — good enough, with a sensitivity on the partial dimension.
+      <div class="mechanism-line">mechanism · analytical role taxonomy · data-source entity profiles · method YAMLs</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">MONDAY · 4:30 PM</div>
+    <div class="tl-title">Decision tree routes to method</div>
+    <div class="tl-body">Launch, specialty, single-asset. The decision tree at <code>HYPOTHESIS_ONTOLOGY_DECISION_TREE.md</code> routes to <strong>workload buildup</strong>. Method YAML loaded from <code>compute/configs/methods/</code>. No ad-hoc pick.
+      <div class="mechanism-line">mechanism · methodology decision tree · method YAML vetted + cross-checked against feasibility tier</div>
+    </div>
+  </div>
+</div>
+
+<p class="prose">Four hours in, the scaffolding is done. Not four hours of analyst work — four hours of <em>elapsed time</em>, during which the analyst did research triage, confidence-flagging, and sensitivity framing while the system ran the mechanical parts in parallel.</p>
+
+<!-- CHAPTER 3 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 03</span>Days 2–8 — the pipe and the method</div>
+  <h2>Databricks layering means the analyst never waits on raw access</h2>
+  <p class="chapter-lede">The analytical plumbing is <em>already running</em> for the two in-line products at this company. The launch asset adds to the same bronze-silver-gold stream — new rows, new joins, but no new infrastructure.</p>
+</section>
+
+<div class="timeline">
+  <div class="tl-step">
+    <div class="tl-when">TUESDAY</div>
+    <div class="tl-title">Raw feeds into <code>cdp_dev.*_bronze</code></div>
+    <div class="tl-body">The operator handles ingest. Unity Catalog governance tags apply automatically — <code>sensitivity: confidential</code>, <code>data_origin: licensed</code>, <code>pii: none</code>.
+      <div class="mechanism-line">mechanism · operator skill · data toolbox (storage slot) · TAG_TAXONOMY</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">WEDNESDAY</div>
+    <div class="tl-title">Conformed + enriched into <code>cdp_dev.*_silver</code></div>
+    <div class="tl-body">Entity IDs attached — NPIs, product codes, geographic anchors. Joined with the organization's existing silver layer. The launch asset is now queryable in the same grain as every other asset.
+      <div class="mechanism-line">mechanism · bronze→silver transformation · three-level identity pattern from the design toolbox</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">THURSDAY</div>
+    <div class="tl-title">Workload buildup runs on silver</div>
+    <div class="tl-body">Market sizing × adoption curve × call intensity → workload → FF size at target reach/frequency. Sensitivity on adoption and call-productivity. The number lands: <strong>47 reps</strong>. The team was planning 52.
+      <div class="mechanism-line">mechanism · analyst skill · workload buildup method · parameter sensitivity</div>
+    </div>
+  </div>
+
+  <div class="tl-step">
+    <div class="tl-when">FRIDAY · MIDDAY</div>
+    <div class="tl-title">Challenger fires on the knee of the curve</div>
+    <div class="tl-body">The independent-review subagent questions marginal-rep productivity. Reps 48–52 sit at ~0.7× productivity of reps 1–47. The 47 number is the inflection — going higher mostly adds cost. Finding persists to the graph.
+      <div class="mechanism-line">mechanism · challenger triad · independent subagent dispatch · finding entity captured</div>
+    </div>
+  </div>
+</div>
+
+<div class="callout-quote">
+  The recommendation isn't "47 reps because the model said so." It's "47 reps because the workload-buildup method, run against full silver data with one partial-dimension sensitivity, with the marginal-productivity claim independently stress-tested, produced 47 as the knee of the curve. <strong>Here is the evidence chain.</strong>"
+  <div class="who">— this is what the brief says</div>
+</div>
+
+<!-- CHAPTER 4 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 04</span>Day 10 — the CCO reviews</div>
+  <h2>The dashboard is the conversation</h2>
+  <p class="chapter-lede">The CCO opens the launch-readiness board in claude.ai before the Monday prep. The sizing number is there — 47. The board also shows target HCPs, access tier, workstream readiness, the five readiness stripes. And a cursor.</p>
+</section>
+
+<p class="prose">The CCO types: <em>why 47 and not 52?</em></p>
+
+<p class="prose">The answer comes back layered. The first layer is data-driven: <strong>target universe refined down 8% after the decile update</strong>, <strong>call-productivity benchmark revised up 6% based on last quarter's response analysis</strong>, <strong>marginal-rep productivity drops sharply past rep 47</strong>. Under each sentence, a trace block: which finding, which method, which input. Every number has its receipt one click away.</p>
+
+<p class="prose">There is a quieter second layer the CCO can expand under <em>expert input integrated</em>. The decile model isn't just quantitative. Last quarter's territory roundtables flagged top-decile accounts as over-indexed relative to actual response lift — and that <strong>field-force feedback was captured as typed findings in the graph at the time</strong>, validated against silver-layer prescriptions, and is now feeding the decile model directly. <em>Tacit knowledge made explicit. Saved once. Referenced every time.</em></p>
+
+<p class="prose">The recommendation isn't "the model said 47." It is "the model said 47 because <strong>the data moved, the reps told us something the data didn't, and here's the audit trail for both</strong>." Data-driven, expert-augmented, auditable. That is the differentiator that makes 47 defensible not just in this meeting, but in any meeting six months from now when someone re-litigates the call.</p>
+
+<p class="prose">The CCO asks the follow-up: <em>what's the revenue risk at 47 vs 52?</em> Peak-year revenue at 47 lands ~$220M with 88% confidence. At 52, peak rises ~$8M — but the incremental reps sit on the flat part of the curve. The 47 sizing is the knee; going higher mostly adds cost.</p>
+
+<p class="prose">Decision captured. <em>Lock 47. Show me the territory design.</em> The next view pulls from the same graph. Same IDs. Same method. Same evidence trail.</p>
+
+<!-- CHAPTER 5 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 05</span>Day 14 — the board meeting</div>
+  <h2>One page of reasoning. Two questions of depth at the ready.</h2>
+  <p class="chapter-lede">The CCO presents the sizing recommendation to the board. The number is 47. The one page behind it shows: method, data sources, sensitivity, risks considered, defensive-lever inventory if actuals diverge from plan. Every line has a citation.</p>
+</section>
+
+<p class="prose">A director asks how the revenue risk compares to peer launches at similar stage. The CCO opens claude.ai on the spot. <em>Show me peer launches in this indication at T+6 months post-launch.</em> The peer-asset registry returns four analog assets with trajectory splines. Comparison delivered in under a minute.</p>
+
+<p class="prose">The recommendation is approved. The decision, the supporting findings, and the peer-benchmark query all persist back to the graph. <em>This is the starting state of the next commercial question at this company.</em></p>
+
+<div class="comparison">
+  <div class="contrast-card before">
+    <div class="tag">Before CAP</div>
+    <div class="headline">90 days · $280K · no continuity</div>
+    <div class="sub">Consultants leave with the reasoning. Next launch starts from zero. Decisions defensible only while the deck is fresh.</div>
+    <details class="grounding">
+      <summary>How is this grounded?</summary>
+      <span class="grounding-body">Specialty-pharma FF optimization engagement — TA research, data prep, S&amp;T, response modeling, sizing, territory design. Industry range: <strong>$200K–$500K over 10–13 weeks</strong> at boutique firms; 2–4× higher at top-tier.</span>
+    </details>
+  </div>
+  <div class="contrast-card after">
+    <div class="tag">With CAP</div>
+    <div class="headline">14 days · 1 analyst · full persistence</div>
+    <div class="sub">Reasoning captured as typed entities. Next launch starts from this launch. Decisions defensible indefinitely — the trace doesn't expire.</div>
+    <details class="grounding">
+      <summary>How is this grounded?</summary>
+      <span class="grounding-body">Analyst <strong>active work: ~5–6 days</strong> (research triage, method sensitivity, challenger absorption, deliverable authoring). The remaining calendar is <strong>stakeholder coordination</strong> — challenger-review cycle, CCO briefing window, board slot. Compute runs in hours; the rate-limit is people, not tools. Subsequent engagements of the same family land in ~4 days because context re-use + stakeholder familiarity both compound.</span>
+    </details>
+  </div>
+</div>
+
+<!-- CHAPTER 6 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 06</span>Two quarters later</div>
+  <h2>The payer review that takes four days</h2>
+  <p class="chapter-lede">Different question, same company. Payer access has tightened in two top-10 plans. The CCO asks what to do. The analyst opens the engagement.</p>
+</section>
+
+<p class="prose">The organization entity is there. The products are there. The data sources are there. The access profile from last April's brief is there — stale by six months, but surfacing the <strong>exact thing that changed</strong>. The researcher runs the delta, not the whole picture.</p>
+
+<p class="prose"><em>Day 1:</em> the delta brief lands, validation score 0.89. <em>Day 2:</em> impact model on gold tables — volume at risk estimated, negotiation priority ranked. <em>Day 3:</em> strategist drafts the recommendation with SCQA framing, challenger reviews, deliverable packaged. <em>Day 4:</em> CCO reviews in claude.ai, asks the two follow-ups, approves.</p>
+
+<p class="prose">What took 90 days of consulting on the first commercial question of its kind now takes <strong>four days of analyst time</strong> on a subsequent commercial question, because the context is already in the graph.</p>
+
+<div class="extends">
+  <h3>The same pattern runs on every commercial question</h3>
+  <div class="extends-list">
+    <div class="ext-item">
+      <div class="ext-label">Launch sizing</div>
+      <p>This story. Day 1 to Day 14 for the first launch; day 1 to day 4 for subsequent.</p>
+    </div>
+    <div class="ext-item">
+      <div class="ext-label">Segmentation &amp; targeting</div>
+      <p>Decile construction from prescriber behavior · call frequency bands per tier · validated against historical response.</p>
+    </div>
+    <div class="ext-item">
+      <div class="ext-label">Key-account management</div>
+      <p>Account concentration · cost of coverage · hub-architecture per candidate · access-signal sensitivity.</p>
+    </div>
+    <div class="ext-item">
+      <div class="ext-label">Payer access</div>
+      <p>Fulfillment-friction mapping · plan-level formulary deltas · volume-at-risk estimate per gap.</p>
+    </div>
+    <div class="ext-item">
+      <div class="ext-label">LOE defense</div>
+      <p>Exclusivity windows · substitution risk · revenue-cliff timeline · defensive lever inventory per asset.</p>
+    </div>
+    <div class="ext-item">
+      <div class="ext-label">Portfolio review</div>
+      <p>Lifecycle-stage scorecard · growth-to-LOE runway · investment ROI at stage · peer-benchmark gap.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 7 -->
+<section class="chapter">
+  <div class="chapter-kicker"><span class="chap-num">Ch. 07</span>The implication</div>
+  <h2>Your commercial intelligence is now an asset you own</h2>
+  <p class="chapter-lede">This is the line that matters for the CCO, the CFO, the board. Not "AI is faster." Not "analysts are cheaper." The line is about <em>what the company owns at the end</em>.</p>
+</section>
+
+<p class="prose">At the end of a ninety-day (10–13 week) consulting engagement, the company owned a deck. Maybe a model file. A trail of emails. The reasoning lived in the consultants' heads and left when they did.</p>
+
+<p class="prose">At the end of fourteen days of CAP-supported analysis, the company owns <strong>a typed graph of decisions, findings, methodologies, and evidence</strong>. The next analyst — whether in-house, consulting, or embedded — starts from that graph. The company's analytical IP is finally on its own balance sheet.</p>
+
+<p class="prose">This is the compounding asset. Every engagement contributes. Every friction becomes a rule. The capability gets cheaper — and sharper — the more the company uses it. That is the go-to-market case.</p>
+
+<div class="deeper">
+  <h3>Go deeper on the questions this raises</h3>
+  <div class="deeper-links">
+    <a class="deeper-link" href="cap_trust_and_evidence.html">
+      <div class="dl-label">TRUST</div>
+      <div class="dl-title">How do I know I can trust the number?</div>
+      <div class="dl-q">Confidence flags, validation scores, per-role handling, audit chain — how every claim earns its credibility.</div>
+    </a>
+    <a class="deeper-link" href="cap_data_toolbox.html">
+      <div class="dl-label">TOOLBOX</div>
+      <div class="dl-title">How does it fit our platform?</div>
+      <div class="dl-q">Two-layer design: architect picks the pattern, operator picks the tool. Portable across compute platforms.</div>
+    </a>
+    <a class="deeper-link" href="cap_rules_layers.html">
+      <div class="dl-label">WHY CAP</div>
+      <div class="dl-title">Why can't Claude do this out-of-the-box?</div>
+      <div class="dl-q">Six real gaps in what an LLM can do alone, and the CAP layer that closes each one.</div>
+    </a>
+    <a class="deeper-link" href="cap_graph_and_journeys.html">
+      <div class="dl-label">MAP</div>
+      <div class="dl-title">What's actually inside?</div>
+      <div class="dl-q">21 entity kinds, 11 agent roles, the KB, the four user journeys, and the FF-sizing example technical walkthrough.</div>
+    </a>
+    <a class="deeper-link" href="cap_management_view.html">
+      <div class="dl-label">MANAGEMENT</div>
+      <div class="dl-title">How does a manager actually use it?</div>
+      <div class="dl-q">The dashboard you can talk to. Three scenarios, three conversations, one graph behind them.</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · The Go-to-Market Lens</strong> · one story, threaded through the capability · <a href="index.html">back to hub</a>
+</footer>
+
+</main>
+</body>
+</html>

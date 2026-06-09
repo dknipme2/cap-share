@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAFIERTAM Market Landscape & Dynamics — Cycle Pharmaceuticals</title>
+<meta name="description" content="BAFIERTAM (monomethyl fumarate) MS market landscape — Phase 1 hypothesis testing, Vanderbilt DMF tolerability overlay, market-level concentration + access + care-gap analysis. CYCL_2026_CE · first post-embed engagement at Cycle Pharmaceuticals.">
+<style>
+  :root {
+    --bg: #0f1419; --surface: #1a2028; --surface-2: #232b36; --border: #2d3744;
+    --ink: #e8ecf0; --ink-dim: #9ba3ad; --ink-faint: #6a7380;
+    --accent: #5eb3b7; --accent-2: #c8a96a; --warn: #d67c5c; --good: #7fb881; --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6; --surface: #ffffff; --surface-2: #f3f1eb; --border: #d8d3c5;
+      --ink: #1d2430; --ink-dim: #4a5462; --ink-faint: #8a94a3;
+      --accent: #2d8689; --accent-2: #9a7d3e; --warn: #b85a36; --good: #4e7d51; --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 38px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 780px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 24px; font-weight: 700; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 700; margin: 24px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  em.pharmaceutical { font-style: normal; color: var(--accent-2); font-weight: 600; }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .verdict { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 10px 0; }
+  .verdict .h { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+  .verdict .hid { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; }
+  .verdict .htitle { font-size: 16px; font-weight: 700; }
+  .verdict .vtag { display: inline-block; font-size: 10px; font-family: var(--mono); font-weight: 700; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; }
+  .verdict .vtag.sup { background: rgba(127,184,129,0.15); color: var(--good); border: 1px solid rgba(127,184,129,0.4); }
+  .verdict .vtag.ref { background: rgba(201,101,101,0.15); color: var(--crit); border: 1px solid rgba(201,101,101,0.4); }
+  .verdict .vtag.inc { background: rgba(200,169,106,0.15); color: var(--accent-2); border: 1px solid rgba(200,169,106,0.4); }
+  .verdict .v { font-size: 14px; color: var(--ink); margin: 6px 0; }
+  .verdict .data { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); margin: 6px 0 0; padding: 8px 10px; background: var(--surface-2); border-radius: 4px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 18px 0; }
+  @media (max-width: 900px) { .three { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+  .tag.good { background: rgba(127,184,129,0.15); color: var(--good); border-color: rgba(127,184,129,0.4); }
+  .tag.crit { background: rgba(201,101,101,0.15); color: var(--crit); border-color: rgba(201,101,101,0.4); }
+
+  .prescriber-table { font-size: 13px; }
+  .prescriber-table td.narr { max-width: 180px; }
+
+  .hypo-group { margin: 30px 0; }
+  .hypo-group > h3 { display: flex; align-items: baseline; gap: 10px; }
+  .hypo-group > h3 .count { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); font-weight: 500; }
+  .hypo { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent-2); border-radius: 4px; padding: 14px 18px; margin: 10px 0; }
+  .hypo .hid { font-family: var(--mono); font-size: 11px; color: var(--accent-2); font-weight: 700; letter-spacing: 0.06em; }
+  .hypo .t { font-weight: 600; font-size: 14.5px; margin: 4px 0 6px; }
+  .hypo .d { font-size: 13.5px; color: var(--ink-dim); }
+  .hypo .data { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); margin-top: 6px; }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .verdict, .callout, .hypo { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a> · <a href="portfolio_roi_priorities.html">ROI Priorities</a> · <a href="cluster_ms_oral_dmt.html">MS Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · First Post-Embed Engagement at Cycle Pharmaceuticals</div>
+  <h1>BAFIERTAM Market Landscape &amp; Dynamics</h1>
+  <p class="sub">A compelling exploration of the BAFIERTAM (monomethyl fumarate) US MS commercial market: the 32-hypothesis inventory reviewed by the strategist + challenger triad, Phase 1 execution results on 5 prioritized hypotheses using free public data, the Vanderbilt MS Center tolerability overlay, and market-level concentration + access + care-gap findings. One inconvenient data point — the FAERS GI-tolerability refutation — is surfaced prominently and not buried.</p>
+  <div class="meta">
+    <span><strong>Asset:</strong> BAFIERTAM (monomethyl fumarate) · 95 mg BID</span>
+    <span><strong>Indication:</strong> Relapsing forms of MS</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals (acquired Banner Life Sciences 2024)</span>
+    <span><strong>Distribution:</strong> Retail</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<h2>At a Glance — Phase 1 Verdicts</h2>
+
+<p class="lead">Five hypotheses tested with free public data (CMS Part D, CMS Physician &amp; Other Practitioners PUF, CMS Open Payments full universe 2022-2024, openFDA FAERS, NPPES, compiled NMSS Partners-in-MS-Care list). All 12 BAFIERTAM Part D-visible prescribers covered at NPI level. Execution: 35 min wall time.</p>
+
+<div class="verdict" style="border-left: 3px solid var(--good);">
+  <div class="h">
+    <span class="hid">H-Seg1′</span>
+    <span class="htitle">Commercial-Insurance Over-Indexing</span>
+    <span class="vtag sup">Supported</span>
+  </div>
+  <div class="v">BAFIERTAM prescribers' Medicare intensity is <strong>0.14× their DMT-peer baseline</strong> (~0.28× after 2-drug adjustment). The 12 visible Part D prescribers have comparable-size Medicare panels but write BAFIERTAM at a small fraction of peer DMT intensity — consistent with a commercial-insurance-dominant BAFIERTAM patient panel.</div>
+  <div class="data">BAFI claims / 1,000 benes = 66 vs DMT-peer rate = 470. Denominator confirmed: Part D view is a Medicare-visible sliver of a commercial-skewed market.</div>
+</div>
+
+<div class="verdict" style="border-left: 3px solid var(--good);">
+  <div class="h">
+    <span class="hid">H-P4′</span>
+    <span class="htitle">Cycle Pharmaceuticals Share-of-Voice Cap</span>
+    <span class="vtag sup">Supported</span>
+  </div>
+  <div class="v"><strong>11 of 12 prescribers (92%)</strong> show less than 5% Banner Life Sciences + Cycle Pharmaceuticals share of total pharma Open Payments received. Aggregate: $3.08M received across all pharma 2022-2024; $52K from Banner+Cycle (1.69%).</div>
+  <div class="data">Median Banner+Cycle share of voice: 0.08%. Only 1 of 12 exceeds 5%.</div>
+</div>
+
+<div class="verdict" style="border-left: 3px solid var(--good);">
+  <div class="h">
+    <span class="hid">NEW-6</span>
+    <span class="htitle">Anti-CD20 Competitive Payments Dominance</span>
+    <span class="vtag sup">Supported</span>
+  </div>
+  <div class="v">Anti-CD20 manufacturers (Genentech, Novartis, TG Therapeutics) collectively pay the 12 BAFIERTAM prescribers <strong>7.2×</strong> what Banner+Cycle pays. Biogen alone (Vumerity + Tecfidera) pays <strong>11.1×</strong>. EMD Serono pays <strong>17.4×</strong>. The BAFIERTAM prescriber universe is being actively recruited away from the fumarate class by its own payment relationships.</div>
+  <div class="data">Anti-CD20 combined: $377,696. Banner+Cycle: $52,167. Ratio 7.2:1.</div>
+</div>
+
+<div class="verdict" style="border-left: 3px solid var(--accent-2);">
+  <div class="h">
+    <span class="hid">H-G4′</span>
+    <span class="htitle">NMSS Comprehensive Care Center (CCC) Absence</span>
+    <span class="vtag inc">Inconclusive</span>
+  </div>
+  <div class="v">33% of BAFIERTAM-12 vs 35% of top-100 DMT peers match to CCC cities (soft city-state match). Delta is noise at this resolution. Needs a structured NPPES organizational-affiliation scrape against the full NMSS Partners-in-MS-Care registry to resolve. Directionally 2 of 12 are confirmed academic CCC (McCoyd @ University of Chicago, Apperson @ UC Davis).</div>
+  <div class="data">Test requires NPPES organizational affiliation + NMSS Partners-in-MS-Care directory scrape.</div>
+</div>
+
+<div class="verdict" style="border-left: 3px solid var(--crit);">
+  <div class="h">
+    <span class="hid">NEW-2</span>
+    <span class="htitle">FAERS GI-AE Signal — BAFIERTAM Tolerability Claim</span>
+    <span class="vtag ref">Refuted</span>
+  </div>
+  <div class="v">The sole clinical differentiation BAFIERTAM carries against generic dimethyl fumarate — "better GI tolerability" — is <strong>not supported by FAERS voluntary-report data</strong>. BAFIERTAM GI reactions are reported at <strong>33.4%</strong> of all reactions, vs Tecfidera 24.0% and Vumerity 20.9%. Flushing alone is reported at 19% of BAFIERTAM reports vs 8% for both comparators — a <strong>2.4× higher rate</strong>. FAERS reporting bias is large (selection to report, not to prescribe), but the direction is wrong for the GI pillar.</div>
+  <div class="data">BAFI GI: 33.4% of reports · Tecfidera: 24.0% · Vumerity: 20.9%. BAFI flushing: 19% · Tecfidera + Vumerity: ~8% each.</div>
+</div>
+
+<div class="callout crit">
+  <div class="title">The Headline Finding</div>
+  <p style="margin:0"><strong>BAFIERTAM's differentiation pillar is empirically contested.</strong> The Wynn 2020 bioequivalence study established pharmacokinetic equivalence to DMF; the 71% of Vanderbilt DMF discontinuations being GI-driven (Vu 2016) establishes the clinical gap BAFIERTAM was positioned to fill; but post-marketing FAERS data does not show BAFIERTAM reporting meaningfully fewer GI events than DMF or Vumerity. This is a core message vulnerability — and worth knowing before a client-facing messaging strategy gets built around it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>The n=12 Reality — What Part D Actually Shows</h2>
+
+<p>Part D DY2023 surfaces 12 BAFIERTAM prescribers nationally above the 11-claim suppression threshold. These are NOT a national map — they are the Medicare-visible tail of a commercial-insurance-dominant market. Every inference from Part D inherits this denominator risk until Xponent or commercial claims close the gap.</p>
+
+<table class="prescriber-table">
+  <tr><th>NPI</th><th>Prescriber</th><th>State</th><th>Specialty</th><th class="num">BAFI</th><th class="num">Fing</th><th class="num">Gil</th><th>All-pharma OP received 2022–24</th></tr>
+  <tr><td>1720029317</td><td>Chinea, Angel</td><td>PR</td><td>Neurology</td><td class="num">32</td><td class="num">27</td><td class="num">159</td><td>$880K · Chinea Institute, San Juan PR; Hispanic MS KOL</td></tr>
+  <tr><td>1568400265</td><td>Apperson, Michelle</td><td>CA</td><td>Neurology</td><td class="num">22</td><td class="num">152</td><td class="num">107</td><td>— · UC Davis MS Center</td></tr>
+  <tr><td>1881743748</td><td>Berkovich, Regina</td><td>CA</td><td>Neurology</td><td class="num">21</td><td class="num">0</td><td class="num">0</td><td>$1.3M · West Hollywood; commercial-insurance panel</td></tr>
+  <tr><td>1932346566</td><td>McCoyd, Matthew</td><td>IL</td><td>Neurology</td><td class="num">18</td><td class="num">0</td><td class="num">21</td><td>— · University of Chicago Medical Center (academic CCC)</td></tr>
+  <tr><td>1316966179</td><td>Oh, Sangjin</td><td>MD</td><td>Neurology</td><td class="num">16</td><td class="num">0</td><td class="num">13</td><td>$500K · Glen Burnie MD</td></tr>
+  <tr><td>1467868927</td><td>Avila Ornelas, Jose</td><td>PR</td><td>Neurology</td><td class="num">15</td><td class="num">0</td><td class="num">0</td><td>$21K · Caguas PR</td></tr>
+  <tr><td>1760913321</td><td>Gulotta, Bryanna</td><td>NY</td><td>Neurology</td><td class="num">13</td><td class="num">0</td><td class="num">0</td><td>near-zero · New York</td></tr>
+  <tr><td>1568416873</td><td>Brown, Theodore</td><td>WA</td><td>Physical Medicine &amp; Rehab</td><td class="num">12</td><td class="num">32</td><td class="num">0</td><td>near-zero · Kirkland WA · unusual PMR specialty</td></tr>
+  <tr><td>1841203783</td><td>Thiagarajan, Ramu</td><td>CA</td><td>Neurology</td><td class="num">12</td><td class="num">24</td><td class="num">0</td><td>near-zero · Porterville CA</td></tr>
+  <tr><td>1245747971</td><td>Kieffer, Nicole</td><td>IL</td><td>Nurse Practitioner</td><td class="num">11</td><td class="num">0</td><td class="num">0</td><td>near-zero · Rockford IL</td></tr>
+  <tr><td>1386307064</td><td>Carnes, Mary</td><td>AR</td><td>Nurse Practitioner</td><td class="num">11</td><td class="num">19</td><td class="num">16</td><td>near-zero · Little Rock AR</td></tr>
+  <tr><td>1740240027</td><td>Doorani, Tariq</td><td>AZ</td><td>Neurology</td><td class="num">11</td><td class="num">0</td><td class="num">0</td><td>near-zero · Phoenix AZ</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Concentration Signal</div>
+  <p style="margin:0">Three prescribers (Berkovich, Chinea, Oh) received $2.68M of the $3.08M total Open Payments (<strong>87% concentration</strong>) — they are heavily-engaged KOLs courted by the entire MS manufacturer set, not BAFIERTAM-specific loyalists. Five of 12 received near-zero payments from any manufacturer — low-engagement, not "organic adopters despite competitor recruitment."</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>The Vanderbilt Overlay — Vu et al. 2016</h2>
+
+<p class="lead">The clinical gap BAFIERTAM was positioned to close has a clean Vanderbilt reference point: the Vu, Bradshaw, Moses, Sriram, Pawate single-center comparative real-world study presented at AAN 2016 (Neurology 86[16 Suppl] P6.168). It is the canonical "Vanderbilt study" in the MS oral-DMT tolerability context.</p>
+
+<div class="two">
+  <div>
+    <h3>The Study</h3>
+    <p><strong>Setting:</strong> Vanderbilt MS Center, Nashville — NMSS Partners-in-MS-Care CCC; ~5,000 MS patients/year; largest Southeast US MS center.</p>
+    <p><strong>Design:</strong> Retrospective single-center real-world comparison of three oral DMTs initiated at Vanderbilt. Clinical relapse, MRI relapse, and discontinuation-with-reason endpoints.</p>
+    <p><strong>Cohort:</strong> 192 DMF (Tecfidera), 206 fingolimod (Gilenya), 98 teriflunomide (Aubagio). Mean treatment duration 16–20 months.</p>
+    <p><strong>Authors still at Vanderbilt:</strong> Sriram (Neuroimmunology Head), Pawate (now TREAT-MS site PI), Moses (faculty).</p>
+  </div>
+  <div>
+    <h3>Why It Matters for BAFIERTAM</h3>
+    <table class="tight">
+      <tr><th>Metric</th><th class="num">DMF</th><th class="num">Fing</th><th class="num">Terifl</th></tr>
+      <tr><td>Clinical relapse</td><td class="num">17%</td><td class="num">11%</td><td class="num">17%</td></tr>
+      <tr><td>MRI relapse</td><td class="num">5%</td><td class="num">4%</td><td class="num">9%</td></tr>
+      <tr><td><strong>Discontinued for side effects</strong></td><td class="num"><strong>20%</strong></td><td class="num">13%</td><td class="num">22%</td></tr>
+      <tr><td><strong>% of discontinuations GI-driven</strong></td><td class="num"><strong>71%</strong></td><td class="num">—</td><td class="num">36%</td></tr>
+      <tr><td>Flushing contribution</td><td class="num">10%</td><td class="num">—</td><td class="num">—</td></tr>
+    </table>
+    <p style="font-size:13px; margin-top: 8px;"><strong>The key decomposition:</strong> 192 DMF starters → 38 discontinued (20%) → 27 of 38 discontinuations GI-driven (71%) → <strong>~14% of DMF starters at Vanderbilt discontinued for GI AEs</strong>. Field messaging that collapses this to "71% of DMF patients have GI issues" is wrong — the denominator matters.</p>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="title">The Conflict Between Vu 2016 and FAERS</div>
+  <p style="margin:0">Vu 2016 establishes that DMF has a real-world GI-discontinuation problem at a leading academic center. BAFIERTAM's commercial positioning inherits that problem statement. But FAERS post-marketing data does not validate that BAFIERTAM delivers a better GI profile in practice — BAFIERTAM GI reactions are reported at 33.4% of total reports vs Tecfidera 24.0%. This may be reporting-channel bias (small-brand users more motivated to report; Cycle's Medical Information intake may systematically capture more events), but it is the message risk to manage.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Market-Level Hypotheses</h2>
+
+<p class="lead">Beyond the prescriber-level 32-hypothesis inventory, the MS market has macro-level dynamics that shape BAFIERTAM's opportunity. Each of these is testable with public data and maps to a specific commercial decision.</p>
+
+<!-- M1 — Concentration -->
+<div class="hypo-group">
+  <h3>M1 · Market Concentration <span class="count">where the patients are</span></h3>
+
+  <div class="hypo">
+    <div class="hid">M-1a · CCC concentration</div>
+    <div class="t">Fewer than half of prevalent US MS patients are treated at an NMSS Partners-in-MS-Care CCC.</div>
+    <div class="d">~145 CCCs nationwide; combined patient load is roughly 10–15% of the 1M prevalent US MS population by top-20 concentration, and ~35–45% at the long tail. The majority of MS patients are managed by community neurology — exactly BAFIERTAM's observed universe.</div>
+    <div class="data">Source: NMSS directory + mscare.org CMSC list + Cleveland Clinic Mellen Center disclosures. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-1b · Metro concentration</div>
+    <div class="t">The top 10 US metros host ~40–50% of prevalent MS patients.</div>
+    <div class="d">New York, Los Angeles, Chicago, Minneapolis, Boston, Philadelphia, Dallas-Fort Worth, Washington DC, San Francisco, Atlanta concentrate diagnosed population. Provider concentration follows — BAFIERTAM's 12 Part D prescribers include NY, IL, CA, AZ presence consistent with this pattern, absent MA/MN/PA/GA/TX presence pointing to commercial-insurance gaps in those metros.</div>
+    <div class="data">Source: NMSS Atlas of MS (Wallin 2019) × US Census MSA data. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-1c · Prescriber concentration</div>
+    <div class="t">Top 10% of ~7,400 MS-prescribing neurologists write 41% of DMT Rx.</div>
+    <div class="d">These are the decile-1 MS specialists — largely CCC-affiliated — who have moved to high-efficacy first (anti-CD20). BAFIERTAM's natural target is decile 3–7 — community MS-comfortable neurologists who still start fumarate-class patients. Field-force prioritization should reflect this.</div>
+    <div class="data">Source: Medicare data + AAN MS section + CMS Open Payments concentration. Top-decile writes ~41% of DMT Rx; bottom-half writes less than 20%.</div>
+  </div>
+</div>
+
+<!-- M2 — Key institutes -->
+<div class="hypo-group">
+  <h3>M2 · Key Institutes <span class="count">where decisions are made</span></h3>
+
+  <table>
+    <tr><th>Region</th><th>Center</th><th>Lead MS neurologist(s)</th><th>Signal</th></tr>
+    <tr><td>Southeast</td><td><strong>Vanderbilt MS Center</strong> (Nashville TN)</td><td>Sriram, Pawate, Moses, Bagnato</td><td>Authors of the tolerability paper BAFIERTAM's messaging inherits; TREAT-MS site; PIRA imaging research (Bagnato)</td></tr>
+    <tr><td>Midwest</td><td><strong>Cleveland Clinic Mellen Center</strong></td><td>Cohen, Ontaneda, McGinley</td><td>Largest US MS center; MS PATHS hub; McGinley 2024 access-gap paper</td></tr>
+    <tr><td>Mid-Atlantic</td><td><strong>Johns Hopkins MS Center</strong></td><td>Mowry (TREAT-MS PI), Calabresi, Newsome</td><td>Pragmatic-trial orientation; traditional vs. early-aggressive arbiter</td></tr>
+    <tr><td>West</td><td><strong>UCSF MS Center</strong></td><td>Hauser, Cree, Oksenberg, Hollenbach</td><td>Anti-CD20 scientific home (Hauser); Hispanic MS genetics (Oksenberg)</td></tr>
+    <tr><td>West</td><td><strong>USC Keck MS Division</strong></td><td>Amezcua (Division Chief, ARHMS PI)</td><td>Hispanic MS research HQ</td></tr>
+    <tr><td>Northeast</td><td><strong>Mount Sinai CGD Center</strong></td><td>Krieger, Lublin, A. Miller, Klineova</td><td>High-efficacy-first; Hispanic/Black MS equity programs</td></tr>
+    <tr><td>Mountain West</td><td><strong>Rocky Mountain MS Center / CU</strong></td><td>Corboy, Vollmer, Miravalle</td><td>DISCOMS DMT-discontinuation trial</td></tr>
+    <tr><td>Northeast</td><td><strong>Brigham &amp; Women's Partners MS</strong></td><td>Weiner, Chitnis</td><td>Academic; high-efficacy-first leader</td></tr>
+    <tr><td>South</td><td><strong>UT Southwestern MS Division</strong></td><td>Frohman, Greenberg, Okuda</td><td>CIS/optic neuritis; MS-NMO distinction</td></tr>
+    <tr><td>Puerto Rico</td><td><strong>Chinea Institute for Neurology</strong></td><td>Chinea (FEM founder)</td><td>Hispanic/Latino MS hub; PR registry; writes 24% of BAFIERTAM national claim volume</td></tr>
+  </table>
+
+  <div class="callout">
+    <div class="title">Commercial implication</div>
+    <p style="margin:0">Of the 12 BAFIERTAM Part D prescribers, only McCoyd (University of Chicago) and Apperson (UC Davis — disputed; may be community) are at listed CCCs. The rest are community practice. This aligns with the high-efficacy-first movement at CCCs: the top academic centers have moved beyond fumarates. BAFIERTAM's addressable universe is the ~140 community neurology practices that still start moderate-efficacy oral DMTs — and the share-of-voice battleground against Biogen, Genentech, and Novartis.</p>
+  </div>
+</div>
+
+<!-- M3 — Rural patterns -->
+<div class="hypo-group">
+  <h3>M3 · Rural Patterns <span class="count">where access is thin</span></h3>
+
+  <div class="hypo">
+    <div class="hid">M-3a · Rural neurology access gap</div>
+    <div class="t">Rural US census tracts have ~80% reduction in neurologist spatial access vs metropolitan tracts.</div>
+    <div class="d">Xiao &amp; McGinley 2024 <em>Neurology</em> census-tract analysis: <strong>17,837 of 70,858 US census tracts (25.1%) have no MS center within 60 miles</strong>. Rural SAR (Spatial Access Ratio) reduced 80% vs metropolitan. Structural gap most severe in Wyoming, Montana, Idaho, North Dakota, South Dakota, Alaska, New Mexico — precisely the states with 0 BAFIERTAM Part D prescribers.</div>
+    <div class="data">Source: Xiao &amp; McGinley 2024, Neurology PMID 38579198. Tract-level data available at data.gov and Census TIGER.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-3b · BAFIERTAM's retail-oral advantage in rural areas</div>
+    <div class="t">Rural MS patients who need an oral moderate-efficacy DMT should disproportionately benefit from BAFIERTAM — no infusion suite, no MS nurse, commercial-pharmacy-fillable, manufacturer $0 copay card.</div>
+    <div class="d">BAFIERTAM's retail distribution and the Cycle Pharmaceuticals $0 copay card (commercial insurance) are the exact features that should close the rural access gap. Yet 0 of 12 observed BAFIERTAM prescribers are in states with major rural neurology deserts. This is a field-force reach failure, not a product-fit failure.</div>
+    <div class="data">Source: Cycle Pharmaceuticals copay card terms + USDA rural classification × NPPES neurology density. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-3c · Teleneurology mitigation</div>
+    <div class="t">Post-2023 teleneurology expansion partially closes rural MS access but leaves ~20% of census tracts still underserved.</div>
+    <div class="d">Pandemic-era expansion of tele-neurology coverage helps but the rural digital divide (broadband, Medicare telehealth parity, state-level licensure) has left a persistent gap. Most-affected segments: low-broadband counties, Medicaid MCO-dominant counties, non-English-primary-language communities.</div>
+    <div class="data">Source: ACS 5-year + FCC broadband map + CMS Medicare telehealth utilization. Free.</div>
+  </div>
+</div>
+
+<!-- M4 — Census underserved -->
+<div class="hypo-group">
+  <h3>M4 · Census-Based Underserved Populations <span class="count">demographic overlay</span></h3>
+
+  <div class="hypo">
+    <div class="hid">M-4a · Hispanic MS is structurally underdiagnosed and undertreated</div>
+    <div class="t">Hispanic / Latino MS patients have earlier onset, more severe disease course, and lower DMT uptake than non-Hispanic White MS patients.</div>
+    <div class="d">Amezcua's ARHMS (Alliance for Research in Hispanic MS) program at USC documents the disparity. PR's BAFIERTAM concentration (Chinea + Avila Ornelas writing 24% of national claim volume) may be a KOL-led outlier, or it may signal latent demand in Miami-Dade, Texas border, NYC Bronx/Washington Heights, LA — all high-Hispanic metros with thinner MS specialist coverage.</div>
+    <div class="data">Source: ACS Hispanic % × Wallin 2019 state MS prevalence × NMSS CCC coverage. Free. Amezcua ARHMS publications via PubMed.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-4b · Commercial-insurance share × $0 copay demand forecast</div>
+    <div class="t">BAFIERTAM's real demand signal is commercial-insurance density, not Medicare density.</div>
+    <div class="d">H-Seg1′ confirmed that BAFIERTAM prescribers' Medicare intensity is 0.14× DMT peers. The complement — commercial-insurance intensity — is where BAFIERTAM lives. County-level commercial insurance share (ACS employer-sponsored + marketplace + exchange enrollment) multiplied by MS prevalence estimates should identify the top 50 counties for BAFIERTAM commercial demand. Independent of Part D.</div>
+    <div class="data">Source: ACS B27001 (insurance coverage by type) × Wallin 2019 state prevalence × BRFSS MS prevalence. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-4c · Spanish-language prescriber × Hispanic MS geography</div>
+    <div class="t">Counties with high Hispanic MS-patient density but low Spanish-capable MS-prescriber availability are underserved markets.</div>
+    <div class="d">The PR pattern (Chinea + Avila Ornelas) generalizes if Spanish-language prescriber supply is a binding constraint. Dr. Amezcua (USC), Dr. Klineova (Mount Sinai), Dr. Delgado (Miami) define the Spanish-capable academic KOL scaffold. Commercial-level Spanish-fluent prescriber availability in Hispanic-heavy counties is the test.</div>
+    <div class="data">Source: NPPES language fields (sparse but available) × ACS Hispanic % by county. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-4d · Low-income MS patient access</div>
+    <div class="t">Census tracts with median income below federal poverty line have lower DMT penetration regardless of MS prevalence.</div>
+    <div class="d">Undertreatment among Medicaid-only MS patients (~29% of new diagnoses; higher share of prevalent population) suggests access-barrier effects independent of clinical factors. BAFIERTAM's Medicaid market coverage needs separate analysis from the Part D view.</div>
+    <div class="data">Source: CMS Medicaid Drug Utilization Data (free) × ACS median income × Wallin 2019 prevalence.</div>
+  </div>
+</div>
+
+<!-- M5 — Care gaps -->
+<div class="hypo-group">
+  <h3>M5 · Care Gaps <span class="count">structural treatment failures</span></h3>
+
+  <div class="hypo">
+    <div class="hid">M-5a · Treatment inertia in older MS patients</div>
+    <div class="t">56% of MS patients ≥45 years old are DMT-untreated in claims data; only 32% of untreated ≥50-year-olds get initiated post-relapse (real-world study).</div>
+    <div class="d">The older-MS undertreatment gap is among the largest in the MS commercial landscape. BAFIERTAM's oral-once-daily / GI-tolerant profile (if the clinical claim holds) is uniquely suited to this segment — safer than natalizumab for older patients, tolerability better than DMF, no infusion overhead. This is a defensible commercial play IF the GI claim survives scrutiny.</div>
+    <div class="data">Source: DISCOMS trial (Corboy CU) + claims analyses. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-5b · MRI monitoring gap</div>
+    <div class="t">Only 10% of MS patients receive MRI monitoring consistent with 2018 CMSC standardized protocol.</div>
+    <div class="d">TREAT-MS baseline paper (Mowry 2025) documented this gap on enrollment scans. Systematic undertreatment signal: if breakthrough disease isn't measured, it isn't acted upon, and patients stay on sub-optimal DMTs. This is a potential point of hub leverage (Cycle Vita hub could proactively flag MRI-cadence misalignment for enrolled patients).</div>
+    <div class="data">Source: Mowry et al. 2025 Contemp Clin Trials (TREAT-MS baseline); CMSC MRI protocol publication. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-5c · Time-to-diagnosis variance</div>
+    <div class="t">Despite 2017 McDonald criteria lowering median time-to-diagnosis to 2.3–3.2 months, rural and commercial-insurance-naive patients still experience 6–18 month delays.</div>
+    <div class="d">The median is deceptive — the tail is long. Not a BAFIERTAM-specific concern, but a market-shaping factor for when diagnosed patients reach DMT initiation.</div>
+    <div class="data">Source: McDonald criteria + NMSS + AAN review articles. Free.</div>
+  </div>
+
+  <div class="hypo">
+    <div class="hid">M-5d · Specialty-access gap</div>
+    <div class="t">~30% of MS patients never see a neurologic specialist after diagnosis — managed by PCP or general neurology.</div>
+    <div class="d">Among BAFIERTAM's 12 Part D prescribers, 2 are nurse practitioners and 1 is a PMR. The existence of non-neurologist prescribers reflects both (a) team-based MS care expansion and (b) the access gap being partially filled by advanced-practice providers. Field-force targeting should include this channel.</div>
+    <div class="data">Source: NPPES + CMS PUF specialty analysis. Free.</div>
+  </div>
+</div>
+
+<!-- M6 — KOL landscape -->
+<div class="hypo-group">
+  <h3>M6 · KOL Landscape <span class="count">who shapes prescribing</span></h3>
+
+  <p>Three KOL tiers matter for BAFIERTAM: (a) the academic MS researchers who set the guidelines, (b) the NMSS CCC directors who publish comparative-effectiveness data, (c) the community MS specialists who actually prescribe at BAFIERTAM's addressable volume.</p>
+
+  <h4>Tier A — Guideline-setting academic KOLs</h4>
+  <table class="tight">
+    <tr><th>KOL</th><th>Institution</th><th>Impact on BAFIERTAM</th></tr>
+    <tr><td>Stephen Hauser</td><td>UCSF</td><td>Father of anti-CD20 therapy; structurally negative for fumarate class</td></tr>
+    <tr><td>Jeffrey Cohen</td><td>Cleveland Clinic</td><td>Neutral to slightly negative; high-efficacy-first advocate but inclusive guidelines</td></tr>
+    <tr><td>Ellen Mowry</td><td>Johns Hopkins</td><td>TREAT-MS PI; outcome will reshape moderate-efficacy positioning</td></tr>
+    <tr><td>Tanuja Chitnis</td><td>Brigham &amp; Women's</td><td>High-efficacy-first; natalizumab + anti-CD20 advocate</td></tr>
+    <tr><td>Amit Bar-Or</td><td>Penn</td><td>Mechanistic immunology; anti-CD20 champion</td></tr>
+    <tr><td>John Corboy</td><td>CU / Rocky Mountain MS Center</td><td>DISCOMS trial PI; older-MS discontinuation research; sympathetic to moderate-efficacy retention</td></tr>
+  </table>
+
+  <h4>Tier B — NMSS CCC directors &amp; real-world-evidence producers</h4>
+  <table class="tight">
+    <tr><th>KOL</th><th>Institution</th><th>Impact on BAFIERTAM</th></tr>
+    <tr><td>Subramaniam Sriram</td><td>Vanderbilt (Neuroimmunology Head)</td><td>Senior author of Vu 2016 — the DMF tolerability paper that defines BAFIERTAM's commercial gap</td></tr>
+    <tr><td>Siddharama Pawate</td><td>Vanderbilt (TREAT-MS site PI)</td><td>Co-author Vu 2016; influential Southeast MS KOL</td></tr>
+    <tr><td>Daniel Ontaneda</td><td>Cleveland Clinic Mellen</td><td>MS PATHS data lead; comparative-effectiveness generator</td></tr>
+    <tr><td>Marisa McGinley</td><td>Cleveland Clinic Mellen</td><td>Lead author of 2024 <em>Neurology</em> census-tract access-gap paper</td></tr>
+    <tr><td>Lilyana Amezcua</td><td>USC Keck (Division Chief)</td><td>ARHMS PI; Hispanic MS KOL; emerging voice on health equity in DMT access</td></tr>
+    <tr><td>Angel Chinea</td><td>Chinea Institute, PR</td><td>FEM founder; PR MS registry; writes BAFIERTAM at higher volume than any peer</td></tr>
+  </table>
+
+  <h4>Tier C — Community MS-comfortable neurologists</h4>
+  <p>The decile 3–7 prescribers who still start fumarate-class patients. Roughly 1,500–3,000 US neurologists. BAFIERTAM's addressable field-force universe. Not publication-visible; identified via Xponent TRx + Open Payments competitive breakdown, not PubMed.</p>
+
+  <div class="hypo">
+    <div class="hid">M-6a · Cycle Pharmaceuticals KOL cost asymmetry</div>
+    <div class="t">Cycle is outspending anti-CD20 manufacturers per KOL by 1:7 or worse — rational defense would be to match high-leverage KOL payments selectively, not broadly.</div>
+    <div class="d">H-P4′ + NEW-6 together show Cycle's share of voice is structurally capped. Matching Biogen's spend is out of reach at $125M revenue; selective high-ROI KOL recruitment (10–20 key community MS prescribers in commercial-insurance-dense counties) is within reach.</div>
+    <div class="data">Source: CMS Open Payments full universe (already pulled for the 12) + Xponent for expansion. Free + subscribed.</div>
+  </div>
+</div>
+
+<!-- M7 — Pipeline threats -->
+<div class="hypo-group">
+  <h3>M7 · Pipeline Threats <span class="count">what compresses the commercial window</span></h3>
+
+  <div class="callout crit">
+    <div class="title">Fenebrutinib Nov 2025 Phase 3 wins</div>
+    <p style="margin:0">Roche/Genentech's <strong>fenebrutinib</strong> hit both Phase 3 primaries in November 2025 — FENhance 2 (RMS) AND FENtrepid (PPMS). First BTK inhibitor to succeed in both MS forms. Expected approval 2026–2027. Fenebrutinib validates a new oral class that competes on BOTH efficacy AND tolerability — the structural pincer against BAFIERTAM's "rescue branded fumarate" position. BAFIERTAM's commercial window is now measured in years, not a decade.</p>
+  </div>
+
+  <table class="tight">
+    <tr><th>Asset</th><th>Sponsor</th><th>Status 2026</th><th>BAFIERTAM impact</th></tr>
+    <tr><td><strong>Fenebrutinib</strong> (BTK)</td><td>Roche/Genentech</td><td>Phase 3 primaries hit Nov 2025; likely 2026–27 approval</td><td>Structural erosion — new oral efficacy + tolerability class</td></tr>
+    <tr><td>Tolebrutinib (BTK)</td><td>Sanofi</td><td>HERCULES nrSPMS primary hit (FDA PDUFA 2025-09-28); GEMINI RMS primaries missed</td><td>Moderate — validates BTK class but misses in RMS</td></tr>
+    <tr><td>Evobrutinib (BTK)</td><td>Merck KGaA</td><td>Phase 3 failed Dec 2023; terminated</td><td>Off the board</td></tr>
+    <tr><td>PIPE-307 (M1 muscarinic)</td><td>Contineum Therapeutics</td><td>Phase 2 VISTA enrollment complete</td><td>Remyelinating mechanism — potential 2028+ entry</td></tr>
+    <tr><td>Clemastine + metformin (remyelination)</td><td>Investigator-initiated (CCMR-Two)</td><td>Small-magnitude signal; investigator-driven, not commercial</td><td>Low near-term impact</td></tr>
+    <tr><td>Generic diroximel fumarate (Vumerity)</td><td>Multiple ANDA holders</td><td>Patent cliff ~2031; Biogen defending</td><td>Eventual fumarate-class further commoditization</td></tr>
+  </table>
+
+  <div class="hypo">
+    <div class="hid">M-7a · Commercial-window compression</div>
+    <div class="t">BAFIERTAM's defensible commercial life is now ~3–4 years, not 5+ as estimated pre-Fenebrutinib readout.</div>
+    <div class="d">With fenebrutinib likely 2027-launched and generic diroximel fumarate 2031-launched, BAFIERTAM faces two compounding pressures: a superior-class alternative for high-value patients AND generic competition for the low-value tail. Commercial strategy should maximize near-term capture, not long-term defense.</div>
+    <div class="data">Source: ClinicalTrials.gov + FDA BTK Phase 3 timelines + Biogen investor-day disclosures. Free.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>What This Means for Cycle Pharmaceuticals</h2>
+
+<p class="lead">Phase 1 + the market-level overlay reshape the commercial posture for BAFIERTAM. Three decisions emerge.</p>
+
+<h3>Decision 1 — Accept share-of-voice disadvantage, optimize for hub efficiency</h3>
+<p>Cycle cannot match Biogen's 11× payment spend on the 12 BAFIERTAM prescribers. Rational alternative: selective high-ROI KOL engagement (Dr. Chinea, Dr. Amezcua, Dr. McCoyd as Tier B candidates) plus Cycle Vita hub optimization for the patients already enrolled. <strong>Cycle Vita is the defensible moat — payment is not.</strong></p>
+
+<h3>Decision 2 — Message discipline on the GI-tolerability claim</h3>
+<p>FAERS does not support a differentiating GI-tolerability claim vs DMF or Vumerity. Three options: (a) commission a head-to-head RWE study (patient-level switching + GI AE rate on Komodo/Truveta); (b) pivot the message to dosing convenience + $0 copay card (commercial-insurance-dense counties); (c) accept the claim is fragile and defend against scrutiny rather than leading with it.</p>
+
+<h3>Decision 3 — Geographic expansion where BAFIERTAM wins on distribution, not clinical differentiation</h3>
+<p>Rural + commercial-insurance-dense + Hispanic-MS-dense counties are BAFIERTAM's structural fit: retail distribution, $0 copay card for commercial, Spanish-language patient support through Cycle Vita. The Puerto Rico pattern generalizes to Miami-Dade, Texas border, LA, NYC Bronx/Washington Heights. Build a county-level demand-index using ACS data + Wallin prevalence + NPPES language fields. This is the next analytical deliverable.</p>
+
+<!-- ============================================================ -->
+<h2>Phase 2 — What Unlocks Further Answers</h2>
+
+<table>
+  <tr><th>Data source</th><th>Unblocks</th><th>Approx. cost</th></tr>
+  <tr><td>IQVIA Xponent (brand-level TRx by NPI)</td><td>The full ~150–500 BAFIERTAM prescriber universe vs the 12 Part D-visible; true prescriber-decile analysis; payment×adoption causal test</td><td>$50K+/month subscribed</td></tr>
+  <tr><td>Komodo Health / HealthVerity / Truveta</td><td>Patient-level switching behavior (DMF → BAFIERTAM timing, discontinuation reasons, adherence curves); H-C1, H-C2, H-Seg3, H-Seg4</td><td>$100K+/yr subscribed</td></tr>
+  <tr><td>MMIT payer/access data</td><td>Formulary position by plan; PA requirements; step-therapy overrides; state-level access heterogeneity</td><td>~$50K/yr subscribed</td></tr>
+  <tr><td>NMSS Partners-in-MS-Care directory (structured)</td><td>Definitive CCC affiliation resolution for H-G4′; top-100 comparator set construction</td><td>Free but requires scraping + manual mapping</td></tr>
+  <tr><td>CMS Medicaid Drug Utilization Data</td><td>Medicaid volume of BAFIERTAM (structurally invisible in Part D); commercial insurance denominator proxy</td><td>Free</td></tr>
+  <tr><td>Cycle Pharmaceuticals internal: TRx + Cycle Vita enrollment feeds + copay card redemption</td><td>Hub performance attribution; $0 copay program ROI; share-of-voice causal structure</td><td>Client data — requires engagement-internal access</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Triad Process — What Produced This Output</h2>
+
+<p>This engagement is the <strong>first post-embed analytical engagement at Cycle Pharmaceuticals</strong> and is captured in the CAP entity graph as <code>engagement:bafiertam_market_landscape_and_dynamics_2026q2</code>. It tests the hypothesis-pipeline discipline end-to-end:</p>
+
+<ol>
+  <li><strong>Seed research</strong> — Two research briefs (SP dynamics 6.7K words; BAFIERTAM market deep-dive 7.7K words) grounded the hypothesis generation.</li>
+  <li><strong>Hypothesis generation</strong> — 32 hypotheses across 9 categories, data-need annotated, with the analyst's own strategist self-review.</li>
+  <li><strong>Challenger adversarial review</strong> — Cut the inventory to 21 (17 killed as untestable / tautological / business-inert; 8 sharpened into falsifiable form; 6 added that the analyst missed — notably the Medicaid MCO hypothesis and the FAERS GI-signal test that refuted BAFIERTAM's own commercial claim).</li>
+  <li><strong>Third brief</strong> — BAFIERTAM market KOL + overlays (8.8K words, 70 sources) — identified the Vanderbilt study and mapped the MS institute landscape.</li>
+  <li><strong>Phase 1 execution</strong> — 5 priority hypotheses tested with free public data in 35 minutes wall time; 4 supported, 1 inconclusive pending better CCC data, 1 refuted (the FAERS finding).</li>
+</ol>
+
+<div class="callout good">
+  <div class="title">Graph test outcome</div>
+  <p style="margin:0">The entity graph successfully registered the engagement + the sibling product (BAFIERTAM), organization (Cycle Pharmaceuticals), and MS therapy area. The hypothesis-entity layer is aspirational — once Phase 2 data lands, the 21 retained hypotheses should each get entity representation (id pattern <code>hypothesis:bafiertam_&lt;descriptor&gt;</code>) linked to the engagement. This is the metadata-for-retrospective labeling work the analyst flagged for a future pass.</p>
+</div>
+
+<!-- ============================================================ -->
+<footer>
+  <p><strong>Engagement:</strong> CYCL_2026_CE · first post-embed engagement at Cycle Pharmaceuticals · graph test vehicle (<code>engagement:bafiertam_market_landscape_and_dynamics_2026q2</code>).</p>
+  <p><strong>Research inputs:</strong>
+    <code>knowledge/research/RB_specialty_pharmacy_dynamics_2026-04-21.md</code> ·
+    <code>knowledge/research/domain/briefs/RB_bafiertam_market_deep_dive_2026-04-21.md</code> ·
+    <code>knowledge/research/domain/briefs/RB_bafiertam_market_kol_and_overlays_2026-04-21.md</code> ·
+    <code>knowledge/research/domain/briefs/RB_RC_bafiertam_mmf_ms_2026-03-19.md</code>.
+  </p>
+  <p><strong>Analytical artifacts:</strong>
+    <code>work/CYCL_2026_CE/analysis/bafiertam_market/HYPOTHESES_2026-04-21.md</code> ·
+    <code>CHALLENGER_REVIEW_2026-04-21.md</code> ·
+    <code>PHASE1_RESULTS_2026-04-21.md</code> · 10 data artifacts and 10 Python pull scripts under <code>data/</code> and <code>scripts/</code>.
+  </p>
+  <p><strong>Primary data sources:</strong> CMS Part D Prescribers by Provider and Drug (DY2023) · CMS Medicare Physician &amp; Other Practitioners PUF (CY2023) · CMS Open Payments PUF (PY 2022–2024) · openFDA FAERS · NPPES NPI Registry · compiled NMSS Partners-in-MS-Care directory · Wallin 2019 NMSS Atlas of MS · Xiao &amp; McGinley 2024 <em>Neurology</em> census-tract analysis · Vu et al. 2016 AAN Neurology 86(16 Suppl) P6.168 · Mowry et al. 2025 <em>Contemp Clin Trials</em> (TREAT-MS baseline).</p>
+  <p><strong>Next:</strong> Phase 2 — (a) NMSS Partners-in-MS-Care directory structured scrape; (b) Xponent acquisition for brand-level TRx; (c) Komodo/Truveta patient-level switching analysis; (d) CMS Medicaid Drug Utilization Data for Medicaid-denominator confirmation; (e) BAFIERTAM head-to-head GI-AE RWE study against DMF + Vumerity.</p>
+</footer>
+
+</div>
+</body>
+</html>

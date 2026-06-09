@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORMALVI (Dichlorphenamide) — Periodic Paralysis · Patient Journey &amp; EHR Identification</title>
+<meta name="description" content="ORMALVI (dichlorphenamide) from Cycle Pharmaceuticals — patient journey, testing, and EHR-based patient identification opportunities for the primary periodic paralyses (hypokalemic PP, hyperkalemic PP, Andersen-Tawil syndrome). Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav span.sep { color: var(--ink-faint); margin: 0 6px; }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a><span class="sep">·</span>← <a href="cluster_periodic_paralysis.html">Periodic Paralysis Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Neuromuscular · Rare Channelopathy</div>
+  <h1>ORMALVI (Dichlorphenamide) — Periodic Paralysis</h1>
+  <p class="sub">ORMALVI (dichlorphenamide) is an oral carbonic anhydrase inhibitor (CAI), approved for the treatment of the primary periodic paralyses (hypokalemic PP, hyperkalemic PP, and related variants including Andersen-Tawil syndrome). Marketed as a branded ANDA generic by Cycle Pharmaceuticals alongside the brand originator Keveyis (Xeris). Orphan exclusivity expired in 2022; the molecule itself has been known since 1958.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> ORMALVI (dichlorphenamide ANDA generic)</span>
+    <span><strong>Disease:</strong> Primary periodic paralyses (HypoPP, HyperPP, Andersen-Tawil)</span>
+    <span><strong>Mechanism:</strong> Carbonic anhydrase inhibitor</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> LeMed (exclusive) · <strong>Hub:</strong> Cycle Vita</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">PP Subtypes</div><div class="v sm">HypoPP · HyperPP · Andersen-Tawil</div></div>
+  <div class="card"><div class="k">US Prevalence</div><div class="v">~5,000</div></div>
+  <div class="card"><div class="k">HypoPP Prevalence</div><div class="v">~1:100K (~3,300)</div></div>
+  <div class="card"><div class="k">HyperPP Prevalence</div><div class="v">~1:200K (~1,650)</div></div>
+  <div class="card"><div class="k">Andersen-Tawil</div><div class="v sm">~1:1M (~330)</div></div>
+  <div class="card"><div class="k">Attacks/wk (untreated, median)</div><div class="v sm">2.4 (HypoPP) · 4.8 (HyperPP)</div></div>
+  <div class="card"><div class="k">Attacks/wk (on therapy)</div><div class="v sm">0.3 (HypoPP) · 0.9 (HyperPP)</div></div>
+  <div class="card"><div class="k">Approved Indication</div><div class="v sm">Primary PP + variants</div></div>
+  <div class="card"><div class="k">Orphan Exclusivity</div><div class="v sm">Expired Aug 2022</div></div>
+  <div class="card"><div class="k">Competitor</div><div class="v sm">Keveyis (Xeris) — same molecule</div></div>
+</div>
+
+<div class="callout">
+  <div class="title">Core Insight</div>
+  <p style="margin:0">This is an ultra-rare channelopathy with a tiny, named prescriber universe and a single FDA-approved molecule. The commercial challenge for ORMALVI is <strong>not finding the right prescriber</strong> — it's finding the undiagnosed patients sitting inside rheumatology, ER, and general-neurology records. Patients endure years of misdiagnosis (as conversion disorder, psychiatric weakness, or idiopathic myopathy) before a neuromuscular specialist orders the right panel. With LeMed exclusive distribution and the Cycle Vita patient support hub, Cycle Pharmaceuticals has full visibility on every ORMALVI fill — the commercial value is in surfacing the undiagnosed population.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">The primary periodic paralyses are autosomal dominant skeletal-muscle channelopathies caused by mutations in ion-channel genes: <em>SCN4A</em> (sodium channel, HyperPP and some HypoPP), <em>CACNA1S</em> (calcium channel, ~60% of HypoPP), <em>KCNJ2</em> (inward-rectifier potassium channel, Andersen-Tawil), and <em>KCNE3</em>. Attacks of flaccid paralysis are triggered by exercise-rest cycles, carbohydrate-rich or potassium-rich meals, cold, stress, or fasting — depending on subtype.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical hallmarks</h3>
+    <ul>
+      <li><strong>Flaccid paralysis attacks</strong> — transient, typically lasting hours; provoked by rest after exercise, diet, or stress</li>
+      <li><strong>Hypokalemic PP:</strong> serum K⁺ drops during attack; triggered by carb-rich meals, rest after exertion</li>
+      <li><strong>Hyperkalemic PP:</strong> serum K⁺ rises during attack; triggered by potassium-rich foods, fasting, cold</li>
+      <li><strong>Andersen-Tawil:</strong> PP + cardiac arrhythmias (long QT, bidirectional VT) + dysmorphic features</li>
+      <li><strong>Permanent weakness</strong> can develop between episodic attacks over decades</li>
+      <li>Family history is typically present (autosomal dominant) but <em>de novo</em> mutations occur</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>US PP prevalence (all types)</td><td>~1:50,000–1:100,000 (~5,000)</td></tr>
+      <tr><td>HypoPP prevalence</td><td>~1:100,000 (~3,300 US)</td></tr>
+      <tr><td>HyperPP prevalence</td><td>~1:200,000 (~1,650 US)</td></tr>
+      <tr><td>Andersen-Tawil</td><td>~1:1,000,000 (~330 US)</td></tr>
+      <tr><td>Estimated diagnosed</td><td>&lt;3,000</td></tr>
+      <tr><td>Estimated on FDA-approved therapy</td><td>~1,500–2,500</td></tr>
+      <tr><td>Onset — HypoPP</td><td>Adolescence (5–20 yr)</td></tr>
+      <tr><td>Onset — HyperPP</td><td>First decade</td></tr>
+      <tr><td>Inheritance</td><td>Autosomal dominant</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="callout warn">
+  <div class="title">Diagnostic lag is the real problem</div>
+  <p style="margin:0">Patients report <strong>years to decades</strong> between first attack and correct diagnosis. Misdiagnoses include conversion disorder, psychiatric weakness, hypokalemia of unclear etiology, myasthenia gravis, and idiopathic myopathy. Commercial analytics for this product needs to treat diagnostic-odyssey reduction as the primary lever — the treated population is a fraction of the diagnosable population, which is a fraction of the true prevalent population.</p>
+</div>
+
+<h2>Patient Journey</h2>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Age 5–20 · First attack</div>
+    <div class="t">Episodic weakness — often dismissed or misattributed</div>
+    <div class="d">First paralytic attack typically occurs in adolescence (HypoPP) or earlier childhood (HyperPP). Triggered by specific meals or post-exercise rest. Many families describe the child as "going limp" for hours. Initial explanations range from dehydration to anxiety to malingering.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">ER / urgent care</div>
+    <div class="t">First medical encounter — serum K+ drawn during attack</div>
+    <div class="d">Some patients present to the ER mid-attack. Serum potassium is measured and found low (HypoPP) or high (HyperPP). Without family history or a high-index clinician, the event is coded as E87.6 (hypokalemia) or E87.5 (hyperkalemia) and the underlying channelopathy is missed.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Pediatrics / PCP</div>
+    <div class="t">Recurrent attacks → neurology referral</div>
+    <div class="d">After multiple episodes, pediatrics or primary care refers to neurology. Delay from first attack to first neurology visit can be months to years depending on geography and caregiver persistence.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">General neurology</div>
+    <div class="t">EMG with exercise provocation — if ordered</div>
+    <div class="d">A neuromuscular-literate neurologist orders an EMG with exercise provocation — the classic electrodiagnostic test for PP. Without exposure to channelopathies, general neurologists often pursue autoimmune workups (which are uniformly negative) and lose years before referring on.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Neuromuscular subspecialty</div>
+    <div class="t">Genetic panel + attack diary + diagnosis</div>
+    <div class="d">At an academic neuromuscular clinic or Center of Excellence, a neuromuscular channelopathy panel (SCN4A, CACNA1S, KCNJ2, KCNE3) is ordered. Family history is re-elicited. Attack diary is kept. Diagnosis is confirmed.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">On therapy</div>
+    <div class="t">Dichlorphenamide trial or acetazolamide (off-label)</div>
+    <div class="d">First-line pharmacotherapy is dichlorphenamide (FDA-approved) or acetazolamide (off-label, cheaper, ~50% response rate overall, lower in SCN4A). Dichlorphenamide shows Class I evidence in HypoPP (attack rate 0.3 vs. 2.4 per week, p=0.02) and weaker but positive evidence in HyperPP. Potassium supplementation or restriction is added as supportive care depending on subtype.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Confirmatory testing</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>Genetic panel (neuromuscular channelopathy)</td><td><strong>Diagnostic.</strong> <em>SCN4A</em>, <em>CACNA1S</em>, <em>KCNJ2</em>, <em>KCNE3</em> sequencing.</td></tr>
+      <tr><td>EMG with long exercise test</td><td>Classic electrodiagnostic — post-exercise CMAP amplitude decrement.</td></tr>
+      <tr><td>Serum potassium during attack</td><td>Diagnostic discriminator: low (HypoPP) vs. high (HyperPP).</td></tr>
+      <tr><td>ECG / Holter (Andersen-Tawil)</td><td>Long QT, bidirectional VT, PVCs.</td></tr>
+      <tr><td>Family history</td><td>Autosomal dominant — typically multigenerational attacks.</td></tr>
+      <tr><td>Attack diary</td><td>Frequency, triggers, potassium shifts — supports diagnosis + tx response.</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who orders testing?</h3>
+    <ul>
+      <li><strong>Neuromuscular neurologists</strong> at academic Centers of Excellence — the primary prescriber universe (estimated ~100–250 active prescribers nationally)</li>
+      <li><strong>Medical geneticists / genetic counselors</strong> — increasingly involved in panel-testing workflow</li>
+      <li><strong>Pediatric neurologists</strong> — early-onset HyperPP</li>
+      <li><strong>General neurologists</strong> — typically refer on once channelopathy is suspected</li>
+      <li><strong>Cardiologists</strong> — Andersen-Tawil (arrhythmia workup leads to PP diagnosis)</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:10px">ORMALVI prescribers concentrate heavily in academic neuromuscular Centers of Excellence — the universe is small enough for Cycle Pharmaceuticals' ~29-rep US sales force to enumerate individually. Every prescriber can be profiled, every Center of Excellence mapped, every patient-advocacy node identified.</p>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">specific but under-coded</span></td><td><code>G72.3</code> &ldquo;Periodic paralysis&rdquo; is specific, but under-used &mdash; many attacks are miscoded as hypokalemia / hyperkalemia (<code>E87.*</code>) during ED encounters.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag lo">weak</span></td><td>Ultra-rare (~5,000 US). Individual-prescriber Part D suppression is significant &mdash; the small universe falls below CMS minimum-cell thresholds in most geographies.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag md">moderate</span></td><td>ORMALVI carries a distinct NDC from <em>Keveyis</em>. Where Part D captures dispensing, share resolution is feasible.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag lo">THE GATE QUESTION</span></td><td>LeMed exclusive distribution. <strong>If LeMed reports to commercial Rx panels: high visibility.</strong> If not: claims data is effectively blind to ORMALVI dispensing. Every downstream analytical workstream hinges on this answer.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Competitive defensive PAP is plausible given the 2-product market structure. Volumes PDE-invisible. Impact on share calculations: moderate.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag md">moderate</span></td><td>EMG exercise-provocation test claims, neuromuscular channelopathy genetic panel orders, and specialty-cascade signals (neurology + EMG + genetic) offer secondary identification. Patient-advocacy nodes enumerable.</td></tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Claims visibility hinges <strong>entirely</strong> on the LeMed reporting gate. With &ldquo;yes,&rdquo; a Tier-1 named-account analytical program is executable. With &ldquo;no,&rdquo; every downstream workstream &mdash; competitive grid, prescriber ranking, patient-journey analytics &mdash; is speculative until Cycle Vita hub or direct LeMed data is licensed. This is the product where the first analytical deliverable should be the gate answer itself, not a market assessment.</p>
+</div>
+
+<h2>EHR Identification Opportunities</h2>
+
+<p class="lead">Unlike alkaptonuria (where no PP-specific ICD exists), ORMALVI-era PP has a specific ICD code — <code>G72.3</code> — but it is under-used, and the real diagnostic signal lives in attack-context coding and genetic-panel orders. The practical EHR question is: <strong>where are the patients miscoded as hypokalemia/hyperkalemia during a paralytic episode, or ordered a neuromuscular channelopathy panel but never reconciled back to a diagnosis?</strong></p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Structured ICD Signal</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">PP-specific coding is under-used but present. Combine with episodic-context codes for enrichment.</p>
+    <ul>
+      <li>Primary ICD: <code>G72.3</code> (periodic paralysis)</li>
+      <li>Hypokalemia in paralyzing-episode context: <code>E87.6</code></li>
+      <li>Hyperkalemia in paralyzing-episode context: <code>E87.5</code></li>
+      <li>Family history of hereditary channelopathy</li>
+      <li>Optional enrichment: neuromuscular disorder codes (<code>G71.*</code>) co-occurring with potassium abnormalities</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> moderate specificity. G72.3 alone captures many already-diagnosed patients; combining with episodic potassium coding enriches for undiagnosed cases.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Genetic-Test Order Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Neuromuscular channelopathy panel orders (ordered but not reconciled into a diagnosis) are extremely high-specificity leads.</p>
+    <ul>
+      <li>Ordered panel: <em>SCN4A</em>, <em>CACNA1S</em>, <em>KCNJ2</em>, <em>KCNE3</em></li>
+      <li>Multi-gene NM channelopathy panels from major genetics labs</li>
+      <li>Single-gene <em>SCN4A</em> or <em>CACNA1S</em> sequencing orders</li>
+      <li>"Neuromuscular comprehensive" panel orders with no follow-up ICD</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> very high specificity. Commercial genetic labs already carry the list of tested-positive patients; partnership access is the highest-precision patient-finding lever.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Electrodiagnostic Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">EMG with exercise-provocation testing is the classic electrodiagnostic workup. Order codes + result narratives are searchable.</p>
+    <ul>
+      <li>EMG with long exercise test CPT codes</li>
+      <li>Free-text: "post-exercise CMAP decrement," "long exercise test positive"</li>
+      <li>EMG reports noting "suggestive of channelopathy"</li>
+      <li>Referral patterns from EMG lab back to neuromuscular subspecialty</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> high specificity in EMG-heavy academic EHRs; less useful in community settings where the test is rarely ordered.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Clinical-Note NLP — Free-Text Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The highest-value PP signals live in neurology notes. Short pilot on academic NM clinic notes typically surfaces undiagnosed candidates.</p>
+    <ul>
+      <li><strong>Neurology / NM notes:</strong> "flaccid paralysis," "periodic paralysis," "episodic weakness with hypokalemia," "channelopathy," "Andersen-Tawil"</li>
+      <li><strong>ER notes:</strong> "paralytic episode," "serum K low with weakness," "recurrent hypokalemia with paralysis"</li>
+      <li><strong>Cardiology notes:</strong> "long QT with episodic weakness," "bidirectional VT"</li>
+      <li><strong>Pediatrics:</strong> "episodic limb weakness," "can't move legs after meals"</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> very high precision. A single "flaccid paralysis with hypokalemia" hit in neurology notes is close to diagnostic.</p>
+  </div>
+
+  <div class="sig">
+    <h4>5 · Specialty-Cascade Detection</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The typical PP patient cycles through ER → general neurology → neuromuscular subspecialty. The cascade itself is signal.</p>
+    <ul>
+      <li>Repeated ER visits for "weakness" with potassium abnormalities in patient &lt;40</li>
+      <li>General neurology visit with negative autoimmune workup (normal RF, CCP, ANA) followed by NM referral</li>
+      <li>Referral pattern: ER → neurology → genetics</li>
+      <li>Multiple EMGs without resolution</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>6 · Family-History Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Autosomal dominant inheritance means patients often have a family history. EHR family-history structured fields and narrative can surface kindred with known-PP relatives.</p>
+    <ul>
+      <li>Structured family-history PP entries</li>
+      <li>Narrative: "mother with periodic paralysis," "father has episodic weakness"</li>
+      <li>Multiple family members with channelopathy genetic testing</li>
+    </ul>
+  </div>
+
+</div>
+
+<h2>Commercial Analytics Posture</h2>
+
+<table>
+  <tr><th>Activity</th><th>Relevance</th></tr>
+  <tr><td>Prescriber grid vs. Keveyis</td><td><span class="tag hi">primary — if LeMed reports</span> named-account competitive visibility</td></tr>
+  <tr><td>Named-account mapping</td><td><span class="tag hi">primary</span> universe is small enough to enumerate individually</td></tr>
+  <tr><td>Territory alignment / call planning</td><td><span class="tag lo">not applicable</span> named-account model, not R&F</td></tr>
+  <tr><td>Cycle Vita hub flywheel KPIs</td><td><span class="tag hi">primary — if LeMed doesn't report</span> hub-driven patient journey becomes the only view</td></tr>
+  <tr><td>DAW compliance analytics</td><td><span class="tag hi">existential</span> without DAW, substitution erodes ORMALVI branded-generic economics</td></tr>
+  <tr><td>Patient-finding analytics</td><td><span class="tag hi">primary</span> most of the treatable population is undiagnosed</td></tr>
+  <tr><td>Diagnostic-odyssey reduction ROI</td><td><span class="tag hi">primary</span> measure rheum / ER / general-neuro education → new diagnoses</td></tr>
+  <tr><td>Genetic-lab partnerships</td><td><span class="tag md">high</span> tested-positive patients are the highest-precision lead</td></tr>
+  <tr><td>Competitor-call-pattern inference</td><td><span class="tag md">conditional</span> requires Open Payments + Rx-panel data</td></tr>
+</table>
+
+<h2>Open Questions</h2>
+<ol>
+  <li><strong>Does LeMed report to IQVIA Xponent / Symphony DDD?</strong> Binary question; determines whether World 1 or World 2 analytics apply (see cluster page).</li>
+  <li><strong>How many patients are actually on ORMALVI</strong> vs. the total diagnosed universe? Revenue-implied treated-patient counts suggest ~1,500–2,500 on therapy, vs. &lt;3,000 diagnosed and ~5,000 prevalent.</li>
+  <li><strong>DAW compliance rate at LeMed</strong> — substitution to unbranded generic dichlorphenamide at ~$67/tablet erodes ORMALVI branded-generic economics silently.</li>
+  <li><strong>Is off-label acetazolamide displacing ORMALVI</strong> in cost-sensitive payer environments? No head-to-head trial exists.</li>
+  <li><strong>What is the shape of the genetic-testing pipeline</strong> — how many tested-positive-but-untreated patients exist at the major commercial labs?</li>
+  <li><strong>Center of Excellence share</strong> — does a small number of academic NM clinics account for most diagnoses, and can disease-awareness investment at community neurology expand the funnel?</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (dichlorphenamide tablet label); FDA approval letter NDA 011366 (Keveyis supplemental NDA, 2015); Sansone et al., <em>Neurology</em> 2016 (DCP pivotal trials); Statland et al., <em>Muscle Nerve</em> 2018 (PP review); Statland et al., <em>Muscle Nerve</em> 2022 (long-term efficacy); StatPearls (Hypokalemic PP, NBK559178); MedlinePlus Genetics; GeneReviews neuromuscular channelopathies; Periodic Paralysis Association (periodicparalysis.org); ICD-10 coding references.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_ormalvi_dichlorphenamide_pp_2026-03-19.md</code>.</p>
+</footer>
+
+</div>
+</body>
+</html>

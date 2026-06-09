@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — Graph, Agents, Knowledge &amp; Journeys</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #e2e8f0;
+    --ink-soft: #94a3b8;
+    --ink-faint: #64748b;
+    --teal: #14b8a6;
+    --teal-soft: rgba(20, 184, 166, 0.14);
+    --teal-ink: #5eead4;
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.14);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.14);
+    --indigo: #818cf8;
+    --indigo-soft: rgba(129, 140, 248, 0.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+  }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+  a { color: var(--teal-ink); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h1 {
+    margin: 0 0 10px;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #f1f5f9;
+  }
+  .subhead {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 68ch;
+  }
+  .meta-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  section { margin-bottom: 56px; }
+  section > h2 {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 6px;
+    font-weight: 700;
+  }
+  section > .section-lede {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+    max-width: 72ch;
+  }
+
+  /* THE MAP: three-band SVG + overlays */
+  .map-frame {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .map-frame svg { width: 100%; height: auto; display: block; }
+  .map-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule-soft);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .map-legend .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* Concept columns */
+  .concept-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 900px) { .concept-cols { grid-template-columns: 1fr; } }
+  .concept-col {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .concept-col h3 {
+    margin: 0 0 4px;
+    font-size: 14.5px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .concept-col .col-lede {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+  .concept-cluster {
+    margin-top: 12px;
+  }
+  .concept-cluster .cluster-label {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+  }
+  .chip {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    background: var(--panel-2);
+    color: var(--ink);
+    border: 1px solid var(--rule-soft);
+    padding: 3px 9px;
+    border-radius: 12px;
+    line-height: 1.4;
+  }
+  .chip.teal { background: var(--teal-soft); color: var(--teal-ink); border-color: rgba(20,184,166,0.3); }
+  .chip.amber { background: var(--amber-soft); color: var(--amber); border-color: rgba(245,158,11,0.3); }
+  .chip.rose { background: var(--rose-soft); color: var(--rose); border-color: rgba(251,113,133,0.3); }
+  .chip.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(129,140,248,0.3); }
+  .chip.dormant {
+    opacity: 0.55;
+    border-style: dashed;
+  }
+
+  /* Journeys */
+  .journey {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .journey-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .journey-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0;
+  }
+  .journey-title .jrn-prefix {
+    color: var(--teal);
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-right: 10px;
+    text-transform: uppercase;
+  }
+  .journey-actor {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  .journey-lede {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin: 0 0 18px;
+    font-style: italic;
+  }
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .step {
+    flex: 1 1 0;
+    min-width: 130px;
+    background: var(--panel-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+  }
+  .step .step-num {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .step .step-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .step .step-detail {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step .step-touch {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--rule-soft);
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 6px;
+  }
+  .step .step-touch .tk { color: var(--teal-ink); }
+  .step .step-touch .tk.amber { color: var(--amber); }
+  .step .step-touch .tk.rose { color: var(--rose); }
+  .step .step-touch .tk.indigo { color: var(--indigo); }
+  .arrow {
+    flex: 0 0 auto;
+    align-self: center;
+    color: var(--ink-faint);
+    font-size: 14px;
+    padding: 0 2px;
+    user-select: none;
+  }
+
+  /* Worked example — richer variant of .journey */
+  .journey.example {
+    border-color: rgba(94, 234, 212, 0.35);
+    background: linear-gradient(180deg, rgba(20, 184, 166, 0.05), transparent 70%), var(--panel);
+  }
+  .journey.example .journey-title .jrn-prefix { color: var(--teal-ink); }
+  .journey.example .flow {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .journey.example .step {
+    min-width: 180px;
+    flex: 1 1 180px;
+  }
+  .journey.example .step code,
+  .journey.example .step .tk {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .journey.example .arrow {
+    display: none;       /* chevron arrows hidden when wrapping */
+  }
+  .example-sidebar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--rule-soft);
+  }
+  @media (max-width: 720px) { .example-sidebar { grid-template-columns: 1fr; } }
+  .callout {
+    background: var(--panel-2);
+    border: 1px solid var(--rule-soft);
+    border-left: 3px solid var(--teal);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .callout.rose { border-left-color: var(--rose); }
+  .callout.indigo { border-left-color: var(--indigo); }
+  .callout .callout-label {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .callout.rose .callout-label { color: var(--rose); }
+  .callout.indigo .callout-label { color: var(--indigo); }
+  .callout .callout-body { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .callout .callout-body code { font-size: 11.5px; background: rgba(14,24,40,0.8); padding: 1px 5px; border-radius: 3px; color: var(--ink); }
+
+  /* Top nav (shared across CAP share/ pages) */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 28px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 14px;
+  }
+  .topnav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active {
+    color: var(--teal-ink);
+    background: rgba(20, 184, 166, 0.12);
+  }
+  .topnav .sep {
+    color: var(--ink-dim, #64748b);
+    margin: 0 6px;
+    font-size: 11px;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    text-align: center;
+  }
+  footer strong { color: var(--ink-soft); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html" class="active">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+</nav>
+
+<main>
+
+<header class="masthead">
+  <div class="eyebrow">CAP · System Map</div>
+  <h1>The Graph, the Agents, the Knowledge — and how work flows through them</h1>
+  <p class="subhead">A zoomed-out view of the platform. Twenty-one entity kinds sit in the schema — eighteen populated today, three dormant-ready. Eleven agent roles read from and write to the graph. Knowledge lives in a typed KB with hybrid retrieval. Four journeys — analyst, agent, platform, analysis — explain how the pieces move together, and one worked example traces a concrete commercial question end-to-end.</p>
+  <div class="meta-row">
+    <span>21 entity kinds in schema</span>
+    <span>18 populated · 3 dormant-ready</span>
+    <span>11 agent roles</span>
+    <span>6-per-entity research config family shipped 2026-04-19</span>
+  </div>
+</header>
+
+<section>
+  <h2>The Map</h2>
+  <p class="section-lede">Agents dispatch against the graph; the graph is grounded in the KB; the KB feeds back into both. Graduation runs up the stack — heuristics promote to rules, research promotes to entities, patterns promote to golden workflows.</p>
+
+  <div class="map-frame">
+    <svg viewBox="0 0 1060 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CAP system map">
+      <defs>
+        <marker id="arrow-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+        </marker>
+        <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+
+      <!-- ================== AGENTS BAND (top) ================== -->
+      <rect x="20" y="16" width="1020" height="138" rx="10" fill="#111a2e" stroke="#1f2937" stroke-width="1"/>
+      <text x="40" y="40" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">AGENTS · 11 ROLES</text>
+
+      <!-- Analytical cluster -->
+      <rect x="38" y="56" width="320" height="86" rx="8" fill="rgba(20,184,166,0.08)" stroke="#134e4a" stroke-width="1"/>
+      <text x="52" y="75" fill="#5eead4" font-size="10.5" font-weight="700" letter-spacing="1.2">ANALYTICAL</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="12">
+        <rect x="52" y="84" width="70" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="87" y="99" fill="#5eead4" text-anchor="middle">strategist</text>
+        <rect x="130" y="84" width="62" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="161" y="99" fill="#5eead4" text-anchor="middle">operator</text>
+        <rect x="200" y="84" width="70" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="235" y="99" fill="#5eead4" text-anchor="middle">researcher</text>
+        <rect x="278" y="84" width="60" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="308" y="99" fill="#5eead4" text-anchor="middle">analyst</text>
+        <rect x="52" y="112" width="100" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="102" y="127" fill="#5eead4" text-anchor="middle" font-size="11">+ subagents</text>
+      </g>
+
+      <!-- Review cluster -->
+      <rect x="376" y="56" width="300" height="86" rx="8" fill="rgba(251,113,133,0.08)" stroke="#7f1d1d" stroke-width="1"/>
+      <text x="390" y="75" fill="#fb7185" font-size="10.5" font-weight="700" letter-spacing="1.2">REVIEW &amp; CRITICISM</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="12">
+        <rect x="390" y="84" width="80" height="22" rx="11" fill="#3b1821" stroke="#7f1d1d"/>
+        <text x="430" y="99" fill="#fb7185" text-anchor="middle">challenger</text>
+        <rect x="478" y="84" width="62" height="22" rx="11" fill="#3b1821" stroke="#7f1d1d"/>
+        <text x="509" y="99" fill="#fb7185" text-anchor="middle">tester</text>
+        <rect x="548" y="84" width="74" height="22" rx="11" fill="#3b1821" stroke="#7f1d1d"/>
+        <text x="585" y="99" fill="#fb7185" text-anchor="middle">architect</text>
+        <rect x="390" y="112" width="220" height="22" rx="11" fill="#3b1821" stroke="#7f1d1d"/>
+        <text x="500" y="127" fill="#fb7185" text-anchor="middle" font-size="11">triad · adversarial · verify</text>
+      </g>
+
+      <!-- Ops cluster -->
+      <rect x="694" y="56" width="346" height="86" rx="8" fill="rgba(129,140,248,0.08)" stroke="#3730a3" stroke-width="1"/>
+      <text x="708" y="75" fill="#a5b4fc" font-size="10.5" font-weight="700" letter-spacing="1.2">PLATFORM OPERATIONS</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="12">
+        <rect x="708" y="84" width="80" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="748" y="99" fill="#a5b4fc" text-anchor="middle">facilitator</text>
+        <rect x="796" y="84" width="102" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="847" y="99" fill="#a5b4fc" text-anchor="middle">groundskeeper</text>
+        <rect x="906" y="84" width="70" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="941" y="99" fill="#a5b4fc" text-anchor="middle">dataops</text>
+        <rect x="984" y="84" width="52" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="1010" y="99" fill="#a5b4fc" text-anchor="middle">finops</text>
+        <rect x="708" y="112" width="292" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="854" y="127" fill="#a5b4fc" text-anchor="middle" font-size="11">governance · hygiene · cost · data quality</text>
+      </g>
+
+      <!-- ================== ENTITY GRAPH BAND (middle) ================== -->
+      <rect x="20" y="196" width="1020" height="176" rx="10" fill="#101a32" stroke="#1f2937" stroke-width="1"/>
+      <text x="40" y="220" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">ENTITY GRAPH · 21 KINDS · 18 LIVE + 3 DORMANT</text>
+
+      <!-- Foundation cluster -->
+      <rect x="38" y="236" width="320" height="124" rx="8" fill="rgba(20,184,166,0.08)" stroke="#134e4a" stroke-width="1"/>
+      <text x="52" y="255" fill="#5eead4" font-size="10.5" font-weight="700" letter-spacing="1.2">FOUNDATION · who / what / where</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="11.5">
+        <rect x="52" y="264" width="90" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="97" y="279" fill="#5eead4" text-anchor="middle">organization</text>
+        <rect x="148" y="264" width="64" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="180" y="279" fill="#5eead4" text-anchor="middle">product</text>
+        <rect x="218" y="264" width="94" height="22" rx="11" fill="#0f3d3a" stroke="#115e59"/>
+        <text x="265" y="279" fill="#5eead4" text-anchor="middle">therapy_area</text>
+        <!-- dormant: markets / events / data_source -->
+        <rect x="52" y="294" width="64" height="22" rx="11" fill="#0a2423" stroke="#115e59" stroke-dasharray="3 3"/>
+        <text x="84" y="309" fill="#5eead4" text-anchor="middle" opacity="0.7">market</text>
+        <rect x="122" y="294" width="54" height="22" rx="11" fill="#0a2423" stroke="#115e59" stroke-dasharray="3 3"/>
+        <text x="149" y="309" fill="#5eead4" text-anchor="middle" opacity="0.7">event</text>
+        <rect x="182" y="294" width="92" height="22" rx="11" fill="#0a2423" stroke="#115e59" stroke-dasharray="3 3"/>
+        <text x="228" y="309" fill="#5eead4" text-anchor="middle" opacity="0.7">data_source</text>
+      </g>
+      <text x="52" y="340" fill="#64748b" font-size="10.5">3 populated · 3 config-ready (dormant YAML dirs)</text>
+      <text x="52" y="352" fill="#64748b" font-size="10.5">6 per-entity research configs active</text>
+
+      <!-- Work cluster -->
+      <rect x="376" y="236" width="348" height="124" rx="8" fill="rgba(245,158,11,0.08)" stroke="#78350f" stroke-width="1"/>
+      <text x="390" y="255" fill="#fbbf24" font-size="10.5" font-weight="700" letter-spacing="1.2">WORK ARTIFACTS · output of analysis</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="11.5">
+        <rect x="390" y="264" width="82" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="431" y="279" fill="#fbbf24" text-anchor="middle">engagement</text>
+        <rect x="480" y="264" width="62" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="511" y="279" fill="#fbbf24" text-anchor="middle">finding</text>
+        <rect x="548" y="264" width="112" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="604" y="279" fill="#fbbf24" text-anchor="middle">recommendation</text>
+        <rect x="666" y="264" width="54" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="693" y="279" fill="#fbbf24" text-anchor="middle">outcome</text>
+        <rect x="390" y="294" width="62" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="421" y="309" fill="#fbbf24" text-anchor="middle">decision</text>
+        <rect x="458" y="294" width="72" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="494" y="309" fill="#fbbf24" text-anchor="middle">hypothesis</text>
+        <rect x="536" y="294" width="78" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="575" y="309" fill="#fbbf24" text-anchor="middle">assumption</text>
+        <rect x="620" y="294" width="62" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="651" y="309" fill="#fbbf24" text-anchor="middle">driver</text>
+        <rect x="390" y="324" width="72" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="426" y="339" fill="#fbbf24" text-anchor="middle">constraint</text>
+        <rect x="468" y="324" width="44" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="490" y="339" fill="#fbbf24" text-anchor="middle">risk</text>
+        <rect x="518" y="324" width="76" height="22" rx="11" fill="#3b2709" stroke="#78350f"/>
+        <text x="556" y="339" fill="#fbbf24" text-anchor="middle">assessment</text>
+      </g>
+
+      <!-- System cluster -->
+      <rect x="742" y="236" width="298" height="124" rx="8" fill="rgba(129,140,248,0.08)" stroke="#3730a3" stroke-width="1"/>
+      <text x="756" y="255" fill="#a5b4fc" font-size="10.5" font-weight="700" letter-spacing="1.2">SYSTEM · reusable platform objects</text>
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="11.5">
+        <rect x="756" y="264" width="90" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="801" y="279" fill="#a5b4fc" text-anchor="middle">methodology</text>
+        <rect x="852" y="264" width="100" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="902" y="279" fill="#a5b4fc" text-anchor="middle">golden_prompt</text>
+        <rect x="756" y="294" width="112" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="812" y="309" fill="#a5b4fc" text-anchor="middle">golden_workflow</text>
+        <rect x="872" y="294" width="92" height="22" rx="11" fill="#1e1b4b" stroke="#3730a3"/>
+        <text x="918" y="309" fill="#a5b4fc" text-anchor="middle">data_pipeline</text>
+      </g>
+      <text x="756" y="340" fill="#64748b" font-size="10.5">queryable by kind via entity_graph.py</text>
+      <text x="756" y="352" fill="#64748b" font-size="10.5">promoted from proven patterns</text>
+
+      <!-- ================== KB BAND (bottom) ================== -->
+      <rect x="20" y="414" width="1020" height="130" rx="10" fill="#0f1a2b" stroke="#1f2937" stroke-width="1"/>
+      <text x="40" y="438" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">KNOWLEDGE BASE · typed folders · hybrid retrieval + rerank</text>
+
+      <g font-family="SF Mono, JetBrains Mono, Consolas, monospace" font-size="11.5">
+        <!-- Domain -->
+        <rect x="38" y="454" width="238" height="78" rx="8" fill="#111a2e" stroke="#26324a"/>
+        <text x="52" y="472" fill="#cbd5e1" font-size="10.5" font-weight="700" letter-spacing="1">DOMAIN</text>
+        <text x="52" y="490" fill="#94a3b8">knowledge/fundamentals/</text>
+        <text x="52" y="506" fill="#94a3b8">knowledge/methodology/</text>
+        <text x="52" y="522" fill="#94a3b8">knowledge/research/ (RB_*.md)</text>
+
+        <!-- Governance -->
+        <rect x="288" y="454" width="238" height="78" rx="8" fill="#111a2e" stroke="#26324a"/>
+        <text x="302" y="472" fill="#cbd5e1" font-size="10.5" font-weight="700" letter-spacing="1">GOVERNANCE</text>
+        <text x="302" y="490" fill="#94a3b8">knowledge/governance/</text>
+        <text x="302" y="506" fill="#94a3b8">TAG_TAXONOMY · GUARDRAILS</text>
+        <text x="302" y="522" fill="#94a3b8">knowledge/platform_administration/</text>
+
+        <!-- Context -->
+        <rect x="538" y="454" width="238" height="78" rx="8" fill="#111a2e" stroke="#26324a"/>
+        <text x="552" y="472" fill="#cbd5e1" font-size="10.5" font-weight="700" letter-spacing="1">CONTEXT</text>
+        <text x="552" y="490" fill="#94a3b8">knowledge/company/</text>
+        <text x="552" y="506" fill="#94a3b8">knowledge/delivery_patterns/</text>
+        <text x="552" y="522" fill="#94a3b8">knowledge/data_sources/</text>
+
+        <!-- System -->
+        <rect x="788" y="454" width="252" height="78" rx="8" fill="#111a2e" stroke="#26324a"/>
+        <text x="802" y="472" fill="#cbd5e1" font-size="10.5" font-weight="700" letter-spacing="1">SYSTEM</text>
+        <text x="802" y="490" fill="#94a3b8">knowledge/graph/ (entity YAMLs)</text>
+        <text x="802" y="506" fill="#94a3b8">knowledge/heuristics/</text>
+        <text x="802" y="522" fill="#94a3b8">knowledge/golden_prompts/</text>
+      </g>
+
+      <!-- Connectors between bands -->
+      <!-- Agents -> Graph -->
+      <line x1="198" y1="154" x2="198" y2="196" stroke="#64748b" stroke-width="1.4" stroke-dasharray="0" marker-end="url(#arrow-soft)"/>
+      <line x1="530" y1="154" x2="530" y2="196" stroke="#64748b" stroke-width="1.4" stroke-dasharray="0" marker-end="url(#arrow-soft)"/>
+      <line x1="870" y1="154" x2="870" y2="196" stroke="#64748b" stroke-width="1.4" stroke-dasharray="0" marker-end="url(#arrow-soft)"/>
+      <!-- Graph -> Agents (read-back) -->
+      <line x1="218" y1="196" x2="218" y2="154" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+      <line x1="550" y1="196" x2="550" y2="154" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+      <line x1="890" y1="196" x2="890" y2="154" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+
+      <!-- Graph -> KB -->
+      <line x1="198" y1="372" x2="198" y2="414" stroke="#64748b" stroke-width="1.4" marker-end="url(#arrow-soft)"/>
+      <line x1="530" y1="372" x2="530" y2="414" stroke="#64748b" stroke-width="1.4" marker-end="url(#arrow-soft)"/>
+      <line x1="870" y1="372" x2="870" y2="414" stroke="#64748b" stroke-width="1.4" marker-end="url(#arrow-soft)"/>
+      <!-- KB -> Graph (feeds) -->
+      <line x1="218" y1="414" x2="218" y2="372" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+      <line x1="550" y1="414" x2="550" y2="372" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+      <line x1="890" y1="414" x2="890" y2="372" stroke="#334155" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow-soft)"/>
+
+      <!-- Graduation arc: Heuristics (System KB cluster) -> Behavioral rules (Agents band) -->
+      <path d="M 1020 494 C 1050 394 1050 160 888 96" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow-amber)"/>
+      <text x="1015" y="395" fill="#f59e0b" font-size="10.5" font-weight="600" text-anchor="end">graduation</text>
+      <text x="1015" y="409" fill="#f59e0b" font-size="10.5" text-anchor="end">heuristic → rule</text>
+    </svg>
+    <div class="map-legend">
+      <span><span class="swatch" style="background:#0f3d3a;border:1px solid #115e59"></span>Teal bands = analytical / foundation / domain (what the system reasons over)</span>
+      <span><span class="swatch" style="background:#3b1821;border:1px solid #7f1d1d"></span>Rose = review &amp; criticism (independent verification)</span>
+      <span><span class="swatch" style="background:#3b2709;border:1px solid #78350f"></span>Amber = analytical output (findings, decisions, recommendations)</span>
+      <span><span class="swatch" style="background:#1e1b4b;border:1px solid #3730a3"></span>Indigo = platform &amp; system (ops, reusable objects, graduation)</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Concepts · expanded</h2>
+  <p class="section-lede">Three columns, same bands as the map. Clusters within each column group kinds / roles / folders that share a purpose.</p>
+
+  <div class="concept-cols">
+    <div class="concept-col">
+      <h3>Entity Graph · 18 kinds</h3>
+      <div class="col-lede">Every analytical output + reusable platform object lives in the graph. Kinds are first-class; queryable via <code>tools/entity_graph.py</code>.</div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Foundation · who / what / where</div>
+        <div class="chips">
+          <span class="chip teal">organization</span>
+          <span class="chip teal">product</span>
+          <span class="chip teal">therapy_area</span>
+          <span class="chip teal dormant">market</span>
+          <span class="chip teal dormant">event</span>
+          <span class="chip teal dormant">data_source</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Work artifacts · output of analysis</div>
+        <div class="chips">
+          <span class="chip amber">engagement</span>
+          <span class="chip amber">finding</span>
+          <span class="chip amber">recommendation</span>
+          <span class="chip amber">decision</span>
+          <span class="chip amber">outcome</span>
+          <span class="chip amber">hypothesis</span>
+          <span class="chip amber">assumption</span>
+          <span class="chip amber">driver</span>
+          <span class="chip amber">constraint</span>
+          <span class="chip amber">risk</span>
+          <span class="chip amber">assessment</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">System · reusable platform objects</div>
+        <div class="chips">
+          <span class="chip indigo">methodology</span>
+          <span class="chip indigo">golden_prompt</span>
+          <span class="chip indigo">golden_workflow</span>
+          <span class="chip indigo">data_pipeline</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-col">
+      <h3>Agents · 11 roles</h3>
+      <div class="col-lede">Specialist skills loaded on demand. Multi-instance by design (Atlas, Forge, Cowork); session coordination via <code>.active</code> markers.</div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Analytical · primary work</div>
+        <div class="chips">
+          <span class="chip teal">strategist</span>
+          <span class="chip teal">operator</span>
+          <span class="chip teal">researcher</span>
+          <span class="chip teal">analyst</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Review &amp; criticism · adversarial</div>
+        <div class="chips">
+          <span class="chip rose">challenger</span>
+          <span class="chip rose">tester</span>
+          <span class="chip rose">architect</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Platform operations · keep the system running</div>
+        <div class="chips">
+          <span class="chip indigo">facilitator</span>
+          <span class="chip indigo">groundskeeper</span>
+          <span class="chip indigo">dataops</span>
+          <span class="chip indigo">finops</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Composition pattern</div>
+        <div class="chips">
+          <span class="chip">triad = challenger + architect + strategist</span>
+          <span class="chip">dispatch = parent + N subagents</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-col">
+      <h3>Knowledge Base · typed folders</h3>
+      <div class="col-lede">Hybrid retrieval (BM25 + vector) with cross-encoder rerank. Rerank is load-bearing — disabling it degrades eval.</div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Domain · pharma CE</div>
+        <div class="chips">
+          <span class="chip">fundamentals/</span>
+          <span class="chip">methodology/</span>
+          <span class="chip">research/ (RB briefs)</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Governance · handling rules</div>
+        <div class="chips">
+          <span class="chip">governance/</span>
+          <span class="chip">TAG_TAXONOMY.md</span>
+          <span class="chip">GOVERNANCE_OVERVIEW</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">Context · this company</div>
+        <div class="chips">
+          <span class="chip">company/</span>
+          <span class="chip">delivery_patterns/</span>
+          <span class="chip">data_sources/ (profiles)</span>
+        </div>
+      </div>
+
+      <div class="concept-cluster">
+        <div class="cluster-label">System · self-knowledge</div>
+        <div class="chips">
+          <span class="chip">graph/ (entity YAMLs)</span>
+          <span class="chip">heuristics/ (register)</span>
+          <span class="chip">golden_prompts/</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Four Journeys</h2>
+  <p class="section-lede">The same pieces, seen four ways — through the eyes of the analyst bringing a question, the agent serving the task, the platform evolving through use, and the analytical workflow producing a commercial answer.</p>
+
+  <!-- Journey 1: Analyst -->
+  <div class="journey">
+    <div class="journey-head">
+      <h3 class="journey-title"><span class="jrn-prefix">user</span>Analyst brings a question</h3>
+      <span class="journey-actor">actor: you</span>
+    </div>
+    <p class="journey-lede">Start a session, set scope, invoke the right skill, let the agent and its subagents do the work, review, persist decisions, close cleanly.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-label">Session start</div>
+        <div class="step-detail">Open Forge / Atlas; pull dev; read CURRENT_STATE.</div>
+        <div class="step-touch"><span class="tk">CLAUDE.md</span><span>·</span><span class="tk">sessions/</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-label">Scope + skill</div>
+        <div class="step-detail">Announce <code>business</code> / <code>personal</code>; invoke <code>/strategist</code>, <code>/operator</code>, <code>/researcher</code>…</div>
+        <div class="step-touch"><span class="tk">.active marker</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-label">Ask</div>
+        <div class="step-detail">Bring the actual question. Agent decomposes, KB-pre-checks, plans.</div>
+        <div class="step-touch"><span class="tk">skill</span><span>·</span><span class="tk">rules</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-label">Review</div>
+        <div class="step-detail">Walk findings chunk-by-chunk; redirect, push back, or accept.</div>
+        <div class="step-touch"><span class="tk amber">finding</span><span>·</span><span class="tk amber">recommendation</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-label">Persist</div>
+        <div class="step-detail">Decisions + outcomes commit to graph; HTML / PPT artifacts ship.</div>
+        <div class="step-touch"><span class="tk amber">decision</span><span>·</span><span class="tk amber">outcome</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-label">Close</div>
+        <div class="step-detail">7 pre-close gates; session YAML; CURRENT_STATE regen.</div>
+        <div class="step-touch"><span class="tk">CLOSING_ROUTINE</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journey 2: Agent -->
+  <div class="journey">
+    <div class="journey-head">
+      <h3 class="journey-title"><span class="jrn-prefix">agent</span>Agent serves a task</h3>
+      <span class="journey-actor">actor: Claude (harness)</span>
+    </div>
+    <p class="journey-lede">Load harness + rules, pick up the skill, pre-check the KB, dispatch subagents, capture entities, verify before claiming done.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-label">Load harness</div>
+        <div class="step-detail">CLAUDE.md + L2 behavioral + L3 operating + domain rules.</div>
+        <div class="step-touch"><span class="tk">.claude/rules/</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-label">Invoke skill</div>
+        <div class="step-detail">Skill tool loads role IDENTITY + procedures. Process skills before implementation skills.</div>
+        <div class="step-touch"><span class="tk">/skill</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-label">KB pre-check</div>
+        <div class="step-detail">Hybrid search + rerank on domain briefs. FULL / PARTIAL / NONE coverage map.</div>
+        <div class="step-touch"><span class="tk">kb_index.py</span><span>·</span><span class="tk">RB_*.md</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-label">Dispatch</div>
+        <div class="step-detail">Subagents for gaps; parent is filing clerk (output contract); triad on consequential decisions.</div>
+        <div class="step-touch"><span class="tk rose">challenger</span><span>·</span><span class="tk rose">architect</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-label">Capture</div>
+        <div class="step-detail">Entities written to graph; briefs land with <code>entity_id</code> + <code>entity_mentions</code>.</div>
+        <div class="step-touch"><span class="tk amber">finding</span><span>·</span><span class="tk">RB brief</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-label">Verify</div>
+        <div class="step-detail">Hook gates at commit; evidence before assertions; independent verification on acceptance.</div>
+        <div class="step-touch"><span class="tk">.claude/hooks/</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">07</div>
+        <div class="step-label">Report</div>
+        <div class="step-detail">Surface output with confidence + gaps; compose for the analyst, not for itself.</div>
+        <div class="step-touch"><span class="tk">user-facing</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journey 3: Platform -->
+  <div class="journey">
+    <div class="journey-head">
+      <h3 class="journey-title"><span class="jrn-prefix">platform</span>Platform evolves through use</h3>
+      <span class="journey-actor">actor: the system itself</span>
+    </div>
+    <p class="journey-lede">Feedback → memory → heuristic candidate → proven firings → graduation to a durable rule. The rulebook improves without an author.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-label">Friction</div>
+        <div class="step-detail">Analyst pushback, correction, or surprising win.</div>
+        <div class="step-touch"><span class="tk">FRICTION_LOG</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-label">Memory</div>
+        <div class="step-detail">Auto-memory capture: feedback / user / project / reference.</div>
+        <div class="step-touch"><span class="tk">memory/*.md</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-label">Candidate</div>
+        <div class="step-detail">Repeated firings crystallize into a heuristic register entry (H-XXX).</div>
+        <div class="step-touch"><span class="tk">HEURISTIC_REGISTER</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-label">Triad</div>
+        <div class="step-detail">Challenger + architect + strategist review: PROCEED / REVISE / BLOCK.</div>
+        <div class="step-touch"><span class="tk rose">triad</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-label">Graduate</div>
+        <div class="step-detail">Write to L2 behavioral or L3 operating model rule file. Memory entry notes graduation.</div>
+        <div class="step-touch"><span class="tk">cap-base-*.md</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-label">Enforce</div>
+        <div class="step-detail">Where mechanical, a hook lands at L7. Rule + hook are paired.</div>
+        <div class="step-touch"><span class="tk">.claude/hooks/</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journey 4: Analysis -->
+  <div class="journey">
+    <div class="journey-head">
+      <h3 class="journey-title"><span class="jrn-prefix">analysis</span>Analytical workflow produces an answer</h3>
+      <span class="journey-actor">actor: the engagement</span>
+    </div>
+    <p class="journey-lede">Engagement onboard → entity research against foundation kinds → feasibility check → Databricks prep → analysis → deliverable with audit trail.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-label">Onboard</div>
+        <div class="step-detail">Company profile, portfolio, TAs, maturity. CE_Opportunity_Assessment.</div>
+        <div class="step-touch"><span class="tk teal">organization</span><span>·</span><span class="tk">company/</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-label">Entity research</div>
+        <div class="step-detail">Per-entity configs dispatch researchers: org, product, TA, market, event, data_source.</div>
+        <div class="step-touch"><span class="tk teal">product</span><span>·</span><span class="tk teal">data_source</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-label">Feasibility</div>
+        <div class="step-detail">Match analytical_roles × grain against method YAMLs. Full / partial / directional.</div>
+        <div class="step-touch"><span class="tk">feasibility_check.py</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-label">Data prep</div>
+        <div class="step-detail">Databricks dev catalog; bronze → silver → gold; governance tags applied.</div>
+        <div class="step-touch"><span class="tk indigo">dataops</span><span>·</span><span class="tk">Unity Catalog</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-label">Analyze</div>
+        <div class="step-detail">Run method; capture findings with confidence tags; challenger reviews edge claims.</div>
+        <div class="step-touch"><span class="tk amber">finding</span><span>·</span><span class="tk rose">challenger</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-label">Recommend</div>
+        <div class="step-detail">Strategist translates findings into recommendations with SCQA + evidence chain.</div>
+        <div class="step-touch"><span class="tk amber">recommendation</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <div class="step-num">07</div>
+        <div class="step-label">Deliver</div>
+        <div class="step-detail">Brief, slide deck, or interactive HTML. Decisions + outcomes persist back to graph.</div>
+        <div class="step-touch"><span class="tk amber">outcome</span><span>·</span><span class="tk amber">decision</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Worked Example · Field-Force Sizing</h2>
+  <p class="section-lede">One concrete commercial question traced end-to-end through the map above. A launch team asks: <em>"what field-force size supports our target reach and frequency at launch?"</em> Here is what the system does.</p>
+
+  <div class="journey example">
+    <div class="journey-head">
+      <h3 class="journey-title"><span class="jrn-prefix">example</span>From question to deployed FF plan</h3>
+      <span class="journey-actor">primary roles: strategist · researcher · operator · analyst · dataops · challenger</span>
+    </div>
+    <p class="journey-lede">Workload-buildup method chosen via the hypothesis ontology decision tree. Bronze → silver → gold on Databricks. Full audit trail back to the graph.</p>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01 · frame</div>
+        <div class="step-label">Problem definition</div>
+        <div class="step-detail">Strategist decomposes: launch vs in-line · specialty vs primary-care · single product vs portfolio. The <code>HYPOTHESIS_ONTOLOGY_DECISION_TREE</code> routes to the method family.</div>
+        <div class="step-touch"><span class="tk">HYPOTHESIS_ONTOLOGY_DECISION_TREE</span><span>·</span><span class="tk amber">hypothesis</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02 · research</div>
+        <div class="step-label">Entity research</div>
+        <div class="step-detail">Researcher dispatches against the per-entity configs: organization (launch co), product (asset), therapy_area, market, event (approval / launch window), data_source (available feeds). KB pre-check surfaces existing <code>RB_*.md</code> briefs before re-research.</div>
+        <div class="step-touch"><span class="tk teal">organization</span><span>·</span><span class="tk teal">product</span><span>·</span><span class="tk teal">market</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03 · find data</div>
+        <div class="step-label">Feasibility check</div>
+        <div class="step-detail">data_source entities enumerate <code>analytical_roles × grain × geographic_scope</code>. <code>tools/feasibility_check.py</code> matches capabilities against the selected method's requirements. Tier: full / partial / directional.</div>
+        <div class="step-touch"><span class="tk teal">data_source</span><span>·</span><span class="tk">feasibility_check.py</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">04 · bronze→silver</div>
+        <div class="step-label">Build the pipe</div>
+        <div class="step-detail">Operator + dataops land raw ingests in <code>cdp_dev.*_bronze</code>, then clean + conform + enrich into <code>cdp_dev.*_silver</code> with entity IDs (NPIs, product codes, geographic anchors). Unity Catalog governance tags applied per <code>TAG_TAXONOMY</code>.</div>
+        <div class="step-touch"><span class="tk indigo">operator</span><span>·</span><span class="tk indigo">dataops</span><span>·</span><span class="tk">Databricks dev</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">05 · scope method</div>
+        <div class="step-label">Select method</div>
+        <div class="step-detail">Method YAML loaded from <code>compute/configs/methods/</code>. For FF sizing: workload-buildup vs affordable-coverage vs response-informed-AC. Method's data requirements cross-checked against feasibility tier from step 03.</div>
+        <div class="step-touch"><span class="tk indigo">methodology</span><span>·</span><span class="tk">method YAML</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">06 · analyze</div>
+        <div class="step-label">Run the method</div>
+        <div class="step-detail">Analyst executes on silver tables: market sizing × adoption curve × call intensity → workload → FF size under reach/frequency targets. Sensitivity analysis on key inputs (adoption, call productivity, territory geometry).</div>
+        <div class="step-touch"><span class="tk amber">finding</span><span>·</span><span class="tk amber">hypothesis</span> updated</div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">07 · silver→gold</div>
+        <div class="step-label">Productize outputs</div>
+        <div class="step-detail">Operator writes productized gold tables: FF size recommendation, territory map, rep allocation, call plan skeleton. Promotion workflow lands in <code>cdp.*_gold</code> (prod, read-only). Refresh cadence set; schema locked.</div>
+        <div class="step-touch"><span class="tk">cdp.*_gold</span><span>·</span><span class="tk indigo">data_pipeline</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">08 · review + deliver</div>
+        <div class="step-label">Challenge + ship</div>
+        <div class="step-detail">Challenger auto-dispatches on the "easy" predictions (rep-ratio rules of thumb) for independent verification. Strategist translates findings into a recommendation with SCQA + evidence chain. Deliverables: brief · slide deck · interactive HTML.</div>
+        <div class="step-touch"><span class="tk rose">challenger</span><span>·</span><span class="tk amber">recommendation</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">09 · save</div>
+        <div class="step-label">KB + graph persist</div>
+        <div class="step-detail">RB brief files to <code>knowledge/research/</code>; entity YAMLs (finding, recommendation, decision, outcome) commit to <code>knowledge/graph/entities/</code>. Novel patterns surface as heuristic candidates. Next FF-sizing engagement starts from this state, not zero.</div>
+        <div class="step-touch"><span class="tk amber">decision</span><span>·</span><span class="tk amber">outcome</span><span>·</span><span class="tk indigo">facilitator</span></div>
+      </div>
+    </div>
+
+    <div class="example-sidebar">
+      <div class="callout">
+        <div class="callout-label">Databricks · why three tiers</div>
+        <div class="callout-body"><strong>Bronze</strong> raw ingests · <strong>silver</strong> cleaned + joined with entity IDs · <strong>gold</strong> productized outputs. Analyst works freely in dev; promotion to prod gates governance, schema, refresh cadence. Not a data swamp — a data <em>product</em>.</div>
+      </div>
+      <div class="callout indigo">
+        <div class="callout-label">Method selection · no ad-hoc picks</div>
+        <div class="callout-body">The decision tree classifies the question — launch vs in-line · specialty vs primary · portfolio vs single-asset — and routes to the vetted method YAML. Every method choice is a traced decision, not an analyst's gut call.</div>
+      </div>
+      <div class="callout rose">
+        <div class="callout-label">Compounding · cheaper with use</div>
+        <div class="callout-body">Each engagement leaves an asset trail — entities populated, briefs filed, method tuned, gold tables registered. <strong>Engagement 1 starts at step 01. Engagement 5 starts at step 06.</strong> The capability gets cheaper the more you use it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>CAP · Commercial Analytics Platform</strong> · zoomed-out system map · generated 2026-04-19<br>
+  Entity graph, agent roster, KB clustering, and journeys reflect live configuration. Every foundation entity kind has a shipping per-entity research config as of Track B close.
+</footer>
+
+</main>
+</body>
+</html>

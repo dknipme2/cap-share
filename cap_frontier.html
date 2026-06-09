@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — A Frontier Deployment, Composed from Frontier Research</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --panel-3: #1a2238;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.14);
+    --teal-deep: rgba(20, 184, 166, 0.22);
+    --amber: #fbbf24;
+    --amber-ink: #fde68a;
+    --amber-soft: rgba(251, 191, 36, 0.10);
+    --amber-deep: #78350f;
+    --rose: #fb7185;
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.10);
+    --indigo-deep: #3730a3;
+    --violet: #c084fc;
+    --violet-ink: #d8b4fe;
+    --violet-soft: rgba(192, 132, 252, 0.10);
+    --violet-deep: #7e22ce;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 44px 28px 96px; }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+  a { color: var(--teal-ink); }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 24px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  .topnav a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+
+  /* Hero */
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 36px;
+    margin-bottom: 48px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  h1 {
+    margin: 0 0 18px;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.12;
+    color: #ffffff;
+    max-width: 24ch;
+  }
+  .lede {
+    color: var(--ink-soft);
+    font-size: 17.5px;
+    line-height: 1.55;
+    max-width: 64ch;
+    margin: 0 0 20px;
+  }
+  .lede em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+  .pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: var(--panel);
+    border: 1px solid var(--rule-soft);
+    color: var(--ink-soft);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-family: "SF Mono", monospace;
+  }
+
+  section { margin-bottom: 64px; }
+  section > h2 {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  section > .section-h {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  section > .section-lede {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 72ch;
+    margin: 0 0 24px;
+  }
+
+  /* Market-labels table */
+  .market-table {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .market-row {
+    display: grid;
+    grid-template-columns: 260px 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .market-row:last-child { border-bottom: none; }
+  .market-row .m-col {
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .market-row .m-label {
+    color: var(--ink);
+    font-weight: 600;
+    background: var(--panel-3);
+    border-right: 1px solid var(--rule-soft);
+  }
+  .market-row .m-label .m-cite {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-top: 4px;
+    font-family: "SF Mono", monospace;
+  }
+  .market-row .m-what { color: var(--ink-soft); border-right: 1px solid var(--rule-soft); }
+  .market-row .m-where { color: var(--ink); }
+  .market-row .m-where strong { color: var(--teal-ink); font-weight: 500; }
+  .market-row.head {
+    background: var(--panel-3);
+  }
+  .market-row.head .m-col {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    padding: 10px 18px;
+  }
+  @media (max-width: 720px) {
+    .market-row { grid-template-columns: 1fr; }
+    .market-row .m-col { border-right: none !important; border-bottom: 1px solid var(--rule-soft); }
+    .market-row.head { display: none; }
+  }
+
+  /* Small-org advantage · stat block */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--teal);
+    border-radius: 10px;
+    padding: 22px 26px;
+  }
+  .stat-card .stat-num {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--teal-ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card h3 {
+    margin: 0 0 8px;
+    font-size: 15.5px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .stat-card p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .stat-card .stat-cite {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule-soft);
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .stat-card .stat-cite a { color: var(--teal-ink); text-decoration: none; }
+  .stat-card .stat-cite a:hover { text-decoration: underline; }
+
+  /* THE VISUAL · composition SVG */
+  .composition {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 20px 20px 12px;
+    margin-bottom: 30px;
+  }
+  .composition svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .composition-legend {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule-soft);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    justify-content: center;
+  }
+  .composition-legend .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* Pillar detail cards */
+  .pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 820px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .pillar .p-num {
+    font-family: "SF Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pillar.teal { border-left: 3px solid var(--teal); }
+  .pillar.teal .p-num { color: var(--teal-ink); }
+  .pillar.amber { border-left: 3px solid var(--amber); }
+  .pillar.amber .p-num { color: var(--amber); }
+  .pillar.indigo { border-left: 3px solid var(--indigo); }
+  .pillar.indigo .p-num { color: var(--indigo); }
+  .pillar.violet { border-left: 3px solid var(--violet); }
+  .pillar.violet .p-num { color: var(--violet-ink); }
+  .pillar.center { border-left: 3px solid var(--teal); background: linear-gradient(180deg, rgba(20,184,166,0.06), transparent 100%), var(--panel); grid-column: 1 / -1; }
+  .pillar.center .p-num { color: var(--teal-ink); }
+
+  .pillar h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .pillar .p-claim {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 12px;
+  }
+  .pillar .p-claim em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+
+  details.knowmore {
+    margin-top: 6px;
+  }
+  details.knowmore summary {
+    cursor: pointer;
+    color: var(--teal-ink);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    list-style: none;
+    padding: 2px 0;
+    user-select: none;
+    border-bottom: 1px dotted rgba(94, 234, 212, 0.4);
+    display: inline-block;
+  }
+  details.knowmore summary::-webkit-details-marker { display: none; }
+  details.knowmore summary::after { content: " ↗"; opacity: 0.7; }
+  details.knowmore[open] summary::after { content: " ↓"; }
+  details.knowmore[open] summary { color: var(--ink); border-bottom-color: var(--rule); }
+  details.knowmore .km-body {
+    display: block;
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: var(--panel-2);
+    border-left: 2px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  details.knowmore .km-body .km-head {
+    font-family: "SF Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  details.knowmore .km-body p { margin: 0 0 10px; }
+  details.knowmore .km-body p:last-child { margin-bottom: 0; }
+  details.knowmore .km-body ul { margin: 0 0 10px; padding-left: 18px; }
+  details.knowmore .km-body ul li { margin-bottom: 4px; }
+  details.knowmore .km-body a { color: var(--teal-ink); text-decoration: none; border-bottom: 1px dotted rgba(94,234,212,0.4); }
+  details.knowmore .km-body a:hover { color: var(--ink); }
+  details.knowmore .km-body strong { color: var(--ink); font-weight: 600; }
+  details.knowmore .km-body code { background: var(--panel); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; color: var(--ink); }
+
+  /* Three grounding anchors */
+  .anchors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 820px) { .anchors { grid-template-columns: 1fr; } }
+  .anchor {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .anchor .a-num {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .anchor h3 { margin: 0 0 8px; font-size: 15.5px; color: var(--ink); font-weight: 600; }
+  .anchor p { margin: 0; color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; }
+  .anchor p a { color: var(--teal-ink); text-decoration: none; }
+  .anchor p a:hover { text-decoration: underline; }
+
+  /* Join-me close */
+  .close {
+    background: linear-gradient(180deg, rgba(20, 184, 166, 0.06), transparent 100%), var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--teal);
+    border-radius: 12px;
+    padding: 28px 32px;
+  }
+  .close h3 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .close p {
+    margin: 0 0 12px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .close p:last-child { margin-bottom: 0; }
+  .close strong { color: var(--ink); font-weight: 600; }
+  .close em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html" class="active">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · The frontier position</div>
+  <h1>A frontier deployment, composed from frontier research.</h1>
+  <p class="lede">The big labs ship frontier <em>models</em>. The consultancies talk frontier <em>strategies</em>. What doesn't yet exist at scale is a disciplined frontier <em>deployment</em> — research composed into production, scoped to a commercial domain, shipping now. That's what CAP is. Here's what it composes — and the research behind each piece.</p>
+  <div class="pills">
+    <span class="pill">agentic composition</span>
+    <span class="pill">8 elements</span>
+    <span class="pill">research-grounded</span>
+    <span class="pill">shipping</span>
+  </div>
+</header>
+
+<!-- SECTION 1 · Naming the frontier -->
+<section>
+  <h2>What the frontier is</h2>
+  <div class="section-h">The market is naming the same frontier five different ways</div>
+  <p class="section-lede">Five communities, five labels, one underlying composition. Each comes from a different angle — enterprise consulting, philosophy of mind, knowledge graphs, memory research, human-AI collaboration. Name them and the convergence becomes visible. CAP sits on the intersection.</p>
+
+  <div class="market-table">
+    <div class="market-row head">
+      <div class="m-col">Label · who's using it</div>
+      <div class="m-col">What it means</div>
+      <div class="m-col">Where CAP lives</div>
+    </div>
+    <div class="market-row">
+      <div class="m-col m-label">Agentic AI <span class="m-cite"><a href="https://www2.deloitte.com/us/en/insights/topics/digital-transformation/state-of-generative-ai-in-enterprise.html">Deloitte</a> · <a href="https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/why-agents-are-the-next-frontier-of-generative-ai">McKinsey</a> · <a href="https://www.gartner.com/en/newsroom/press-releases/2024-10-21-gartner-identifies-the-top-10-strategic-technology-trends-for-2025">Gartner</a></span></div>
+      <div class="m-col m-what">Systems that plan, act, use tools, maintain state across interactions</div>
+      <div class="m-col m-where"><strong>11 specialist roles</strong> · three-way peer review · specialist output preserved verbatim</div>
+    </div>
+    <div class="market-row">
+      <div class="m-col m-label">Organizational exocortex <span class="m-cite">Clark &amp; Chalmers 1998</span></div>
+      <div class="m-col m-what">A persistent cognitive layer that extends team / org working knowledge</div>
+      <div class="m-col m-where"><strong>Typed graph + persistent session memory</strong> · captured rule candidates from each session</div>
+    </div>
+    <div class="market-row">
+      <div class="m-col m-label">Knowledge-graph-grounded AI <span class="m-cite">Neuro-symbolic revival · Palantir · Backstage</span></div>
+      <div class="m-col m-what">Reasoning over typed structured knowledge, not only vector retrieval</div>
+      <div class="m-col m-where"><strong>21 entity kinds</strong> · hybrid retrieval · cross-encoder rerank</div>
+    </div>
+    <div class="market-row">
+      <div class="m-col m-label">Memory-augmented LLMs <span class="m-cite"><a href="https://arxiv.org/abs/2310.08560">MemGPT (Packer et al. 2023)</a> · Letta · Mem0</span></div>
+      <div class="m-col m-what">Persistent + episodic memory architectures beyond the prompt window</div>
+      <div class="m-col m-where"><strong>Persistent memory across sessions</strong> · rule-candidate log · feedback loop</div>
+    </div>
+    <div class="market-row">
+      <div class="m-col m-label">Human-AI collaboration patterns <span class="m-cite"><a href="https://www.anthropic.com/research/building-effective-agents">Anthropic "Building effective agents"</a> · <a href="https://www.sciencedirect.com/science/article/abs/pii/0005109883900468">Bainbridge "Ironies of Automation" 1983</a></span></div>
+      <div class="m-col m-what">Patterns for hand-off, oversight, trust calibration between humans and AI</div>
+      <div class="m-col m-where"><strong>Three-way peer review</strong> · specialist output preserved verbatim · per-claim confidence tags</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 · Who composes it first -->
+<section>
+  <h2>Who builds it first</h2>
+  <div class="section-h">Small teams reach the composition first — and we're inside that window</div>
+  <p class="section-lede">If five communities are converging on the same composition, the next question is <em>who builds it first</em>. Worth being honest: the frontier is not theoretical for pharma. <a href="https://claude.com/customers/novo-nordisk">Anthropic and Novo Nordisk shipped Claude in regulatory documentation</a> — 10+ weeks of work compressed to 10 minutes. <a href="https://www.biospace.com/business/novartis-ceo-joins-anthropic-board-embedding-ai-in-the-heart-of-biopharma">Novartis's CEO joined Anthropic's board.</a> Sanofi, AbbVie, and others are in motion. Frontier models are being deployed inside the largest pharma companies right now.</p>
+  <p class="section-lede"><strong>But the scope is narrow.</strong> Those deployments are single use cases — regulatory documentation automation, lab workflows, drug-discovery pipelines. The <em>full commercial composition</em> — sizing, S&amp;T, payer access, LOE defense, portfolio review, all running off a shared graph and a closed feedback loop — is still ahead. Even the biggest frontier-lab + big-pharma partnerships haven't gone there yet, because big pharma has to re-map its operating model around agentic work first. That re-map takes years: regulatory governance, established analytics functions, committee culture, change-management processes, stakeholder layers. A small embedded team doesn't carry that weight. We compose now. We ship. We correct. The window closes as the capability scales — which is exactly why this kind of work lands here first.</p>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num">~20×</div>
+      <h3>Small-team speed at 0 → 1</h3>
+      <p>Agentic systems reach working composition at roughly an order-of-magnitude faster cadence in small, embedded teams than in large enterprises re-mapping their operating model around them. The advantage is organizational, not technical.</p>
+      <div class="stat-cite">source · <a href="https://podcasts.apple.com/us/podcast/the-daily/id1200361736">NYT <em>The Daily</em>, April 2026</a></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">~10%</div>
+      <h3>Of organizations deploying agentic AI in production</h3>
+      <p>Most enterprise AI work today is chat surfaces, copilots, and isolated RAG experiments. Actual agentic deployments — plan + act + maintain state + audit — are still a single-digit fraction. Frontier research exceeds frontier deployment by a wide margin.</p>
+      <div class="stat-cite">source · <a href="https://podcasts.apple.com/us/podcast/the-daily/id1200361736">NYT <em>The Daily</em>, April 2026</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 · What we actually built -->
+<section>
+  <h2>What we composed</h2>
+  <div class="section-h">Eight elements: one orchestrator, three that fire per question, two that feed them, one foundation, one feedback loop</div>
+  <p class="section-lede">If small teams reach the composition first, the next question is what the composition actually looks like. Here is ours. Agentic orchestration (01) is the spine — what binds the whole. Three pillars fire per question (<em>active</em>). Two feed them (<em>substrate</em>). One supports everything (<em>foundation</em>). One loops the learning back so the next engagement starts further along.</p>
+
+  <div class="composition">
+    <svg viewBox="0 0 1040 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CAP composition · 1 center + 7 pillars">
+      <defs>
+        <marker id="fr-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+        </marker>
+        <marker id="fr-arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#5eead4"/>
+        </marker>
+        <marker id="fr-arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/>
+        </marker>
+        <linearGradient id="crown-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0f766e" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#134e4a" stop-opacity="0.6"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ========== CROWN · Agentic orchestration (position 08) ========== -->
+      <rect x="120" y="22" width="760" height="82" rx="14" fill="url(#crown-grad)" stroke="#14b8a6" stroke-width="2.2"/>
+      <text x="500" y="48" fill="#99f6e4" font-size="10.5" font-weight="700" letter-spacing="2.4" text-anchor="middle" font-family="-apple-system, Segoe UI, Roboto, sans-serif">01 · THE CENTER · ORCHESTRATION SPINE</text>
+      <text x="500" y="76" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="0.02em" text-anchor="middle" font-family="-apple-system, Segoe UI, Roboto, sans-serif">AGENTIC ORCHESTRATION</text>
+      <text x="500" y="94" fill="#cbd5e1" font-size="12" font-weight="400" text-anchor="middle" font-family="-apple-system, Segoe UI, Roboto, sans-serif">plans · dispatches · composes · maintains state · binds the 7 below</text>
+
+      <!-- Down arrows from Crown to Active layer -->
+      <line x1="200" y1="104" x2="200" y2="138" stroke="#5eead4" stroke-width="2" marker-end="url(#fr-arrow-teal)"/>
+      <line x1="500" y1="104" x2="500" y2="138" stroke="#5eead4" stroke-width="2" marker-end="url(#fr-arrow-teal)"/>
+      <line x1="800" y1="104" x2="800" y2="138" stroke="#5eead4" stroke-width="2" marker-end="url(#fr-arrow-teal)"/>
+
+      <!-- ========== ACTIVE LAYER · 3 pillars ========== -->
+      <!-- 01 · Memory (carries the ACTIVE layer label) -->
+      <rect x="60" y="144" width="280" height="100" rx="10" fill="#111827" stroke="#26324a" stroke-width="1.2"/>
+      <rect x="60" y="144" width="4" height="100" rx="2" fill="#14b8a6"/>
+      <text x="76" y="166" fill="#5eead4" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">ACTIVE · 02 · MEMORY</text>
+      <text x="76" y="196" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Persistent context</text>
+      <text x="76" y="220" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">across sessions · captured automatically</text>
+      <text x="76" y="234" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">user · feedback · project · references</text>
+
+      <!-- 02 · Specialists -->
+      <rect x="360" y="144" width="280" height="100" rx="10" fill="#111827" stroke="#26324a" stroke-width="1.2"/>
+      <rect x="360" y="144" width="4" height="100" rx="2" fill="#14b8a6"/>
+      <text x="376" y="166" fill="#5eead4" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">03 · SPECIALISTS</text>
+      <text x="376" y="196" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">11 specialist roles</text>
+      <text x="376" y="220" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">strategist · researcher · operator</text>
+      <text x="376" y="234" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">challenger · architect · analyst · …</text>
+
+      <!-- 03 · Reasoning -->
+      <rect x="660" y="144" width="280" height="100" rx="10" fill="#111827" stroke="#26324a" stroke-width="1.2"/>
+      <rect x="660" y="144" width="4" height="100" rx="2" fill="#14b8a6"/>
+      <text x="676" y="166" fill="#5eead4" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">04 · REASONING</text>
+      <text x="676" y="196" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Structured thinking</text>
+      <text x="676" y="220" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">decision trees · methods · sensitivity</text>
+      <text x="676" y="234" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">answer-first · adversarial review</text>
+
+      <!-- Active → Substrate arrows (4 angle arrows) -->
+      <line x1="200" y1="244" x2="260" y2="280" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+      <line x1="460" y1="244" x2="360" y2="280" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+      <line x1="540" y1="244" x2="640" y2="280" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+      <line x1="800" y1="244" x2="740" y2="280" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+
+      <!-- ========== SUBSTRATE LAYER · 2 pillars ========== -->
+      <!-- 04 · Expertise (carries the SUBSTRATE layer label) -->
+      <rect x="100" y="286" width="380" height="100" rx="10" fill="rgba(251,191,36,0.05)" stroke="#78350f" stroke-width="1.2"/>
+      <rect x="100" y="286" width="4" height="100" rx="2" fill="#fbbf24"/>
+      <text x="118" y="308" fill="#fbbf24" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">SUBSTRATE · 05 · EXPERTISE</text>
+      <text x="118" y="338" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Typed graph + domain KB</text>
+      <text x="118" y="362" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">21 entity types · keyword + semantic search + reranking</text>
+      <text x="118" y="376" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">field-force roundtable insights captured as typed findings</text>
+
+      <!-- 05 · Tools / Methods -->
+      <rect x="500" y="286" width="380" height="100" rx="10" fill="rgba(251,191,36,0.05)" stroke="#78350f" stroke-width="1.2"/>
+      <rect x="500" y="286" width="4" height="100" rx="2" fill="#fbbf24"/>
+      <text x="518" y="308" fill="#fbbf24" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">06 · TOOLS / METHODS</text>
+      <text x="518" y="338" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Pattern + tool toolboxes</text>
+      <text x="518" y="362" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">method library · decision trees · capability matching</text>
+      <text x="518" y="376" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">design patterns and tools live as separate, swappable layers</text>
+
+      <!-- Substrate → Foundation arrows -->
+      <line x1="290" y1="386" x2="380" y2="428" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+      <line x1="690" y1="386" x2="620" y2="428" stroke="#64748b" stroke-width="1.4" marker-end="url(#fr-arrow)"/>
+
+      <!-- ========== FOUNDATION · Platform (carries the FOUNDATION layer label) ========== -->
+      <rect x="220" y="434" width="560" height="80" rx="10" fill="rgba(165,180,252,0.05)" stroke="#3730a3" stroke-width="1.2"/>
+      <rect x="220" y="434" width="4" height="80" rx="2" fill="#a5b4fc"/>
+      <text x="238" y="456" fill="#a5b4fc" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">FOUNDATION · 07 · PLATFORM</text>
+      <text x="238" y="484" fill="#f1f5f9" font-size="17" font-weight="600" letter-spacing="0.01em" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Git · Databricks · Unity Catalog · layered rule system</text>
+      <text x="238" y="504" fill="#94a3b8" font-size="12" font-family="-apple-system, Segoe UI, Roboto, sans-serif">commit-time guardrails · confidence-tagged claims · audit trail by default</text>
+
+      <!-- ========== EVOLUTION · right-side loop (position 07) ========== -->
+      <!-- Arc path: from right side of Platform up the right edge and back into Crown -->
+      <path d="M 784 474 Q 1020 474 1020 280 Q 1020 80 880 56" fill="none" stroke="#c084fc" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#fr-arrow-violet)"/>
+
+      <!-- Evolution label (sits on the arc, right of Tools/Methods substrate row) -->
+      <rect x="890" y="286" width="135" height="100" rx="8" fill="rgba(192,132,252,0.12)" stroke="#7e22ce" stroke-width="1.4"/>
+      <rect x="890" y="286" width="4" height="100" rx="2" fill="#c084fc"/>
+      <text x="906" y="308" fill="#c084fc" font-size="10" font-weight="700" letter-spacing="1.6" font-family="-apple-system, Segoe UI, Roboto, sans-serif">08 · EVOLUTION</text>
+      <text x="906" y="338" fill="#f1f5f9" font-size="15" font-weight="600" font-family="-apple-system, Segoe UI, Roboto, sans-serif">Feedback loop</text>
+      <text x="906" y="362" fill="#d8b4fe" font-size="11" font-family="-apple-system, Segoe UI, Roboto, sans-serif">what worked stays —</text>
+      <text x="906" y="376" fill="#d8b4fe" font-size="11" font-family="-apple-system, Segoe UI, Roboto, sans-serif">next start: further</text>
+    </svg>
+
+    <div class="composition-legend">
+      <span><span class="swatch" style="background:var(--teal)"></span>The center + the active layer · what orchestrates and what fires per question</span>
+      <span><span class="swatch" style="background:var(--amber)"></span>Substrate · what the active layer reaches for</span>
+      <span><span class="swatch" style="background:var(--indigo)"></span>Foundation · what everything runs on</span>
+      <span><span class="swatch" style="background:var(--violet)"></span>The feedback loop · what makes the system get sharper with use</span>
+    </div>
+  </div>
+
+  <!-- ========== PILLAR DETAIL CARDS ========== -->
+  <div class="pillars">
+
+    <div class="pillar center">
+      <div class="p-num">01 · CENTER · AGENTIC ORCHESTRATION</div>
+      <h3>The composition spine</h3>
+      <p class="p-claim">What plans, delegates, and composes across the 7 pillars. The thing Deloitte and McKinsey are pointing at when they say <em>agentic AI</em>. The version that lives in CAP is production-grade, domain-scoped, and disciplined — not a demo.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://www.anthropic.com/research/building-effective-agents">Anthropic · <em>Building effective agents</em> (2024)</a> — orchestrator-worker, evaluator-optimizer, routing patterns. <a href="https://www2.deloitte.com/us/en/insights/topics/digital-transformation/state-of-generative-ai-in-enterprise.html">Deloitte · <em>State of Generative AI in the Enterprise</em> (2024–25)</a>. <a href="https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/why-agents-are-the-next-frontier-of-generative-ai">McKinsey · <em>Why agents are the next frontier of generative AI</em> (2024)</a>. <a href="https://www.gartner.com/en/newsroom/press-releases/2024-10-21-gartner-identifies-the-top-10-strategic-technology-trends-for-2025">Gartner · Top Strategic Tech Trends 2025 · Agentic AI</a>.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>11 specialist roles</strong>, <strong>triad composition</strong> (challenger + architect + strategist), <strong>subagent filing-clerk output contract</strong>, scoped dispatch per decision class.</p>
+          <div class="km-head">Horizon</div>
+          <p>Measured-autonomy expansion at increasing decision scope, with human gates at decision boundaries.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar teal">
+      <div class="p-num">02 · ACTIVE · MEMORY</div>
+      <h3>Persistent context across sessions</h3>
+      <p class="p-claim">Most LLM work starts fresh every chat. A commercial exocortex cannot. Last month's decisions, this quarter's tuning, yesterday's roundtable feedback — all available on next session start, not reconstructed.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://consc.net/papers/extended.html">Clark &amp; Chalmers · <em>The Extended Mind</em> (1998)</a> — cognition as a process that includes external scaffolding. <a href="https://arxiv.org/abs/2310.08560">Packer et al. · <em>MemGPT / Letta</em> (arXiv 2023)</a> — hierarchical memory tiers beyond the context window. <a href="https://mem0.ai">Mem0</a>; <a href="https://www.langchain.com/langmem">LangMem</a>. Tulving's episodic/semantic distinction underwrites the typing model.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>Auto-memory</strong> system (user / feedback / project / reference), <strong>append-only session YAMLs</strong> loaded at session start, <strong>heuristic register</strong> as intermediate-term store, typed graph as long-term.</p>
+          <div class="km-head">Horizon</div>
+          <p>Cross-engagement episodic recall — the system surfacing analogous prior-engagement contexts automatically.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar teal">
+      <div class="p-num">03 · ACTIVE · SPECIALISTS</div>
+      <h3>11 specialist roles, composable</h3>
+      <p class="p-claim">Each specialist — strategist, operator, researcher, challenger, architect, analyst, facilitator, groundskeeper, dataops, finops, tester — is a separate role with its own job, methods, and quality bar. The orchestration center decides which to call when, and how to combine them. Roles are <em>composed per question</em>, not hard-wired into a script.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://www.anthropic.com/research/building-effective-agents">Anthropic · orchestrator-worker &amp; routing patterns</a>. Multi-agent system literature (<a href="https://en.wikipedia.org/wiki/Multi-agent_system">Wooldridge, <em>Introduction to MultiAgent Systems</em></a>). Division-of-labor heritage from organizational theory (Smith, Simon). Dispatch patterns from Erlang / actor-model concurrency.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>11 named role skills</strong>, <strong>triad review</strong> for consequential decisions, <strong>parallel subagent dispatch</strong>, filing-clerk output contract (parent doesn't edit specialist output).</p>
+          <div class="km-head">Horizon</div>
+          <p>Autonomous multi-step execution within a specialist's scope, with human gates at decision boundaries.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar teal">
+      <div class="p-num">04 · ACTIVE · REASONING</div>
+      <h3>Structured thinking, not chain-of-thought theater</h3>
+      <p class="p-claim">Decision trees route the question to the right method. The method constrains what counts as a good answer. The output is structured answer-first, with the supporting reasoning underneath. An adversarial reviewer stress-tests the claim the recommendation depends on most. <em>Reasoning is infrastructure, not vibes.</em></p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://www.amazon.com/Pyramid-Principle-Logic-Writing-Thinking/dp/0273710516">Minto · <em>The Pyramid Principle</em> (1987)</a> — SCQA, MECE, answer-first structure. <a href="https://mitpress.mit.edu/9780262611466/sources-of-power/">Klein · <em>Sources of Power</em> (1998)</a> — Recognition-Primed Decision. Simon's bounded rationality (<a href="https://www.jstor.org/stable/1884852"><em>A Behavioral Model of Rational Choice</em>, 1955</a>). <a href="https://hbr.org/2007/09/performing-a-project-premortem">Klein · <em>Performing a Project Premortem</em> (HBR 2007)</a> underwrites the challenger pattern.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>Hypothesis-ontology decision tree</strong>, <strong>method YAMLs</strong> constraining analysis, <strong>SCQA + evidence chain</strong> in deliverables, <strong>adversarial triad review</strong>.</p>
+          <div class="km-head">Horizon</div>
+          <p>Multi-hop causal reasoning across the graph (e.g., <em>"trace this outcome back to its decision, its finding, its data source, its assumption"</em>).</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar amber">
+      <div class="p-num">05 · SUBSTRATE · EXPERTISE</div>
+      <h3>Typed graph + domain knowledge base</h3>
+      <p class="p-claim">What the active layer reaches for. Not a search index dumped into a vector store — <strong>21 typed entity kinds</strong> with stable IDs (organizations, products, decisions, findings, and the rest), with three-stage retrieval that ranks the right results to the top. Includes a loop that turns <em>field-force roundtable signal</em> — what the reps know that the data doesn't show — into validated, queryable findings.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://www.amazon.com/Knowledge-Creating-Company-Japanese-Companies-Innovation/dp/0195092694">Nonaka · SECI model / <em>Knowledge-Creating Company</em> (1995)</a> — tacit-to-explicit conversion. <a href="https://www.taylorfrancis.com/books/mono/10.4324/9781315237473/reflective-practitioner-donald-sch%C3%B6n">Schön · <em>The Reflective Practitioner</em> (1983)</a>. Knowledge-graph / ontology tradition: <a href="https://backstage.io">Spotify Backstage</a>, <a href="https://schema.org">schema.org</a>, <a href="https://www.nlm.nih.gov/research/umls/">UMLS</a>. <a href="https://arxiv.org/abs/2005.11401">Lewis et al. · <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em> (2020)</a>. <a href="https://arxiv.org/abs/1910.14424">Nogueira &amp; Cho · <em>Passage Re-ranking with BERT</em> (2019)</a>.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>21 typed entity kinds</strong> in the graph, <strong>hybrid retrieval + cross-encoder rerank</strong> (rerank is load-bearing — disabling it degrades eval), <strong>per-entity research configs</strong>, <strong>tacit-knowledge capture</strong> via field-force roundtables → typed findings → validated against silver-layer data.</p>
+          <div class="km-head">Horizon</div>
+          <p>Cross-engagement analog surfacing — the graph automatically identifying prior similar situations across the company's history.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar amber">
+      <div class="p-num">06 · SUBSTRATE · TOOLS / METHODS</div>
+      <h3>Patterns and tools, composable</h3>
+      <p class="p-claim">Two layers. The architect picks the <em>design pattern</em> — what shape the data takes. The operator picks the <em>tool</em> that implements it. Methods sit in a vetted library; the analyst doesn't pick by gut. A capability-matcher checks whether the available data supports the method before the analysis runs. Composable, swappable, extendable without rebuild.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p>Unix philosophy · <a href="https://martinfowler.com/articles/patterns-of-distributed-systems/">patterns literature (Fowler et al.)</a>. <a href="https://dl.acm.org/doi/10.1145/2810103.2813677">Snodgrass · bitemporal modeling</a> for the data design toolbox. FAIR data principles (<a href="https://www.go-fair.org/fair-principles/">Wilkinson et al. 2016</a>) for provenance. <a href="https://www.openpolicyagent.org/">OPA / Rego</a> for policy-as-code. Feasibility matching heritage from method-selection literature in OR / decision analysis.</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>Data design toolbox</strong> (12 patterns, architect-facing, domain-agnostic) + <strong>data tools toolbox</strong> (5 slots, operator-facing, compute-swap surface). <strong>Method YAMLs</strong> at <code>compute/configs/methods/</code>. <strong>Feasibility engine</strong> matching analytical roles × grain.</p>
+          <div class="km-head">Horizon</div>
+          <p>Auto-extending toolbox from usage telemetry — the system proposing new tool/pattern slots when engagement traffic suggests them.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar indigo">
+      <div class="p-num">07 · FOUNDATION · PLATFORM</div>
+      <h3>The substrate that doesn't bend</h3>
+      <p class="p-claim">Everything above runs on this. Git for versioning, branching, and audit trail. Databricks and Unity Catalog for data. A layered rule system that goes from session-level discipline up to mechanical guardrails enforced at commit time. A 7-tier confidence system that flags every claim as <em>fact</em>, <em>structural</em>, <em>directional</em>, <em>computed</em>, or <em>unverified</em>. Time-stamped fact lineage so we can answer <em>what did we believe when</em>.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p><a href="https://www.openpolicyagent.org/">OPA / Rego</a> — policy-as-code. <a href="https://dl.acm.org/doi/10.1145/2810103.2813677">Snodgrass · bitemporal temporal databases</a>. FAIR / <a href="https://www.w3.org/TR/prov-overview/">PROV-O</a> provenance standards. Unix + Git heritage for version-as-truth. <a href="https://arxiv.org/abs/2305.16291">MYCIN-era expert systems</a> for knowledge-acquisition / rule-firing patterns (direct ancestor of the L1–L7 rule stack).</p>
+          <div class="km-head">Ships today</div>
+          <p><strong>Databricks</strong> + <strong>Unity Catalog</strong> + <strong>git</strong> as the canonical stack. <strong>L1 harness → L2 behavioral → L3 operating+domain → L5 role skills → L7 hooks</strong>. <strong>Pre-commit hook suite</strong> for schema, provenance, vendor-scrub, roundtrip integrity. <strong>7-tier confidence-flag system</strong>.</p>
+          <div class="km-head">Horizon</div>
+          <p>Multi-tenant isolation, enterprise audit service, SSO + compliance posture. See the <a href="cap_assessment.html">honest assessment</a> for the gap list.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="pillar violet">
+      <div class="p-num">08 · THE FEEDBACK LOOP · EVOLUTION</div>
+      <h3>The system gets sharper with use</h3>
+      <p class="p-claim">Every engagement leaves signal — <em>what worked, what failed, what surprised</em>. That signal flows back into the system as a captured note, then a candidate rule, then (if it holds up to peer review) a durable part of how the system runs the next engagement. <strong>The system is where the lesson lives — not in someone's head, not in a deck, not in last quarter's deck.</strong> Most peers in the market don't have this loop closed. We do.</p>
+      <details class="knowmore">
+        <summary>Research lineage + what ships today</summary>
+        <div class="km-body">
+          <div class="km-head">Lineage</div>
+          <p>Expert-systems-era knowledge acquisition — <a href="https://web.stanford.edu/~shortlif/shortliffe-mycin.pdf">MYCIN (Shortliffe 1976)</a> and the rule-acquisition literature that followed. <a href="https://www.amazon.com/Knowledge-Creating-Company-Japanese-Companies-Innovation/dp/0195092694">Nonaka · SECI cycle</a> — tacit → explicit → combined → internalized. <a href="https://hbr.org/2007/09/performing-a-project-premortem">Klein · pre-mortem</a> for adversarial review patterns. <a href="https://www.cambridge.org/core/journals/perspectives-on-psychological-science/article/abs/adversarial-collaboration/">Kahneman &amp; Klein · adversarial collaboration</a>. <a href="https://plato.stanford.edu/entries/epistemology-virtue/">Virtue epistemology</a> on how reasoning communities improve over time.</p>
+          <div class="km-head">Ships today</div>
+          <p>Engagement learnings are captured automatically and reviewed by a three-perspective panel. Promoted learnings become rules in the system; where the rule can be checked mechanically, a paired guardrail enforces it on the next commit. See <a href="cap_rules_layers.html">Why CAP</a> for the layered stack and graduation story.</p>
+          <div class="km-head">Horizon</div>
+          <p>Promotion triggered automatically when the same learning fires across enough engagements. Less analyst overhead; more learning per cycle.</p>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 4 · Three anchors -->
+<section>
+  <h2>How to know it's not vibes</h2>
+  <div class="section-h">The case rests on three independent anchors</div>
+  <p class="section-lede">A frontier framing is easy to do badly — too aspirational, not enough receipts. Three orthogonal anchors keep this one honest. <strong>Market validation</strong> — the big shops are converging on the same composition, so the frontier is real, not invented. <strong>Research lineage</strong> — every pillar has prior art that predates the market label. <strong>Production reality</strong> — the loop is shipping, not on a roadmap.</p>
+
+  <div class="anchors">
+    <div class="anchor">
+      <div class="a-num">01 · MARKET</div>
+      <h3>The big shops are pointing here too</h3>
+      <p>Deloitte, McKinsey, Gartner, Anthropic, Microsoft are all publishing on the same composition from different directions. The <em>frontier is a real thing</em>, not a CAP construct. The advantage is that we're composing it now; they're still mapping it.</p>
+    </div>
+    <div class="anchor">
+      <div class="a-num">02 · RESEARCH</div>
+      <h3>Every pillar has a research lineage that predates the label</h3>
+      <p>Extended Mind (1998). SECI (1995). Pyramid Principle (1987). RAG (2020). Pre-mortem (2007). Bitemporal (1990s). Expert-systems knowledge acquisition (1970s). The label <em>agentic AI</em> is new; the research foundations aren't.</p>
+    </div>
+    <div class="anchor">
+      <div class="a-num">03 · SHIPPING</div>
+      <h3>The production loop is active</h3>
+      <p>Not a roadmap. The <a href="cap_gtm_lens.html">launch-sizing story</a> walks a real engagement from question to board in 14 days. The <a href="cap_assessment.html">honest assessment</a> names the gaps. Both are true simultaneously: frontier and narrow, shipping and incomplete.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 · The position from here · synthesis close (Option A) -->
+<section>
+  <div class="close">
+    <h3>The position from here.</h3>
+    <p>The strategic position is sitting at the intersection — frontier research composed into production discipline, scoped to a domain where small-team speed beats large-org governance. We hold this position by continuing to compose, ship, and close the loop. The frontier moves; the composition moves with it; the production discipline keeps the work honest.</p>
+    <p>Grounded because we ship. Aspirational because we compose research into production. <strong>Both are true. Both matter.</strong></p>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · A Frontier Deployment, Composed from Frontier Research</strong> · grounded and ahead<br>
+  Companions · <a href="index.html">Home</a> · <a href="cap_gtm_lens.html">Story</a> · <a href="cap_rules_layers.html">Why CAP</a> · <a href="cap_trust_and_evidence.html">Trust</a> · <a href="cap_data_toolbox.html">Toolbox</a> · <a href="cap_assessment.html">Assessment</a>
+</footer>
+
+</main>
+</body>
+</html>

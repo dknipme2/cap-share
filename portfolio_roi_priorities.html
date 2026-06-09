@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analytical ROI Priorities — Cycle Pharmaceuticals Portfolio</title>
+<meta name="description" content="CYCL_2026_CE prioritization framework identifying where commercial analytics investment yields highest ROI across Cycle Pharmaceuticals' 10-product rare disease portfolio.">
+<style>
+  :root {
+    --bg: #0f1419; --surface: #1a2028; --surface-2: #232b36; --border: #2d3744;
+    --ink: #e8ecf0; --ink-dim: #9ba3ad; --ink-faint: #6a7380;
+    --accent: #5eb3b7; --accent-2: #c8a96a; --warn: #d67c5c; --good: #7fb881; --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6; --surface: #ffffff; --surface-2: #f3f1eb; --border: #d8d3c5;
+      --ink: #1d2430; --ink-dim: #4a5462; --ink-faint: #8a94a3;
+      --accent: #2d8689; --accent-2: #9a7d3e; --warn: #b85a36; --good: #4e7d51; --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+  .tag.good { background: rgba(127,184,129,0.12); color: var(--good); border-color: rgba(127,184,129,0.4); }
+  .score { font-family: var(--mono); font-weight: 700; font-size: 15px; }
+  .score.hi { color: var(--good); }
+  .score.md { color: var(--accent-2); }
+  .score.lo { color: var(--warn); }
+  .tier-hdr { display: flex; align-items: baseline; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .tier-hdr h2 { margin: 0; border: none; padding: 0; }
+  .tier-hdr .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-faint); }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  @media print { body { background: white; color: black; } .wrap { max-width: none; padding: 20px; } h2 { page-break-after: avoid; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">Cycle Pharmaceuticals · Portfolio ROI Framework</div>
+  <h1>Where Analysis Has the Highest ROI</h1>
+  <p class="sub">Prioritization framework for analytical investment across Cycle Pharmaceuticals' 10-product rare disease portfolio (CYCL_2026_CE engagement). Scored on commercial stakes, data feasibility, methodology fit, decision pressure, and platform reusability. Output: where to spend the next analytical dollar, and why.</p>
+</header>
+
+<h2>Scoring Framework</h2>
+
+<p>Each product and cluster is scored on five dimensions (1–5). A strong score on any one dimension is necessary but not sufficient — the ranking reflects the product of all five.</p>
+
+<table>
+  <tr><th>Dimension</th><th>What it measures</th><th>High score means</th></tr>
+  <tr><td><strong>Commercial stakes</strong></td><td>Revenue, growth runway, competitive threat severity</td><td>Material upside or downside that analysis can influence</td></tr>
+  <tr><td><strong>Data feasibility</strong></td><td>Availability of analytical substrate (public + internal)</td><td>Claims + Rx + SP data readily usable without new contracts</td></tr>
+  <tr><td><strong>Methodology fit</strong></td><td>Does the existing analytics toolkit (class→brand funnel, S&amp;T, concentration, workload) apply?</td><td>Off-the-shelf application of proven methods — no new methodology required</td></tr>
+  <tr><td><strong>Decision pressure</strong></td><td>Time-bound or outcome-bound commercial decision pending</td><td>Launch, LOE, pipeline threat, or payer event in next 12 months</td></tr>
+  <tr><td><strong>Platform reusability</strong></td><td>Does this analysis establish a repeatable substrate for future work?</td><td>Outputs a template or data layer that accelerates other products</td></tr>
+</table>
+
+<!-- ========================= -->
+<h2 id="claims-data-validity-profile">Claims Data Validity Profile</h2>
+
+<p class="lead">Before the ROI ranking, the epistemic floor: what commercial and claims data can and cannot identify per product. The verdict here drives every downstream feasibility assumption. &ldquo;Claims-blind&rdquo; products cannot be rescued by a larger analytics investment &mdash; they need a different data surface (EHR, hub, registry).</p>
+
+<table>
+  <tr><th>Product</th><th>ICD-10</th><th>Part D</th><th>NDC resolution</th><th>Claims verdict</th></tr>
+  <tr>
+    <td><strong>BAFIERTAM · MS Monomethyl fumarate</strong></td>
+    <td><span class="tag hi">G35 specific</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag lo">weak — needs Xponent</span></td>
+    <td>Class-level on public data; brand-level requires Xponent.</td>
+  </tr>
+  <tr>
+    <td><strong>TASCENSO ODT · MS Fingolimod ODT</strong></td>
+    <td><span class="tag hi">G35 specific</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag good">strongest product-level substrate in the portfolio</span></td>
+  </tr>
+  <tr>
+    <td><strong>VENXXIVA · Cystinuria · Tiopronin</strong></td>
+    <td><span class="tag hi">E72.01 specific</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag good">cleanest substrate &mdash; "rare-but-identifiable" blueprint</span></td>
+  </tr>
+  <tr>
+    <td><strong>PHYRAGO · CML Dasatinib reformulation</strong></td>
+    <td><span class="tag hi">C92.1* specific</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td><span class="tag good">strong &mdash; time-bound (launch PAP caveat Yr1)</span></td>
+  </tr>
+  <tr>
+    <td><strong>NITYR · HT-1 · Nitisinone tablet</strong></td>
+    <td><span class="tag hi">E70.21 specific</span></td>
+    <td><span class="tag md">moderate</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td>Adequate for patient-finding; brand-switching needs Xponent or hub.</td>
+  </tr>
+  <tr>
+    <td><strong>JAVYGTOR · PKU · Sapropterin</strong></td>
+    <td><span class="tag hi">E70.0 / E70.1</span></td>
+    <td><span class="tag md">moderate (pediatric skew)</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td>Adequate for switching; retention-threat analysis blocked by PAP invisibility.</td>
+  </tr>
+  <tr>
+    <td><strong>SAJAZIR · HAE · Icatibant</strong></td>
+    <td><span class="tag md">D84.1 / T78.3</span></td>
+    <td><span class="tag md">moderate</span></td>
+    <td><span class="tag hi">strong</span></td>
+    <td>Adequate for defensive analytics in a contracting market.</td>
+  </tr>
+  <tr>
+    <td><strong>ORMALVI · Periodic paralysis · Dichlorphenamide</strong></td>
+    <td><span class="tag md">G72.3 under-coded</span></td>
+    <td><span class="tag lo">weak (ultra-rare)</span></td>
+    <td><span class="tag md">moderate</span></td>
+    <td><span class="tag lo">GATE-dependent on SP reporting; blind otherwise</span></td>
+  </tr>
+  <tr>
+    <td><strong>HARLIKU · Alkaptonuria · Nitisinone</strong></td>
+    <td><span class="tag lo">E70.29 shared bucket</span></td>
+    <td><span class="tag lo">weak (ultra-rare)</span></td>
+    <td><span class="tag md">HT-1 vs AKU ambiguous</span></td>
+    <td><span class="tag lo">claims-blind &mdash; EHR/genotype is primary surface</span></td>
+  </tr>
+  <tr>
+    <td><strong>GOVORESTAT · Galactosemia · ARI (pipeline)</strong></td>
+    <td><span class="tag hi">E74.21 specific</span></td>
+    <td><span class="tag lo">n/a (pre-approval)</span></td>
+    <td><span class="tag lo">n/a</span></td>
+    <td>Prospective &mdash; NBS registry identifies prevalent pool when approval lands.</td>
+  </tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Read with the scoring table</div>
+  <p style="margin:0">Claims-verdict rows drive the &ldquo;Data feasibility&rdquo; dimension below. Rows labeled <span class="tag lo">weak</span> or <span class="tag lo">GATE-dependent</span> or <span class="tag lo">claims-blind</span> cannot score above 3 on Data feasibility in the scoring matrix &mdash; they require a different data surface (Xponent license, hub data, EHR/NLP, genotype pulls) before analytical ROI materializes. A product&rsquo;s Tier is bounded by its claims verdict, not just its commercial stakes.</p>
+</div>
+
+<!-- ========================= -->
+<div class="tier-hdr"><h2>Tier 1 — Highest ROI</h2><span class="lbl">public-data feasible · near-term delivery · proof-of-value</span></div>
+
+<p>Three workstreams dominate Tier 1: an MS oral-DMT cluster analysis, a cystinuria claims-based blueprint, and a CML launch-support package. All three can execute on public data (Xponent, Part D, claims, Open Payments) with no client-data dependency, and each returns decision-grade output in 2–3 weeks.</p>
+
+<table>
+  <tr><th>Workstream</th><th>Stakes</th><th>Data</th><th>Method</th><th>Pressure</th><th>Reuse</th><th>Total</th><th>Why</th></tr>
+  <tr>
+    <td><strong>MS oral-DMT cluster</strong> (BAFIERTAM + TASCENSO ODT, two products, shared prescriber universe)</td>
+    <td class="num">4</td><td class="num">5</td><td class="num">5</td><td class="num">4</td><td class="num">4</td>
+    <td><span class="score hi">22</span></td>
+    <td>Largest TA patient universe (~1M); retail Xponent + Part D fully visible; class→brand adoption funnel methodology ready; two-product bundle creates co-promotion analytics; generic-DMF defense is decision-urgent.</td>
+  </tr>
+  <tr>
+    <td><strong>Cystinuria claims blueprint (VENXXIVA)</strong></td>
+    <td class="num">4</td><td class="num">5</td><td class="num">5</td><td class="num">3</td><td class="num">5</td>
+    <td><span class="score hi">22</span></td>
+    <td>Specific ICD-10 (E72.01), procedure codes for stones, 22–31K identifiable US patients. Cleanest claims substrate in the portfolio. Produces the template for "rare-but-identifiable" analytics that extends to other products.</td>
+  </tr>
+  <tr>
+    <td><strong>CML reformulation launch support (PHYRAGO)</strong></td>
+    <td class="num">5</td><td class="num">4</td><td class="num">4</td><td class="num">5</td><td class="num">3</td>
+    <td><span class="score hi">21</span></td>
+    <td>Launch-phase product with time-bound competitive threat (next-gen TKI PDUFA Q3 2026). Highest per-product revenue upside in the portfolio. Open Payments + Part D + PPI co-medication claims give a focused niche sizing answer.</td>
+  </tr>
+</table>
+
+<div class="callout good">
+  <div class="title">Tier 1 recommendation</div>
+  <p style="margin:0">Start all three in parallel. They share no data dependencies and use different analytical personas (S&amp;T vs claims discovery vs launch support), so one engagement can staff all three without collision. Collective cost of delay is high — MS generic pressure is actively eroding; CML competitive window is narrowing; cystinuria is the fastest path to demonstrable claims-based CE.</p>
+</div>
+
+<!-- ========================= -->
+<div class="tier-hdr"><h2>Tier 2 — Conditional ROI</h2><span class="lbl">depends on data access or client decisions</span></div>
+
+<p>Tier 2 workstreams have high potential but are gated on data-access questions that must be answered before investment. Scored twice — a "public-only" floor and a "with-hub-data" ceiling.</p>
+
+<table>
+  <tr><th>Workstream</th><th>Public-only</th><th>With hub data</th><th>Gate</th></tr>
+  <tr>
+    <td><strong>Periodic paralysis named-account targeting (ORMALVI)</strong></td>
+    <td><span class="score md">15</span></td>
+    <td><span class="score hi">21</span></td>
+    <td>Does the exclusive SP report to commercial Rx panels? If yes, Tier 1 performance. If no, requires hub data or dies at Tier 3.</td>
+  </tr>
+  <tr>
+    <td><strong>Ultra-rare metabolic cross-sell</strong> (HARLIKU + NITYR + JAVYGTOR, three products, shared prescriber universe)</td>
+    <td><span class="score lo">15</span></td>
+    <td><span class="score hi">22</span></td>
+    <td>Hub-data access unlocks prescriber-level portfolio penetration analytics — the "which metabolic centers prescribe one of three but not the others" question. Without hub data, analysis is descriptive.</td>
+  </tr>
+  <tr>
+    <td><strong>HAE on-demand defense (SAJAZIR)</strong></td>
+    <td><span class="score lo">12</span></td>
+    <td><span class="score md">17</span></td>
+    <td>Market is contracting (70% shifting to oral prophylaxis; oral on-demand approved mid-2025). Analytics yields defensive positioning at best, not growth.</td>
+  </tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Tier 2 gate questions</div>
+  <ul style="margin: 6px 0 0 0; padding-left: 20px;">
+    <li>Do the exclusive specialty pharmacies supporting the ultra-rare cluster report to commercial Rx panels (Xponent/DDD)?</li>
+    <li>Is hub CRM data extractable in a de-identified form for analytics (Tier-1 HIPAA posture)?</li>
+    <li>Are there signed data-sharing authorizations on existing Cycle Vita patient enrollment forms naming Cycle Pharmaceuticals as a data recipient?</li>
+  </ul>
+</div>
+
+<!-- ========================= -->
+<div class="tier-hdr"><h2>Tier 3 — Low Near-Term ROI</h2><span class="lbl">descriptive-only or premature</span></div>
+
+<p>Tier 3 products are not wrong to analyze eventually, but current investment returns little decision-grade output.</p>
+
+<table>
+  <tr><th>Product</th><th>Stakes</th><th>Data</th><th>Method</th><th>Pressure</th><th>Reuse</th><th>Total</th><th>Why low</th></tr>
+  <tr>
+    <td><strong>Ultra-rare metabolic (HARLIKU / NITYR / JAVYGTOR standalone per-product analysis)</strong></td>
+    <td class="num">3</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">2</td>
+    <td><span class="score lo">10</span></td>
+    <td>Claims capture &lt;5% of prescribers for ultra-rare populations. Per-product public analysis is descriptive. Value unlocks only at cluster + hub-data level (see Tier 2).</td>
+  </tr>
+  <tr>
+    <td><strong>Pipeline / pre-approval products (GOVORESTAT)</strong></td>
+    <td class="num">4</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td class="num">1</td>
+    <td><span class="score lo">7</span></td>
+    <td>Regulatory setback (CRL, data-integrity warning) makes timing uncertain. Analytics investment is premature until approval pathway clarifies.</td>
+  </tr>
+</table>
+
+<!-- ========================= -->
+<h2>The Big Play — Hub Data Integration</h2>
+
+<p class="lead">Hub data integration across the ultra-rare cluster + HAE + periodic paralysis scores <strong>24+</strong> when unlocked, but requires client-data access, BAAs, and Tier-3 HIPAA infrastructure. It is the defensible moat if delivered — and the strategic reason the portfolio exists as an analytics challenge at all.</p>
+
+<p>For Cycle Pharmaceuticals specifically, this means integrating LeMed (HARLIKU + NITYR + JAVYGTOR + ORMALVI), Vanscoy Rare (VENXXIVA), and Orsini (SAJAZIR) data feeds via an aggregator layer (ClaritasRx or IntegriChain).</p>
+
+<table>
+  <tr><th>Analysis</th><th>Why it matters</th><th>Data needed</th></tr>
+  <tr>
+    <td>Patient journey flywheel (FIND → ACCESS → START → MAINTAIN → MEASURE)</td>
+    <td>Optimizing hub performance = optimizing revenue for 7 of 10 products. 5% improvement in time-to-first-fill across portfolio is material.</td>
+    <td>Hub enrollment + SP dispense + BV/PA logs (de-identified)</td>
+  </tr>
+  <tr>
+    <td>Prescriber portfolio penetration (metabolic cluster)</td>
+    <td>Metabolic geneticists prescribe multiple rare-disease products. Identifying single-product centers surfaces high-yield cross-sell opportunities.</td>
+    <td>Prescriber-level enrollment by product (de-identified)</td>
+  </tr>
+  <tr>
+    <td>Hub-attributed retention / ROI</td>
+    <td>Quantifies whether hub services actually improve adherence vs baseline — justifies premium pricing and hub investment.</td>
+    <td>Hub interaction logs + adherence curves</td>
+  </tr>
+  <tr>
+    <td>Hub-informed field force targeting</td>
+    <td>With small field teams, every call must count. Hub data flags prescribers where patients are falling off — actionable targeting that Rx data cannot produce.</td>
+    <td>Hub enrollment + refill gap data</td>
+  </tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Strategic positioning</div>
+  <p style="margin:0">For a portfolio whose commercial differentiation lives in the hub, the hub is the defensible moat. Competitors can match field size and SP contracts — they cannot easily replicate proprietary patient-journey analytics. Hub data integration is not a nice-to-have; it is the single highest-reusability investment in the portfolio. Plan for a 6–18 month build, $500K–$1.1M/yr steady-state spend. Context: that's under 1% of revenue for a $125M specialty pharma — industry benchmark is 1–3%.</p>
+</div>
+
+<!-- ========================= -->
+<h2>Recommended Engagement Sequence</h2>
+
+<h3>Phase 1 · weeks 1–6 · public data</h3>
+<ul>
+  <li>MS oral-DMT cluster (BAFIERTAM + TASCENSO ODT) — class→brand funnel, two-product co-promotion sizing, generic-DMF defense targeting.</li>
+  <li>Cystinuria (VENXXIVA) — claims-based prescriber map + referral pathway + surgery-burden segmentation.</li>
+  <li>CML reformulation (PHYRAGO) — PPI niche sizing + Sprycel→PHYRAGO funnel + competitor-pipeline scenario.</li>
+</ul>
+
+<h3>Phase 2 · weeks 6–14 · conditional on data answers</h3>
+<ul>
+  <li>Periodic paralysis (ORMALVI) — named-account grid (if SP data visible) or hub pilot (if not).</li>
+  <li>Ultra-rare metabolic cross-sell (HARLIKU + NITYR + JAVYGTOR) — prescriber portfolio penetration map using Cycle Vita hub prescriber reference table.</li>
+  <li>Portfolio-level field force sizing — workload model across all 10 Cycle products once commercial data is confirmed.</li>
+  <li>Hub data readiness assessment — Cycle Vita architecture audit, maturity tier assignment, gap analysis.</li>
+</ul>
+
+<h3>Phase 3 · months 4–18 · hub integration</h3>
+<ul>
+  <li>Data aggregator selection (ClaritasRx vs IntegriChain) — normalize across LeMed, Vanscoy Rare, Orsini, and Onco360 SP platforms.</li>
+  <li>Bronze / silver / gold data layer on Databricks with tokenized de-identified substrates.</li>
+  <li>Patient journey analytics for all Cycle Vita hub-distributed products (HARLIKU, NITYR, JAVYGTOR, ORMALVI, VENXXIVA, SAJAZIR).</li>
+  <li>Hub ROI quantification + field-force optimization layer (~29 US reps across 10 products).</li>
+</ul>
+
+<!-- ========================= -->
+<h2>Temporal Artifact — What Changes When</h2>
+
+<table>
+  <tr><th>Window</th><th>Signal to watch</th><th>ROI re-score trigger</th></tr>
+  <tr><td>Now → 2 weeks</td><td>Data-access answers (LeMed / Vanscoy Rare / Orsini SP reporting, Cycle Vita hub extractability)</td><td>Tier 2 workstreams move up or down based on gate answers</td></tr>
+  <tr><td>Now → 3 months</td><td>Next-gen CML TKI PDUFA outcome (Q3 2026)</td><td>PHYRAGO launch ROI drops materially if competitor is approved on schedule</td></tr>
+  <tr><td>Now → 6 months</td><td>GOVORESTAT FDA resubmission outcome (post-CRL)</td><td>Pipeline workstream moves from Tier 3 to Tier 1 if approval lands</td></tr>
+  <tr><td>6–18 months</td><td>Cycle Vita hub data integration milestones</td><td>The Big Play score materializes into actual deliverables; portfolio valuation shifts</td></tr>
+</table>
+
+<!-- ========================= -->
+<h2>Open Questions — Blocking ROI Crystallization</h2>
+<ol>
+  <li>Do Cycle's exclusive SP partners (LeMed, Vanscoy Rare, Orsini, Onco360) report to commercial Rx panels (Xponent/DDD)?</li>
+  <li>What product-level TRx data can Cycle Pharmaceuticals provide internally for the MS cluster (BAFIERTAM + TASCENSO ODT)?</li>
+  <li>What are the first 6 months of launch trajectory data for PHYRAGO?</li>
+  <li>Is Cycle Vita hub patient-enrollment data extractable in a de-identified form (especially the HARLIKU enrollment volumes, which are the scarcest data in the portfolio)?</li>
+  <li>Does Cycle Vita operate a patient data-sharing authorization that names Cycle Pharmaceuticals as a data recipient?</li>
+  <li>Do any of the commercial SPs (LeMed, Vanscoy Rare, Orsini, Onco360) operate bridge / PAP / free-drug programs, and for which products? (PAP volumes are structurally invisible in CMS data.)</li>
+</ol>
+
+<footer>
+  <p><strong>Methodology references:</strong> class→brand adoption funnel (cross-engagement pattern); CAP analytical maturity model (Minimum/Intermediate/Advanced/Modern); Data Certainty Model (Direct/Derivable/Proxy/Unavailable); HIPAA compliance-tier staircase for hub-data work. Scores reflect directional ROI ranking rather than absolute revenue impact estimates.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public clinical/epidemiological information with CAP research briefs (RB_RC_* series, March–April 2026).</p>
+</footer>
+
+</div>
+</body>
+</html>

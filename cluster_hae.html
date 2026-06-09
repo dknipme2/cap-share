@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hereditary Angioedema — Contracting Market Cluster</title>
+<meta name="description" content="Cluster analytics playbook for hereditary angioedema (HAE) — a market where injectable on-demand treatment is being structurally displaced by oral prophylaxis and, post-2025, oral on-demand therapy.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .product-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin: 18px 0; display: block; text-decoration: none; color: var(--ink); transition: border-color 0.15s, transform 0.15s; }
+  .product-card:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .product-card .pct-title { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  .product-card .pct-sub { font-size: 14px; color: var(--ink-dim); margin-bottom: 8px; }
+  .product-card .pct-meta { font-size: 12px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.04em; }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout, .product-card { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Allergy/Immunology · Contracting Market</div>
+  <h1>HAE Cluster — SAJAZIR (Icatibant)</h1>
+  <p class="sub">Hereditary angioedema (HAE) is a small, well-characterized rare disease (~8,500–9,500 diagnosed US patients) undergoing a structural shift away from injectable on-demand treatment toward oral prophylaxis and, as of mid-2025, oral on-demand therapy. Analytics for SAJAZIR (Cycle Pharmaceuticals' injectable icatibant generic) in this market yields defensive positioning, not growth.</p>
+  <div class="meta">
+    <span><strong>Cluster:</strong> HAE · SAJAZIR (Cycle) as sole member</span>
+    <span><strong>Molecule:</strong> Icatibant — bradykinin B2 receptor antagonist</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> Orsini · <strong>Hub:</strong> Cycle Vita</span>
+    <span><strong>Commercial posture:</strong> Branded generic in a declining segment</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US HAE Prevalence</div><div class="v">~8,500–9,500</div></div>
+  <div class="card"><div class="k">Global Rate</div><div class="v sm">~1 in 50,000</div></div>
+  <div class="card"><div class="k">Oral Prophylaxis Adoption</div><div class="v" style="color:var(--warn)">~70%</div></div>
+  <div class="card"><div class="k">Oral On-Demand Approved</div><div class="v sm">July 2025 (Ekterly)</div></div>
+  <div class="card"><div class="k">Injectable Market (12-mo, 2020)</div><div class="v">~$270M</div></div>
+  <div class="card"><div class="k">Injectable Market (12-mo, 2023)</div><div class="v" style="color:var(--warn)">~$137M</div></div>
+  <div class="card"><div class="k">Icatibant Patent Expiry</div><div class="v sm">Jul 2019</div></div>
+  <div class="card"><div class="k">US Generic Competitors</div><div class="v">4+ generics</div></div>
+  <div class="card"><div class="k">Prescriber Universe</div><div class="v sm">~4,000–5,000 allergists</div></div>
+  <div class="card"><div class="k">Female Predominance</div><div class="v sm">65–69%</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Core Insight — Why This Cluster is Tier 3</div>
+  <p style="margin:0">The treatment landscape is actively shifting <strong>away</strong> from injectable on-demand. 70% of US HAE patients are on oral prophylaxis (Orladeyo, Takhzyro), which structurally reduces acute attack frequency. New entrants Andembry (monthly SC, approved June 2025) and Dawnzera (RNA-targeted, approved 2025) further compress the on-demand market. In July 2025, the FDA approved <strong>Ekterly (sebetralstat) — the first oral on-demand treatment</strong> — which directly displaces the injectable-on-demand segment where SAJAZIR competes. Commercial analytics for Cycle Pharmaceuticals here yields defensive positioning: protect SAJAZIR retention, manage payer access, serve intolerance / failure patients. It does not reverse the decline.</p>
+</div>
+
+<h2>Strategic Framing — Why Analytics ROI Is Lower Here</h2>
+
+<p class="lead">Three structural dynamics drive the low-ROI assessment:</p>
+
+<ol>
+  <li><strong>Prophylaxis dominance.</strong> Long-term prophylaxis (Takhzyro, Orladeyo, Haegarda, Cinryze, now Andembry and Dawnzera) accounts for the majority of 2025 HAE market revenue. The more patients on effective prophylaxis, the fewer acute attacks, the smaller the on-demand market.</li>
+  <li><strong>Oral on-demand approval.</strong> Ekterly (sebetralstat), approved July 7, 2025, is the first oral on-demand treatment — removing the injection burden that has been the central patient-experience friction for SAJAZIR and all injectable icatibants. It is approved down to age 12 (icatibant is adults 18+). Median time-to-treat ~10 minutes from symptom onset vs. injection preparation.</li>
+  <li><strong>Generic saturation.</strong> Firazyr (original branded icatibant) lost exclusivity in 2019. Four or more generic icatibant suppliers have entered (SAJAZIR among them). Pharmaceutically equivalent molecules compete on service wrapper alone; the total icatibant market halved from ~$270M (2020) to ~$137M (2023).</li>
+</ol>
+
+<p>The analytical read is not that this cluster is without value — it's that analysis <em>confirms</em> the decline and identifies retention pockets. It does not reverse the structural shift. Analytics investment here should be proportionate to the remaining market window and focused on defensible sub-segments.</p>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this cluster. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag md">moderate</span></td><td>HAE-specific <code>D84.1</code> (complement defects, HAE subcode since 2019) is usable but <code>T78.3</code> &ldquo;Angioneurotic edema&rdquo; is often used in ED encounters. Dual-code cohorting required.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag md">moderate</span></td><td>Allergy / immunology prescribers captured. Patient counts sit above suppression in most regions. Adequate for prescriber-level work.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>SAJAZIR, Firazyr brand, and other icatibant generics carry distinct NDCs. Prophylaxis products (<em>Takhzyro</em>, <em>Orladeyo</em>, <em>Haegarda</em>, <em>Cinryze</em>, etc.) all distinguishable.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag md">moderate</span></td><td>Orsini is the primary SAJAZIR distribution path; panel-reporting varies by network. Retail component small but present.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Market contraction drives defensive PAP retention on residual users. PDE-invisible. Naive share trends overstate rate of decline for Cycle and other manufacturers running active retention.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>ER-visit patterns (attack coding) identify uncontrolled patients. C4 and C1-INH lab-testing orders flag diagnostic-workup episodes. Strong defensive-analytics triangulation.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Claims data is <strong>adequate for defensive SAJAZIR analytics</strong> &mdash; retention analysis, oral-prophylaxis switching patterns, payer-specific on-demand access. But the market trajectory is downward: oral prophylaxis dominates and oral on-demand is approved. Analysis <em>confirms</em> the decline and <em>optimizes</em> defensive positioning; it does not reverse direction. Scope Cycle's ROI proportionate to the remaining injectable on-demand window, not to the historical HAE market size.</p>
+</div>
+
+<h2>Competitive Dynamics</h2>
+
+<table>
+  <tr><th>Product</th><th>Type</th><th>Mechanism</th><th>Route</th><th>Trajectory</th></tr>
+  <tr>
+    <td>Firazyr (innovator)</td>
+    <td>Brand — Takeda (via Shire)</td>
+    <td>Bradykinin B2 antagonist</td>
+    <td>SC, on-demand</td>
+    <td>Declining post-patent-expiry; still marketed</td>
+  </tr>
+  <tr>
+    <td><strong>SAJAZIR (icatibant) — Cycle Pharmaceuticals</strong></td>
+    <td>ANDA — branded generic</td>
+    <td>Bradykinin B2 antagonist</td>
+    <td>SC, on-demand</td>
+    <td>Competes on Cycle Vita hub services + Orsini SP; structural decline</td>
+  </tr>
+  <tr>
+    <td>Icatibant (unbranded generics)</td>
+    <td>ANDA — multiple unbranded-generic suppliers</td>
+    <td>Bradykinin B2 antagonist</td>
+    <td>SC, on-demand</td>
+    <td>Retail price pressure</td>
+  </tr>
+  <tr>
+    <td>Ekterly / Ektrlly (sebetralstat)</td>
+    <td>Brand — KalVista, approved Jul 2025</td>
+    <td>Oral kallikrein inhibitor</td>
+    <td>Oral, on-demand</td>
+    <td>Direct displacement of injectable on-demand</td>
+  </tr>
+  <tr>
+    <td>Takhzyro (lanadelumab)</td>
+    <td>Brand — Takeda</td>
+    <td>Anti-kallikrein mAb</td>
+    <td>SC, prophylaxis q2w/q4w</td>
+    <td>Prophylaxis market leader</td>
+  </tr>
+  <tr>
+    <td>Orladeyo (berotralstat)</td>
+    <td>Brand — BioCryst</td>
+    <td>Oral kallikrein inhibitor</td>
+    <td>Oral, daily prophylaxis</td>
+    <td>~70% of US HAE patients; strong growth</td>
+  </tr>
+  <tr>
+    <td>Andembry (garadacimab)</td>
+    <td>Brand — CSL, approved Jun 2025</td>
+    <td>Anti-FXIIa mAb</td>
+    <td>SC, monthly prophylaxis</td>
+    <td>First monthly SC prophylaxis; 99% median attack reduction</td>
+  </tr>
+  <tr>
+    <td>Dawnzera (donidalorsen)</td>
+    <td>Brand — Ionis, approved 2025</td>
+    <td>Antisense (anti-prekallikrein)</td>
+    <td>SC, prophylaxis</td>
+    <td>First RNA therapy for HAE</td>
+  </tr>
+</table>
+
+<h2>Cluster Member</h2>
+
+<a class="product-card" href="hae_icatibant.html">
+  <div class="pct-title">SAJAZIR (Icatibant) · HAE On-Demand</div>
+  <div class="pct-sub">Cycle Pharmaceuticals' branded ANDA-generic icatibant. Bradykinin B2 receptor antagonist; subcutaneous self-administered injection; on-demand treatment of acute HAE attacks in adults 18+. Pharmaceutically equivalent to Firazyr. Distributed via Orsini Specialty Pharmacy with Cycle Vita hub-based patient training and PA support.</div>
+  <div class="pct-meta">World 2 · hub-driven · SP: Orsini · Cycle Vita hub · structurally contracting segment</div>
+</a>
+
+<h2>Defensive Analytics Playbook</h2>
+
+<p>With growth analytics off the table, the useful work in this cluster is <strong>retention, intolerance / failure positioning, and payer contracting.</strong> Each has a tight scope and a clear output.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Retention Analytics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Who is NOT switching to oral alternatives, and why? Needle-comfortable patients, those with established self-injection protocols, and laryngeal-attack-risk patients who value the proven on-demand profile.</p>
+    <ul>
+      <li>Switchers vs. stayers — demographic and clinical segmentation</li>
+      <li>Reasons for non-switching (oral intolerance, access, preference)</li>
+      <li>Retention rate by payer and by hub service tier</li>
+      <li>Predictors of attrition to oral on-demand</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Intolerance / Failure Analytics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Patients who fail oral prophylaxis (inadequate response, tolerability issues) or oral on-demand (efficacy gap, pharmacokinetic mismatch) are the durable segment for injectable on-demand. Size and profile them.</p>
+    <ul>
+      <li>Oral-prophylaxis failures who still experience breakthrough attacks</li>
+      <li>Patients intolerant of Orladeyo (daily oral) or Takhzyro (SC injection)</li>
+      <li>Adolescent / younger patients who may be on injectable before oral on-demand penetrates pediatrics</li>
+      <li>Laryngeal-attack-history patients whose clinicians favor a proven rescue profile</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Payer-Contracting Analytics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Payer mix and formulary positioning matter in a commoditized injectable segment. Some payers restrict access to oral on-demand (step therapy, prior authorization) — map those and target retention there.</p>
+    <ul>
+      <li>Payer-level formulary positioning for injectable vs. oral on-demand</li>
+      <li>Step-therapy requirements that favor injectable first-line</li>
+      <li>PA approval rates by payer and by product</li>
+      <li>Commercial vs. Medicaid vs. Medicare Advantage differences</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Hub Service Differentiation</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Against pharmaceutically equivalent generics, service wrapper is the only differentiator. Self-injection training quality, PA support, and copay programs are the retention levers.</p>
+    <ul>
+      <li>Time-to-first-fill compared to unbranded generic SP experience</li>
+      <li>Self-injection training completion rate</li>
+      <li>Nurse-touchpoint correlation with persistence</li>
+      <li>Copay-support utilization and financial-barrier resolution</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>5 · ED-Utilization Positioning</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Patients with reliable home on-demand therapy present to the ED less frequently. That is a payer-facing value story for injectable on-demand even as prophylaxis dominates.</p>
+    <ul>
+      <li>ED-visit rates for HAE attacks by prophylaxis regimen</li>
+      <li>Impact of home on-demand access on ED utilization</li>
+      <li>Payer-level cost-offset analyses (ED avoidance vs. drug cost)</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>6 · Bridging / Rescue Positioning</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Patients on prophylaxis still have breakthrough attacks. Injectable on-demand remains a legitimate rescue option, especially for laryngeal attacks where clinicians want a proven, fast-acting profile.</p>
+    <ul>
+      <li>Breakthrough-attack rate on modern prophylaxis regimens</li>
+      <li>Rescue-therapy prescribing patterns alongside prophylaxis</li>
+      <li>Carry-rate of injectable on-demand in prophylaxis-treated patients</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="callout warn">
+  <div class="title">Why Analytics ROI Is Lower Here</div>
+  <p style="margin:0">In a growing market, analytics reshapes resource allocation and surfaces growth paths. In a <strong>structurally contracting</strong> market, analytics confirms the decline and identifies a defensible subset. Both outputs have value — but the second has a ceiling bounded by the retention pocket, not by the full patient universe. For portfolio ROI purposes, budget accordingly and avoid over-investing in analytical infrastructure that will depreciate with the segment.</p>
+</div>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>Ekterly uptake trajectory</strong> — how quickly does oral on-demand displace injectable on-demand in the first 12 months post-launch? Early real-world data will define the retention-pocket size.</li>
+  <li><strong>Payer posture on injectable vs. oral on-demand</strong> — do payers implement step therapy that favors oral (likely), and how fast?</li>
+  <li><strong>Intolerance / failure patient counts</strong> — how many patients fail oral prophylaxis or oral on-demand and return to injectable?</li>
+  <li><strong>Pediatric displacement timing</strong> — Ekterly is approved 12+. Does the pediatric injectable market persist longer than the adult market?</li>
+  <li><strong>What is the hub-service differentiation value</strong> against pharmaceutically equivalent generics in this specific patient population?</li>
+  <li><strong>Competitive intelligence on Takeda's injectable on-demand investment</strong> — is the original brand being defended or allowed to decline naturally?</li>
+</ol>
+
+<footer>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_sajazir_icatibant_hae_2026-03-19.md</code>.</p>
+  <p><strong>Primary public sources:</strong> DailyMed (icatibant injection label, ANDA 212446); FDA approval announcements for Ekterly (KalVista, July 2025), Andembry (CSL, June 2025), Dawnzera (Ionis, 2025); NEJM 2009 and JACI 2012 (FAST pivotal trials); US HAE claims-based prevalence study (PubMed PMID 40414286, 2025); HAEA Scientific Registry; BioCryst Orladeyo financial reports; Takeda HAE franchise reports; HCPCS J1744.</p>
+</footer>
+
+</div>
+</body>
+</html>

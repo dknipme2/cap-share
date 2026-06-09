@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ultra-Rare Metabolic — Portfolio Cross-Sell Cluster</title>
+<meta name="description" content="Three ultra-rare metabolic products (AKU, HT-1, PKU) sharing a metabolic-genetics prescriber universe and hub infrastructure. Cluster-level analytical playbook and the case for hub-data investment.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 820px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0 12px; }
+  @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr; } }
+  .pcard { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; display: block; color: var(--ink); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+  .pcard:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .pcard .disease { font-size: 11px; font-family: var(--mono); letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+  .pcard .title { font-weight: 700; font-size: 16px; margin-bottom: 6px; color: var(--ink); }
+  .pcard .sub { font-size: 13px; color: var(--ink-dim); margin: 0 0 10px; line-height: 1.45; }
+  .pcard .meta { font-size: 11px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.04em; }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+  .tag.good { background: rgba(127,184,129,0.12); color: var(--good); border-color: rgba(127,184,129,0.4); }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout, .pcard { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Cluster Analytics · Portfolio Cross-Sell</div>
+  <h1>Ultra-Rare Metabolic Cluster — HARLIKU + NITYR + JAVYGTOR</h1>
+  <p class="sub">Cycle Pharmaceuticals' three ultra-rare inborn-errors-of-metabolism products — HARLIKU (nitisinone for AKU), NITYR (nitisinone tablets for HT-1), and JAVYGTOR (sapropterin for PKU) — share a single fact that drives the entire analytical case: the same ~150–250 metabolic geneticists, in the same ~100–150 centers of excellence, prescribe all three through the Cycle Vita hub and LeMed specialty pharmacy, to patient populations that often live in overlapping geographies. Public data shows almost none of this. Cycle Vita hub data shows all of it. This is Cycle's strongest case for hub-data investment.</p>
+  <div class="meta">
+    <span><strong>Cluster:</strong> Ultra-rare metabolic (Cycle Pharmaceuticals)</span>
+    <span><strong>Members:</strong> HARLIKU (AKU) · NITYR (HT-1) · JAVYGTOR (PKU)</span>
+    <span><strong>SP / Hub:</strong> LeMed (HARLIKU, NITYR exclusive) · Cycle Vita hub</span>
+    <span><strong>ROI tier:</strong> T3 public-only → T1 with Cycle Vita hub data</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">Combined US Patients</div><div class="v">~4,300–9,300</div></div>
+  <div class="card"><div class="k">Prescriber Universe</div><div class="v">~150–250 MDs</div></div>
+  <div class="card"><div class="k">Metabolic Centers</div><div class="v">~100–150</div></div>
+  <div class="card"><div class="k">Shared NBS Status</div><div class="v sm">PKU + HT-1 on RUSP; AKU not</div></div>
+  <div class="card"><div class="k">Distribution Model</div><div class="v sm">Hub-routed specialty pharmacy</div></div>
+  <div class="card"><div class="k">Claims-Based Finding</div><div class="v sm" style="color:var(--warn)">Low signal</div></div>
+  <div class="card"><div class="k">Hub-Data Dependency</div><div class="v" style="color:var(--accent)">Critical</div></div>
+  <div class="card"><div class="k">Cross-Sell Lever</div><div class="v" style="color:var(--good)">Prescriber-level</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">The strategic thesis, in one paragraph</div>
+  <p style="margin:0">Metabolic geneticists who manage one rare inborn error of metabolism almost always manage others. The same center that starts NITYR on an HT-1 neonate likely prescribes JAVYGTOR for BH4-responsive PKU in the same patient's cousins, and — if the center has a mature adult-transition program — HARLIKU in a middle-aged AKU patient who spent two decades in rheumatology before diagnosis. <strong>Three Cycle products, one prescriber universe, one Cycle Vita hub, overlapping geographies, shared adherence dynamics.</strong> The traditional siloed rep-per-brand structure makes this invisible to Cycle's ~29 US reps. Portfolio-penetration analytics — &ldquo;which centers prescribe one of HARLIKU / NITYR / JAVYGTOR but not the others&rdquo; — require Cycle Vita hub data, and they are the single highest-leverage analytical asset Cycle can build.</p>
+</div>
+
+<h2>Member Products</h2>
+
+<p>Three Cycle products, one cluster. Each has its own disease, regulatory path, and competitive landscape — but they share the Cycle prescriber universe, the Cycle Vita hub, and the shape of the adherence problem. Product pages cover each in detail:</p>
+
+<div class="product-grid">
+  <a class="pcard" href="alkaptonuria_patient_identification.html">
+    <div class="disease">AKU · adult-onset</div>
+    <div class="title">HARLIKU (Nitisinone) · Alkaptonuria</div>
+    <div class="sub">Cycle Pharmaceuticals' first approved disease-modifying therapy for AKU (2025). Ultra-rare autosomal recessive. ~300–1,300 theoretical US patients; &lt;100 confirmed in registries. The patient-finding problem: most are hidden inside rheumatology, orthopedic, and cardiology records.</div>
+    <div class="meta">NDA 2025 · fixed 2 mg QD · LeMed SP · EHR-NLP identification</div>
+  </a>
+  <a class="pcard" href="ht1_nitisinone.html">
+    <div class="disease">HT-1 · pediatric</div>
+    <div class="title">NITYR (Nitisinone Tablets) · HT-1</div>
+    <div class="sub">Cycle's tablet formulation (505(b)(2) NDA, 2017) competing with Orfadin capsules (Sobi, 2002) and AB-rated generic capsules (2023). ~500–1,000 living US patients, nearly all NBS-identified. Commercial analytics is formulation-share and transition retention.</div>
+    <div class="meta">RUSP-covered · ~1 mg/kg/day · LeMed SP · dietary Tyr/Phe restriction</div>
+  </a>
+  <a class="pcard" href="pku_sapropterin.html">
+    <div class="disease">PKU · lifelong</div>
+    <div class="title">JAVYGTOR (Sapropterin) · PKU</div>
+    <div class="sub">Cycle Pharmaceuticals' generic BH4 (sapropterin dihydrochloride, ANDA) in a market disrupted by Sephience (sepiapterin, PTC Therapeutics, Jul 2025), which is pharmacologically superior and expands into classical PKU. Defensive analytical posture — manage decline, retain stable patients, monitor substitution velocity.</div>
+    <div class="meta">Kuvan reference · ~3,500–7,000 addressable · sepiapterin disruption</div>
+  </a>
+</div>
+
+<h3>Why these three group</h3>
+<table>
+  <tr><th>Shared attribute</th><th>HARLIKU (AKU)</th><th>NITYR (HT-1)</th><th>JAVYGTOR (PKU)</th></tr>
+  <tr><td>Metabolic geneticist is primary prescriber</td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td></tr>
+  <tr><td>Metabolic dietitian is care-team partner</td><td><span class="tag md">partial (optional)</span></td><td><span class="tag good">yes (mandatory diet)</span></td><td><span class="tag good">yes (mandatory diet)</span></td></tr>
+  <tr><td>Newborn screening catches the disease</td><td><span class="tag lo">no — not on RUSP</span></td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td></tr>
+  <tr><td>Claims-based identification works</td><td><span class="tag lo">no — shared ICD code</span></td><td><span class="tag lo">low signal — tiny N</span></td><td><span class="tag md">partial — identifiable by dx</span></td></tr>
+  <tr><td>Cycle Vita hub + LeMed SP</td><td><span class="tag good">yes (LeMed exclusive)</span></td><td><span class="tag good">yes (LeMed exclusive)</span></td><td><span class="tag good">yes (specialty pharmacy)</span></td></tr>
+  <tr><td>Lifelong daily therapy</td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td><td><span class="tag good">yes (responders)</span></td></tr>
+  <tr><td>Pediatric-to-adult transition is a leak point</td><td><span class="tag md">adult-onset — N/A</span></td><td><span class="tag good">yes — high risk</span></td><td><span class="tag good">yes — ~75% adult dropoff</span></td></tr>
+  <tr><td>Shared Cycle Vita hub infrastructure</td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td><td><span class="tag good">yes</span></td></tr>
+  <tr><td>Molecule overlap</td><td colspan="2" style="text-align:center;"><span class="tag md">HARLIKU + NITYR = nitisinone (different indications &amp; doses)</span></td><td><span class="tag lo">JAVYGTOR = sapropterin (different molecule)</span></td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">AKU is the asymmetric member</div>
+  <p style="margin:0">JAVYGTOR (PKU) and NITYR (HT-1) are NBS-diagnosed at birth — the commercial challenge is retention. HARLIKU (AKU) is a different disease shape: adult-onset, undiagnosed in 80–95% of the theoretical population, and a <em>patient-finding</em> problem dominated by EHR-NLP and genotype-lab analytics, not hub optimization. Cycle's cluster analytical playbook must treat HARLIKU as distinct on the finding axis while grouping it with NITYR / JAVYGTOR on the prescriber / hub / adherence axes. Don't average the three — model them as parallel tracks converging on the same metabolic center.</p>
+</div>
+
+<h2>Strategic Framing — Why Cluster, Not Per-Product</h2>
+
+<p class="lead">A per-product analytical approach treats each Cycle rare-disease franchise as an independent business. It misses the single fact that explains the portfolio's commercial shape: <strong>one prescriber, three products (HARLIKU, NITYR, JAVYGTOR), partially overlapping patients, shared adherence dynamics</strong>. The per-product view makes Cycle's ~29 reps call on the same center three times for three products. The cluster view tells you <em>which</em> center to call on for <em>which</em> product, <em>in what order</em>, based on its actual prescribing pattern across the cluster.</p>
+
+<div class="two">
+  <div>
+    <h3>What the per-product view shows</h3>
+    <ul>
+      <li>HARLIKU brand share — always close to 100% (first approved AKU therapy, no direct competitor)</li>
+      <li>NITYR share of nitisinone molecule — a formulation-preference story inside a ~$100–140M global market vs Orfadin capsules</li>
+      <li>JAVYGTOR share of BH4-responsive PKU — a decline curve against branded Kuvan (slow) and Sephience sepiapterin (fast)</li>
+      <li>Each product's Cycle Vita hub KPIs — PA rate, time-to-first-fill, refill continuity</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:8px;">These are useful. They are also what you get without hub-data integration. They describe each product's performance in isolation and do not answer any portfolio question.</p>
+  </div>
+  <div>
+    <h3>What only the cluster view shows</h3>
+    <ul>
+      <li><strong>Portfolio penetration</strong> — of the ~100–150 US metabolic centers, how many prescribe all three Cycle products (HARLIKU + NITYR + JAVYGTOR), two of three, one, or zero?</li>
+      <li><strong>Cross-sell gaps</strong> — centers prescribing NITYR but not HARLIKU (same molecule, same metabolic expertise) are the highest-yield cross-sell targets in Cycle's portfolio</li>
+      <li><strong>Shared transition risk</strong> — patients aging out of pediatric JAVYGTOR (PKU) programs are often in the same institutions that treat NITYR (HT-1) children; a single transition-support intervention benefits both products</li>
+      <li><strong>Prescriber-level adherence benchmark</strong> — a center's JAVYGTOR adherence performance predicts its NITYR performance, letting weak centers be identified before they produce attrition</li>
+      <li><strong>Field-force prioritization by portfolio weight</strong> — one call list ranked by combined portfolio exposure, not three lists ranked by each product separately</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this cluster. Individual-product variation is material &mdash; the worst case (AKU) anchors the cluster floor.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag md">mixed</span></td><td><strong>NITYR (HT-1)</strong> uses <code>E70.21</code> and <strong>JAVYGTOR (PKU)</strong> uses <code>E70.0</code>, <code>E70.1</code> — specific. <strong>HARLIKU (AKU)</strong> sits in the shared bucket <code>E70.29</code> with no specific code &mdash; claims cannot find HARLIKU-eligible patients at all.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag lo">weak</span></td><td>Ultra-rare patient counts + pediatric-skewed cohorts (JAVYGTOR especially) + &lt;50-prescriber universes push most centers below CMS suppression thresholds.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag md">mixed</span></td><td>JAVYGTOR vs <em>Kuvan</em> vs <em>Sephience</em> (sepiapterin) carry distinct NDCs. NITYR tablets vs Orfadin capsules / suspension distinguishable. HARLIKU vs NITYR use of nitisinone <strong>indistinguishable</strong> from NDC alone &mdash; requires linked ICD.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag lo">weak (gate questions)</span></td><td>HARLIKU + NITYR are LeMed-exclusive; JAVYGTOR uses a specialty pharmacy. Panel-reporting status varies and must be confirmed per product. Without reporting, claims is blind to dispensing for this cluster.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag lo">material</span></td><td>Premium pricing across all three Cycle products drives heavy PAP use. JAVYGTOR defensive retention programs vs sepiapterin are structurally PDE-invisible. Share calculations materially mislead without Cycle Vita hub validation.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">essential</span></td><td>NBS identifies NITYR (HT-1) and JAVYGTOR (PKU) patients at birth (registry-adjacent). Metabolic-center census enumerates the prescriber universe directly. Cycle Vita hub CRM is the only way to see cross-sell and retention across the shared prescriber universe.</td></tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Individual products have a weak claims substrate &mdash; HARLIKU is effectively invisible, NITYR and JAVYGTOR are specific but pediatric-skewed and PAP-distorted. <strong>The strategic cross-sell analytic &mdash; &ldquo;which metabolic centers prescribe one Cycle product but not the others&rdquo; &mdash; is impossible on claims alone</strong> because (a) HARLIKU/AKU cannot be cohorted, (b) ultra-rare Part D suppression masks prescriber-level activity, and (c) PAP retention volumes are invisible. <strong>Cycle Vita hub data is the unlock.</strong> Until hub access is contracted internally, cluster-level analytics are descriptive; with hub access, the cluster becomes the highest-leverage analytical play in Cycle's portfolio.</p>
+</div>
+
+<h2>Combined Patient &amp; Prescriber Context</h2>
+
+<table>
+  <tr><th>Dimension</th><th>HARLIKU (AKU)</th><th>NITYR (HT-1)</th><th>JAVYGTOR (PKU)</th><th>Cluster total</th></tr>
+  <tr><td>US prevalence (theoretical)</td><td>~300–1,300</td><td>~500–1,000</td><td>~3,500–7,000 (BH4-responsive)</td><td><strong>~4,300–9,300</strong></td></tr>
+  <tr><td>Diagnosed fraction</td><td>&lt;20% (AKU-specific registry)</td><td>~100% (NBS)</td><td>~100% (NBS)</td><td>heavily weighted toward PKU + HT-1</td></tr>
+  <tr><td>Annual new diagnoses (US)</td><td>~4–14 (untested hypothesis)</td><td>~30–40 (NBS)</td><td>~240–360 (NBS-defined PKU), of which ~60–180 BH4-responsive</td><td>new-start pool dominated by PKU</td></tr>
+  <tr><td>Primary prescribers</td><td>Metabolic genetics + rheum/ortho/cardio (identification)</td><td>Pediatric metabolic genetics</td><td>Metabolic genetics + metabolic dietitians</td><td>~150–250 US MDs</td></tr>
+  <tr><td>Centers of excellence</td><td>&lt;50 US (adult metabolic)</td><td>~50 US (pediatric metabolic)</td><td>~100–150 US (pediatric + adult metabolic)</td><td>~100–150 overlap-weighted</td></tr>
+  <tr><td>Hub-distributed</td><td>Cycle Vita + LeMed</td><td>Cycle Vita + LeMed</td><td>Cycle Vita + specialty pharmacy</td><td>Cycle Vita hub serves all three</td></tr>
+  <tr><td>Claims-visibility</td><td>Very low (shared ICD)</td><td>Very low (tiny N)</td><td>Moderate (specific dx)</td><td>Cycle Vita hub is the primary data substrate</td></tr>
+</table>
+
+<div class="callout">
+  <div class="title">Overlap estimate — a working hypothesis</div>
+  <p style="margin:0">No published source enumerates center-level portfolio penetration across HARLIKU + NITYR + JAVYGTOR. Based on the structure of US metabolic genetics — roughly 100–150 centers, heavily overlapping pediatric PKU and HT-1 coverage, far narrower AKU expertise — a working estimate is: <strong>~80–90% of centers prescribe at least one Cycle cluster product, ~50–70% prescribe two, and &lt;20% prescribe all three today.</strong> The ~30–50% of two-product centers that are missing the third Cycle product are the primary cross-sell target universe. Validating this estimate requires Cycle Vita hub enrollment data segmented by prescriber NPI and product — a single query, once the data is accessible.</p>
+</div>
+
+<h2>Analytical Playbook — Cluster Level</h2>
+
+<p class="lead">Six cluster-level analytical workstreams. Each is either impossible or weakly executable on public data alone and unlocks to decision-grade output once Cycle Vita hub data flows. These are the artifacts that make Cycle's portfolio-level analytics real.</p>
+
+<table>
+  <tr><th>#</th><th>Workstream</th><th>Public-data ceiling</th><th>With hub data</th><th>Decision it supports</th></tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td>Prescriber portfolio penetration map</td>
+    <td><span class="tag lo">descriptive</span> — guess at center list from conferences / directories</td>
+    <td><span class="tag hi">operational</span> — exact count of centers by portfolio coverage</td>
+    <td>Field-force call-list prioritization; cross-sell-target identification</td>
+  </tr>
+  <tr>
+    <td><strong>2</strong></td>
+    <td>Center-of-excellence mapping by referral geography</td>
+    <td><span class="tag lo">descriptive</span> — public lists of centers</td>
+    <td><span class="tag hi">operational</span> — patient shipping addresses reveal referral catchments</td>
+    <td>Pediatric-to-adult handoff pairings; geographic-gap identification</td>
+  </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td>Pediatric-to-adult transition tracking</td>
+    <td><span class="tag lo">anecdotal</span> — literature estimates only</td>
+    <td><span class="tag hi">operational</span> — actual refill continuity by age 18 boundary event, per center</td>
+    <td>Which pediatric centers produce the worst transition outcomes; targeted dietitian / social-work intervention</td>
+  </tr>
+  <tr>
+    <td><strong>4</strong></td>
+    <td>Shared FIND / ACCESS / START / MAINTAIN / MEASURE flywheel across all three products</td>
+    <td><span class="tag md">partial</span> — structural framework without metrics</td>
+    <td><span class="tag hi">operational</span> — KPI dashboard per product + cluster roll-up</td>
+    <td>Hub operational improvements sized by portfolio impact, not product silo</td>
+  </tr>
+  <tr>
+    <td><strong>5</strong></td>
+    <td>Cross-product adherence benchmark (TTFF, refill gap, persistence curves)</td>
+    <td><span class="tag lo">by product only</span></td>
+    <td><span class="tag hi">per-center, cross-product</span> — weak PKU adherence predicts weak HT-1 adherence</td>
+    <td>Early-warning system for center-level attrition; dietitian-education prioritization</td>
+  </tr>
+  <tr>
+    <td><strong>6</strong></td>
+    <td>HARLIKU AKU-identification pilot inside cluster infrastructure</td>
+    <td><span class="tag md">EHR-NLP feasible</span> at academic partners</td>
+    <td><span class="tag hi">operational</span> — Cycle Vita hub enrollment funnel from AKU rule-out workups</td>
+    <td>Scale disease-awareness intervention to centers already in the Cycle cluster relationship; measure new-diagnosis yield for HARLIKU</td>
+  </tr>
+</table>
+
+<h3>The flywheel, shared across three products</h3>
+<div class="signals">
+  <div class="sig">
+    <h4>FIND</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Identifying the eligible patient.</p>
+    <ul>
+      <li><strong>JAVYGTOR (PKU):</strong> NBS — essentially universal</li>
+      <li><strong>NITYR (HT-1):</strong> NBS — essentially universal</li>
+      <li><strong>HARLIKU (AKU):</strong> EHR-NLP + rheumatology / orthopedic pathology note mining + genotype labs — the active problem</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>ACCESS</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Insurance authorization and payer alignment.</p>
+    <ul>
+      <li>PA universal for all three</li>
+      <li>Metabolic-specialist consult required by most payers</li>
+      <li>BH4 responsiveness documentation required for sapropterin</li>
+      <li>Hub access specialists handle PA workflow — measurable throughput KPI</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>START</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Time from prescription to first fill.</p>
+    <ul>
+      <li>Bridge supply during PA in all three Cycle products</li>
+      <li>Dietary counseling setup for NITYR (HT-1) and JAVYGTOR (PKU)</li>
+      <li>BH4 challenge scheduling for JAVYGTOR (PKU)</li>
+      <li>Slit-lamp baseline + monitoring setup for HARLIKU / NITYR (nitisinone)</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>MAINTAIN</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Ongoing adherence and retention.</p>
+    <ul>
+      <li>Refill continuity — the universal adherence metric</li>
+      <li>Dietary adherence (NITYR &amp; JAVYGTOR) — proxied by plasma Phe or Tyr when available</li>
+      <li>Transition support (pediatric → adult for NITYR &amp; JAVYGTOR)</li>
+      <li>Pregnancy-planning support (maternal PKU on JAVYGTOR)</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>MEASURE</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Outcome benchmarking.</p>
+    <ul>
+      <li>Plasma Phe (JAVYGTOR / PKU) — ACMG target ≤360 μmol/L lifelong</li>
+      <li>Plasma Tyr (NITYR / HT-1) — target &lt;500 μmol/L</li>
+      <li>Urine HGA (HARLIKU / AKU) — 95–99% reduction on therapy</li>
+      <li>Cross-product: adherence curves + persistence</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>Shared dietitian &amp; KOL relationships</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The non-obvious lever.</p>
+    <ul>
+      <li>Metabolic dietitians are the JAVYGTOR (PKU) + NITYR (HT-1) adherence drivers</li>
+      <li>The same dietitians cover both diseases at most centers — single Cycle Vita touchpoint</li>
+      <li>Dietitian education and resources are a cross-product investment with triple leverage across HARLIKU + NITYR + JAVYGTOR</li>
+      <li>NPKUA + AKU Society + pediatric-metabolic advocacy groups — overlap in funding, membership, and conferences</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Data Strategy — Why Hub Data Is the Unlock</h2>
+
+<p class="lead">The cluster's analytical ceiling is set by the data substrate, not by methodology. Public data — claims, Xponent, CMS — answers very little for this cluster. The data that answers every interesting cluster question lives inside the Cycle Vita hub.</p>
+
+<table>
+  <tr><th>Data source</th><th>What it provides</th><th>Cluster limitation</th></tr>
+  <tr><td>IQVIA Xponent / DDD</td><td>Retail prescription volumes at NPI level</td><td>Near-zero signal for ultra-rare products; limited-distribution specialty flow not captured</td></tr>
+  <tr><td>CMS Part D / Medicaid</td><td>Federal Rx claims</td><td>Ultra-rare populations thinly represented; pediatric populations (HT-1, PKU) heavily commercial / CHIP, not Part D</td></tr>
+  <tr><td>Commercial claims (Optum, Truven)</td><td>Diagnoses, procedures, Rx</td><td>JAVYGTOR (PKU) somewhat visible (specific dx); NITYR (HT-1) and HARLIKU (AKU) largely invisible (tiny N, non-specific or shared codes)</td></tr>
+  <tr><td>Cycle Vita hub enrollment + dispense data</td><td>Prescriber NPI, patient journey, PA throughput, refill pattern, adherence curves</td><td><span class="tag good">complete</span> for on-hub patients — essentially all patients for Cycle hub-distributed products</td></tr>
+  <tr><td>LeMed specialty-pharmacy dispense records</td><td>NDC-level dispense events, refill timing</td><td><span class="tag good">complete</span> for HARLIKU + NITYR (LeMed exclusive); JAVYGTOR via specialty pharmacy</td></tr>
+  <tr><td>Cycle Vita-integrated lab data (Phe, Tyr, HGA)</td><td>Patient-level adherence ground truth</td><td>Available only where Cycle Vita has lab-integration partnerships; the highest-quality outcome metric</td></tr>
+</table>
+
+<h3>Compliance tiers</h3>
+<table>
+  <tr><th>Tier</th><th>Data posture</th><th>What it buys</th><th>What it costs</th></tr>
+  <tr><td>Tier 1</td><td>Aggregate, de-identified counts only</td><td>Denominators, share reporting, trend analytics</td><td>Lowest cost; no BAA or new authorizations required</td></tr>
+  <tr><td>Tier 2</td><td>De-identified patient-level with HIPAA safe-harbor removal</td><td>Journey analytics, cohort segmentation, per-center portfolio penetration</td><td>BAA coordination, de-identification pipeline, moderate cost</td></tr>
+  <tr><td>Tier 3</td><td>Tokenized linked — re-identifiable within the hub environment, de-identified outside</td><td>Patient-level flywheel, attrition attribution, cross-product linkage</td><td>Full HIPAA compliance infrastructure, tokenization vendor, highest cost</td></tr>
+</table>
+
+<div class="callout good">
+  <div class="title">The path — Tier 1 first, Tier 2 fast, Tier 3 on purpose</div>
+  <p style="margin:0">The cluster doesn't need Tier 3 infrastructure to start producing value. <strong>Tier 1</strong> (aggregate, de-identified) is enough for the portfolio-penetration map, cluster-level KPI trending, and center-level ranking — the highest-leverage artifacts. <strong>Tier 2</strong> (patient-level de-identified) unlocks journey analytics and transition-window tracking. Only the cross-product adherence linkage and flywheel patient-level attribution require <strong>Tier 3</strong>. Start with the Tier-1 deliverables; stage Tier 2 and Tier 3 on proven value, not speculative scope.</p>
+</div>
+
+<h2>ROI Framing</h2>
+
+<p>The ultra-rare metabolic cluster (HARLIKU + NITYR + JAVYGTOR) is the <strong>clearest example in Cycle's portfolio</strong> of how per-product analysis understates value and cluster analysis unlocks it. Per-product ROI on public data alone is low — three small populations, weak claims signal, limited statistical traction. Cluster ROI with Cycle Vita hub data is high — a single analytical substrate powers field prioritization, hub optimization, cross-sell targeting, and transition intervention across all three Cycle products simultaneously.</p>
+
+<table>
+  <tr><th>Scenario</th><th>Data</th><th>ROI tier</th><th>Why</th></tr>
+  <tr><td>Per-product, public data only</td><td>Xponent, claims, CMS</td><td><span class="tag lo">Tier 3 — low</span></td><td>Ultra-rare products are not visible in retail / claims systems. Output is descriptive.</td></tr>
+  <tr><td>Cluster, public data only</td><td>Public conferences + KOL + published registries</td><td><span class="tag lo">Tier 3 — low</span></td><td>Descriptive framework, no operational outputs. Useful for positioning; no field-actionable outputs.</td></tr>
+  <tr><td>Cluster, hub data Tier 1 (aggregate)</td><td>Hub + SP de-identified aggregates</td><td><span class="tag md">Tier 2 — conditional</span></td><td>Portfolio-penetration map, center-level KPI dashboards, cluster-level trending. Field-actionable.</td></tr>
+  <tr><td>Cluster, hub data Tier 2 (patient de-identified)</td><td>Journey + adherence curves + transition events</td><td><span class="tag hi">Tier 1 — high</span></td><td>Operational transition intervention, adherence early-warning, cross-product benchmarking.</td></tr>
+  <tr><td>Cluster, hub data Tier 3 (tokenized linked)</td><td>Cross-product patient linkage + lab integration</td><td><span class="tag hi">Tier 1 — highest</span></td><td>Full flywheel ROI quantification, maternal PKU cross-cohort tracking, product-substitution modeling.</td></tr>
+</table>
+
+<h2>The Big Play</h2>
+
+<div class="callout crit">
+  <div class="title">This cluster is the strongest case for Cycle Vita hub-data investment in the portfolio</div>
+  <p style="margin:0">Every Cycle product has a case for Cycle Vita hub-data. The HARLIKU + NITYR + JAVYGTOR cluster is the case.
+  <br><br>Three products, same Cycle Vita hub, same prescribers, overlapping geographies, shared adherence dynamics, and a generational-scale retention challenge (NBS-diagnosed pediatric patients following the disease for 60+ years). No other cluster in Cycle's portfolio has this combination of: (1) near-complete population overlap of the prescriber universe, (2) a shared Cycle Vita hub already in place, (3) a concrete cross-sell gap (centers missing one of three Cycle products), and (4) a shared structural weakness (pediatric-to-adult transition) where a single analytical substrate unlocks interventions for NITYR and JAVYGTOR simultaneously.
+  <br><br>Other Cycle portfolio clusters make independent cases for hub-data integration. This one makes the <em>strategic</em> case: the Cycle Vita hub-data investment pays for itself on the metabolic cluster alone, even before portfolio-wide extensions.</p>
+</div>
+
+<h3>What this cluster justifies</h3>
+<ul>
+  <li><strong>Cycle Vita hub-data aggregator contract</strong> — vendor selection, BAA structure, data-flow architecture (the foundation that every other Cycle hub-distributed product reuses).</li>
+  <li><strong>Tier-1 de-identified substrate on shared compute</strong> — the HARLIKU/NITYR/JAVYGTOR portfolio-penetration map and cluster KPI dashboards as the first-year deliverables.</li>
+  <li><strong>Prescriber-NPI-normalized view</strong> across all three Cycle products — the single data artifact that makes cross-sell visible.</li>
+  <li><strong>Transition-window alert system</strong> — patient-level (de-identified) flag for age-18 boundary refill continuity, shared between NITYR (HT-1) and JAVYGTOR (PKU).</li>
+  <li><strong>Dietitian-education investment line</strong> — one Cycle Vita investment, three-product leverage.</li>
+  <li><strong>HARLIKU (AKU) identification pilot scoped inside cluster infrastructure</strong> — same metabolic centers, lowest incremental cost.</li>
+</ul>
+
+<h2>Open Questions</h2>
+<ol>
+  <li><strong>Hub extractability.</strong> Is patient-level hub enrollment and dispense data extractable in a de-identified form suitable for analytics across all three products, and at what granularity (monthly aggregate, event-level, or continuous)?</li>
+  <li><strong>Patient authorization language.</strong> Do existing hub enrollment / patient-authorization forms already name the manufacturer as a data recipient for analytics purposes? If not, what is the re-consent path and timeline?</li>
+  <li><strong>Center-list completeness.</strong> Is there a canonical US metabolic-genetics center list (GMDI / SIMD / HRSA Regional Collaboratives) that can seed the portfolio-penetration denominator — and how complete is it for adult metabolic centers specifically?</li>
+  <li><strong>Prescriber NPI normalization across products.</strong> Are prescribers keyed consistently across the hub's three product lines, or is there NPI-normalization work required before cross-product joins are possible?</li>
+  <li><strong>Lab-integration footprint.</strong> Which metabolic centers share plasma Phe / Tyr / HGA lab values with the hub today, and what is the path to expanding that integration?</li>
+  <li><strong>Adult-center map.</strong> How many US adult metabolic clinics actively accept HT-1 or PKU handoffs, and where are the geographic gaps?</li>
+  <li><strong>AKU rule-out workup volume inside cluster centers.</strong> How many HGA / urine organic acid / <em>HGD</em> gene tests are ordered per year at the ~50 centers that are most likely to identify AKU patients — a signal that feeds the disease-awareness ROI model?</li>
+  <li><strong>Sepiapterin substitution at cluster centers.</strong> Are the centers most loyal to sapropterin also the centers with the strongest portfolio penetration on HT-1 / AKU? If so, cluster-level hub stickiness becomes even more important as a PKU defensive lever.</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed labels for nitisinone (HT-1 NDA and AKU NDA) and sapropterin ANDAs; GeneReviews Tyrosinemia Type I (NBK1515); StatPearls PKU (NBK535378) and Nitisinone (NBK589678); HRSA Newborn Screening condition pages (Tyrosinemia I, Phenylketonuria); ACMG PAH Deficiency Management Guideline (<em>Genetics in Medicine</em> 2024); AMPLIPHY Phase 3 head-to-head (<em>Metabolism</em> 2026); APHENITY pivotal trial (<em>The Lancet</em> 2024); published literature on metabolic genetics center distribution (GMDI, SIMD); AKU Society (akusociety.org); NPKUA (npkua.org).</p>
+  <p>This document synthesizes publicly available clinical and epidemiological information about alkaptonuria, hereditary tyrosinemia type 1, and phenylketonuria, and discusses generic approaches to portfolio-level commercial analytics for an ultra-rare metabolic cluster. Product references use disease names and INN molecules (nitisinone, sapropterin dihydrochloride, sepiapterin); Orfadin (Sobi), Kuvan (BioMarin), Palynziq (BioMarin), and Sephience (PTC Therapeutics) are named because they are market infrastructure. No confidential or proprietary information is included.</p>
+</footer>
+
+</div>
+</body>
+</html>

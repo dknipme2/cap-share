@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — How to Trust What AI Gives You</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --panel-3: #1a2238;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.12);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.12);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.12);
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.12);
+    --green: #4ade80;
+    --green-soft: rgba(74, 222, 128, 0.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 15.5px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 48px 28px 96px; }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 24px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  .topnav a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+
+  .hero { border-bottom: 1px solid var(--rule); padding-bottom: 36px; margin-bottom: 48px; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  h1 {
+    margin: 0 0 16px;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    color: #ffffff;
+    max-width: 20ch;
+  }
+  .hero-lede {
+    color: var(--ink-soft);
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 64ch;
+    margin: 0;
+  }
+  .hero-lede em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+
+  section { margin-bottom: 64px; }
+  section > h2 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 8px; font-weight: 700; }
+  section > .section-h { font-size: 26px; font-weight: 600; color: var(--ink); margin: 0 0 10px; letter-spacing: -0.01em; }
+  section > .section-lede { color: var(--ink-soft); font-size: 15px; max-width: 72ch; margin: 0 0 28px; }
+
+  /* Trust opener · three kinds of answers */
+  .answer-kinds {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 820px) { .answer-kinds { grid-template-columns: 1fr; } }
+  .answer-kind {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .answer-kind .kind-label { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+  .answer-kind.trust .kind-label { color: var(--green); }
+  .answer-kind.use .kind-label { color: var(--amber); }
+  .answer-kind.verify .kind-label { color: var(--rose); }
+  .answer-kind h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 600; color: var(--ink); }
+  .answer-kind p { margin: 0; color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; }
+
+  /* Flag table */
+  .flag-table {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .flag-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px;
+    gap: 0;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: stretch;
+  }
+  .flag-row:last-child { border-bottom: none; }
+  @media (max-width: 720px) {
+    .flag-row { grid-template-columns: 1fr; }
+  }
+  .flag-cell {
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .flag-tag {
+    background: var(--panel-2);
+    border-right: 1px solid var(--rule-soft);
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  @media (max-width: 720px) { .flag-tag { border-right: none; border-bottom: 1px solid var(--rule-soft); } }
+  .flag-tag .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+  .flag-tag.tier-1 .dot { background: var(--green); }
+  .flag-tag.tier-2 .dot { background: var(--teal); }
+  .flag-tag.tier-3 .dot { background: var(--amber); }
+  .flag-tag.tier-4 .dot { background: var(--rose); }
+  .flag-tag.tier-stale .dot { background: var(--ink-faint); }
+  .flag-tag code { background: transparent; color: var(--ink); font-weight: 600; }
+  .flag-meaning { color: var(--ink-soft); }
+  .flag-meaning strong { color: var(--ink); font-weight: 600; }
+  .flag-trust { color: var(--ink-faint); font-size: 12px; display: flex; align-items: center; }
+  .flag-header {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px;
+    background: var(--panel-3);
+    border-bottom: 1px solid var(--rule);
+    padding: 0;
+  }
+  @media (max-width: 720px) { .flag-header { display: none; } }
+  .flag-header > div {
+    padding: 10px 18px;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+
+  /* Validation score card */
+  .score-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 24px 26px;
+  }
+  @media (max-width: 820px) { .score-card { grid-template-columns: 1fr; } }
+  .score-formula {
+    background: var(--panel-2);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.8;
+  }
+  .score-formula .frac { display: inline-block; vertical-align: middle; text-align: center; margin: 0 8px; }
+  .score-formula .num { border-bottom: 1px solid var(--ink-faint); padding: 0 8px 4px; color: var(--teal-ink); }
+  .score-formula .den { padding: 4px 8px 0; color: var(--ink-soft); }
+  .score-thresholds { display: flex; flex-direction: column; gap: 10px; }
+  .score-threshold {
+    display: grid;
+    grid-template-columns: 80px 90px 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule-soft);
+    align-items: center;
+    font-size: 13px;
+  }
+  .score-threshold:last-child { border-bottom: none; }
+  .score-threshold .range { font-family: "SF Mono", monospace; color: var(--ink); font-weight: 600; }
+  .score-threshold .rating { font-weight: 700; letter-spacing: 0.05em; font-size: 11px; padding: 3px 10px; border-radius: 4px; text-align: center; }
+  .score-threshold.green .rating { background: var(--green-soft); color: var(--green); }
+  .score-threshold.yellow .rating { background: var(--amber-soft); color: var(--amber); }
+  .score-threshold.red .rating { background: var(--rose-soft); color: var(--rose); }
+  .score-threshold .note { color: var(--ink-soft); font-size: 12.5px; }
+
+  /* Role handling table */
+  .role-matrix {
+    overflow-x: auto;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+  }
+  .role-matrix table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .role-matrix th {
+    background: var(--panel-3);
+    color: var(--ink-faint);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid var(--rule);
+  }
+  .role-matrix td {
+    padding: 12px 14px;
+    color: var(--ink-soft);
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule-soft);
+    line-height: 1.45;
+  }
+  .role-matrix tr:last-child td { border-bottom: none; }
+  .role-matrix td.role {
+    color: var(--teal-ink);
+    font-family: "SF Mono", monospace;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .role-matrix code { background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; color: var(--ink); }
+
+  /* Flow · question to evidence chain */
+  .flow-diagram {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .flow-diagram svg { width: 100%; height: auto; display: block; }
+
+  /* KB mechanics */
+  .kb-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 820px) { .kb-cards { grid-template-columns: 1fr; } }
+  .kb-card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--teal);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .kb-card .stage-num {
+    font-family: "SF Mono", monospace;
+    font-size: 10.5px;
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .kb-card h4 { margin: 0 0 8px; font-size: 15px; color: var(--ink); font-weight: 600; }
+  .kb-card p { margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.5; }
+  .kb-card code { background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; color: var(--ink); }
+
+  /* Audit chain visual */
+  .chain {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 24px 26px;
+  }
+  .chain-row {
+    display: grid;
+    grid-template-columns: 180px 20px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--rule-soft);
+  }
+  .chain-row:last-child { border-bottom: none; }
+  @media (max-width: 720px) { .chain-row { grid-template-columns: 1fr; } .chain-row .arrow { display: none; } }
+  .chain-row .link-label {
+    font-family: "SF Mono", monospace;
+    font-size: 11.5px;
+    color: var(--teal-ink);
+    font-weight: 600;
+    background: rgba(20, 184, 166, 0.1);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .chain-row .arrow { color: var(--ink-faint); text-align: center; font-size: 16px; }
+  .chain-row .desc { color: var(--ink-soft); font-size: 13.5px; line-height: 1.45; }
+  .chain-row .desc strong { color: var(--ink); font-weight: 600; }
+
+  /* Principles box */
+  .principles {
+    background: linear-gradient(180deg, rgba(20, 184, 166, 0.05), transparent 100%), var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--teal);
+    border-radius: 10px;
+    padding: 22px 26px;
+  }
+  .principles h3 { margin: 0 0 10px; font-size: 17px; color: var(--ink); font-weight: 600; }
+  .principles p { margin: 0 0 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+  .principles p:last-child { margin-bottom: 0; }
+  .principles strong { color: var(--ink); font-weight: 600; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html" class="active">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · Trust &amp; evidence</div>
+  <h1>How do I know I can trust what the AI gives me?</h1>
+  <p class="hero-lede">Every factual claim is flagged. Every brief carries a validation score. Every recommendation traces back through the graph to a named source. <em>Unflagged text is assumed unverified</em>; only <code>[CONFIRMED]</code> claims are treated as facts in deliverables. The mechanism is the same one an analyst would use — made durable and auditable by the system.</p>
+</header>
+
+<section>
+  <h2>The starting posture</h2>
+  <div class="section-h">Three kinds of answers, three kinds of trust</div>
+  <p class="section-lede">Not all AI output deserves the same trust. The system classifies every claim on the way out so the reader knows which is which, before acting.</p>
+
+  <div class="answer-kinds">
+    <div class="answer-kind trust">
+      <div class="kind-label">Trust · verified</div>
+      <h3>Confirmed facts</h3>
+      <p>Human-verified or primary-source-verified claims. Tagged <code>[CONFIRMED: source]</code>. These land in the deliverable as facts. Everything else does not.</p>
+    </div>
+    <div class="answer-kind use">
+      <div class="kind-label">Use · with context</div>
+      <h3>Structural &amp; directional</h3>
+      <p>Mechanisms, patterns, ranges, trends. Tagged <code>[STRUCTURAL]</code>, <code>[DIRECTIONAL]</code>, or <code>[EXISTS]</code>. Safe to reason with; surface the flag alongside.</p>
+    </div>
+    <div class="answer-kind verify">
+      <div class="kind-label">Verify · don't quote</div>
+      <h3>Specific, calculable, stale</h3>
+      <p>Exact numbers from the LLM, things that should be computed from data, or facts that may have aged. Tagged <code>[SPECIFIC]</code>, <code>[CALCULABLE]</code>, <code>[STALE: date]</code>. Don't quote these — replace with computation or re-verify.</p>
+    </div>
+  </div>
+
+  <div class="principles">
+    <h3>The rule behind the flags</h3>
+    <p><strong>All unflagged claims are <code>[ESTIMATED]</code> — LLM-generated, not independently verified. Treat as directional until flagged otherwise.</strong> Only <code>[CONFIRMED]</code> claims are treated as facts in deliverables.</p>
+    <p>Flags are <strong>sticky</strong>: every consumer downstream (card, methodology module, engagement delivery) can suppress a flag at the viewing layer, but never strip it from the data layer. The audit trail stays intact all the way to the reader.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The claim confidence system</h2>
+  <div class="section-h">Seven trust tiers, each with a distinct action rule</div>
+  <p class="section-lede">The inline tagging system that every research brief obeys. Each flag carries both a meaning and an implicit action — what to do about the claim if you're the analyst, strategist, or operator consuming it.</p>
+
+  <div class="flag-table">
+    <div class="flag-header">
+      <div>Flag</div>
+      <div>Meaning · example</div>
+      <div>Trust level</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-1"><span class="dot"></span><code>[CONFIRMED: source]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Human or primary source verified.</strong> The only tier that is a fact. Example: <code>[CONFIRMED: FDA Drugs@FDA 2025-Q1]</code> pediatric indication approved 2025-02-11.</div>
+      <div class="flag-cell flag-trust">Fact</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-2"><span class="dot"></span><code>[EXISTS]</code></div>
+      <div class="flag-cell flag-meaning"><strong>The thing exists</strong> and is verifiable via product page / vendor docs, even if details are LLM-estimated. Example: <code>[EXISTS]</code> IQVIA oncology dynamics platform.</div>
+      <div class="flag-cell flag-trust">High · existence</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-2"><span class="dot"></span><code>[STRUCTURAL]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Mechanism or pattern</strong> — established domain knowledge. Example: <code>[STRUCTURAL]</code> buy-and-bill is oncology's primary distribution model.</div>
+      <div class="flag-cell flag-trust">High · pattern</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-3"><span class="dot"></span><code>[DIRECTIONAL]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Trend or range.</strong> Direction reliable, magnitude is not. Example: <code>[DIRECTIONAL]</code> biosimilar adoption accelerating in the past 24 months.</div>
+      <div class="flag-cell flag-trust">Medium</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-3"><span class="dot"></span><code>[CALCULABLE]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Compute this — don't trust the LLM number.</strong> Data pipeline can answer. Example: <code>[CALCULABLE]</code> biosimilar share (compute from silver.prescriptions).</div>
+      <div class="flag-cell flag-trust">Medium · existence<br>Low · value</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-4"><span class="dot"></span><code>[SPECIFIC]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Exact number from LLM.</strong> Empirical ~30% error rate. Don't quote — verify or replace with computation. Example: <code>[SPECIFIC]</code> ~2,550 oncologists (verify against NPI registry).</div>
+      <div class="flag-cell flag-trust">Low</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-stale"><span class="dot"></span><code>[STALE: date]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Was accurate at date; may have changed.</strong> Time-bound freshness. Example: <code>[STALE: ~2020]</code> 62% pathway exposure.</div>
+      <div class="flag-cell flag-trust">Decaying</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-4"><span class="dot"></span><code>[SOURCE_CONFLICT: A=X, B=Y]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Two citable sources disagree.</strong> Answer exists somewhere; human picks for context.</div>
+      <div class="flag-cell flag-trust">Medium</div>
+    </div>
+
+    <div class="flag-row">
+      <div class="flag-cell flag-tag tier-4"><span class="dot"></span><code>[LLM_DISPUTED: brief=X, agent=Y]</code></div>
+      <div class="flag-cell flag-meaning"><strong>Counter-validation LLM disagreed with original.</strong> Neither is verified; human must resolve.</div>
+      <div class="flag-cell flag-trust">Low</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The brief-level validation score</h2>
+  <div class="section-h">One number that summarizes "can I use this?"</div>
+  <p class="section-lede">Every research brief carries a validation score in frontmatter. It's the share of claims that are either verified, existence-confirmed, or structural. Above 0.80 is green; below 0.50 needs review before the brief lands anywhere.</p>
+
+  <div class="score-card">
+    <div class="score-formula">
+      <div style="color:var(--ink-faint);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;font-family:-apple-system,sans-serif;font-weight:700">Formula</div>
+      validation_score =
+      <span class="frac">
+        <div class="num">confirmed + exists + structural</div>
+        <div class="den">total_claims</div>
+      </span>
+    </div>
+
+    <div class="score-thresholds">
+      <div style="color:var(--ink-faint);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;font-weight:700">Rating bands</div>
+      <div class="score-threshold green">
+        <span class="range">&gt; 0.80</span>
+        <span class="rating">GREEN</span>
+        <span class="note">Safe for engagement use</span>
+      </div>
+      <div class="score-threshold yellow">
+        <span class="range">0.50 – 0.80</span>
+        <span class="rating">YELLOW</span>
+        <span class="note">Usable with caution; surface flagged items</span>
+      </div>
+      <div class="score-threshold red">
+        <span class="range">&lt; 0.50</span>
+        <span class="rating">RED</span>
+        <span class="note">Too many unverified — needs review before use</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-lede" style="margin-top:20px">The Cycle engagement's current active brief sits at <code>validation_score: 0.97</code> — published only after two rounds of adversarial counter-validation against fresh-context subagents.</p>
+</section>
+
+<section>
+  <h2>Per-role handling</h2>
+  <div class="section-h">Who trusts what, and what each role does with a flag</div>
+  <p class="section-lede">Each analytical role consumes flagged claims differently. A strategist can reason on directional claims; an analyst must compute anything <code>[CALCULABLE]</code> from data instead of quoting it.</p>
+
+  <div class="role-matrix">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:120px">Role</th>
+          <th>Can build on</th>
+          <th>Must surface to analyst-in-charge</th>
+          <th style="width:220px">Action on <code>[CALCULABLE]</code></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="role">strategist</td>
+          <td><code>EXISTS</code>, <code>STRUCTURAL</code>, <code>DIRECTIONAL</code></td>
+          <td><code>LLM_DISPUTED</code>, <code>SOURCE_CONFLICT</code>, <code>SPECIFIC</code> if driving a recommendation</td>
+          <td>Note as input assumption</td>
+        </tr>
+        <tr>
+          <td class="role">operator</td>
+          <td><code>EXISTS</code>, <code>STRUCTURAL</code></td>
+          <td><code>CALCULABLE</code> (build the computation)</td>
+          <td>Build pipeline; never hardcode <code>SPECIFIC</code></td>
+        </tr>
+        <tr>
+          <td class="role">researcher</td>
+          <td><code>EXISTS</code>, <code>STRUCTURAL</code>, <code>DIRECTIONAL</code></td>
+          <td><code>LLM_DISPUTED</code> (carry with flag, don't present as resolved)</td>
+          <td>N/A — researcher doesn't compute</td>
+        </tr>
+        <tr>
+          <td class="role">analyst</td>
+          <td><code>EXISTS</code>, <code>STRUCTURAL</code></td>
+          <td><code>SPECIFIC</code> (ignore the number, calculate from data)</td>
+          <td>Calculate from data</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>The research flow</h2>
+  <div class="section-h">From question to flagged brief to scored artifact</div>
+  <p class="section-lede">Every research question runs through the same six-step pipe. The KB is checked before any subagent fires; every brief lands with a validation score and a full source list.</p>
+
+  <div class="flow-diagram">
+    <svg viewBox="0 0 980 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Research flow">
+      <defs>
+        <marker id="a-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+        </marker>
+      </defs>
+
+      <!-- step pills -->
+      <g font-family="-apple-system, Segoe UI, sans-serif">
+        <!-- step 1 -->
+        <rect x="20" y="40" width="130" height="110" rx="8" fill="#1e293b" stroke="#26324a"/>
+        <text x="85" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">01 · DECOMPOSE</text>
+        <text x="85" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Break question</text>
+        <text x="85" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">into sub-topics</text>
+        <text x="85" y="122" fill="#94a3b8" font-size="11" text-anchor="middle">Reasoning shown</text>
+        <text x="85" y="136" fill="#94a3b8" font-size="11" text-anchor="middle">to the analyst</text>
+
+        <!-- step 2 -->
+        <rect x="170" y="40" width="130" height="110" rx="8" fill="#1e293b" stroke="#26324a"/>
+        <text x="235" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">02 · KB CHECK</text>
+        <text x="235" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Hybrid search</text>
+        <text x="235" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">+ rerank</text>
+        <text x="235" y="122" fill="#94a3b8" font-size="11" text-anchor="middle">FULL / PARTIAL /</text>
+        <text x="235" y="136" fill="#94a3b8" font-size="11" text-anchor="middle">NONE coverage</text>
+
+        <!-- step 3 -->
+        <rect x="320" y="40" width="130" height="110" rx="8" fill="#1e293b" stroke="#26324a"/>
+        <text x="385" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">03 · COVERAGE MAP</text>
+        <text x="385" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Show the map</text>
+        <text x="385" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">before dispatch</text>
+        <text x="385" y="122" fill="#94a3b8" font-size="11" text-anchor="middle">FULL = cite brief</text>
+        <text x="385" y="136" fill="#94a3b8" font-size="11" text-anchor="middle">PARTIAL/NONE = dispatch</text>
+
+        <!-- step 4 -->
+        <rect x="470" y="40" width="130" height="110" rx="8" fill="#1e293b" stroke="#26324a"/>
+        <text x="535" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">04 · DISPATCH</text>
+        <text x="535" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Subagent(s)</text>
+        <text x="535" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">per sub-topic</text>
+        <text x="535" y="122" fill="#94a3b8" font-size="11" text-anchor="middle">Parent = filing clerk</text>
+        <text x="535" y="136" fill="#94a3b8" font-size="11" text-anchor="middle">(no editing)</text>
+
+        <!-- step 5 -->
+        <rect x="620" y="40" width="130" height="110" rx="8" fill="#1e293b" stroke="#26324a"/>
+        <text x="685" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">05 · FLAG &amp; FILE</text>
+        <text x="685" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Brief writes</text>
+        <text x="685" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">with flags</text>
+        <text x="685" y="122" fill="#94a3b8" font-size="11" text-anchor="middle">RB_*.md + KB</text>
+        <text x="685" y="136" fill="#94a3b8" font-size="11" text-anchor="middle">rebuild</text>
+
+        <!-- step 6 -->
+        <rect x="770" y="40" width="150" height="110" rx="8" fill="#0f3d3a" stroke="#115e59" stroke-width="1.5"/>
+        <text x="845" y="60" fill="#5eead4" font-size="9.5" font-weight="700" letter-spacing="1" text-anchor="middle">06 · VALIDATE &amp; SCORE</text>
+        <text x="845" y="82" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">Counter-validation</text>
+        <text x="845" y="98" fill="#f1f5f9" font-size="13" font-weight="600" text-anchor="middle">+ validation score</text>
+        <text x="845" y="122" fill="#5eead4" font-size="11" text-anchor="middle">GREEN / YELLOW /</text>
+        <text x="845" y="136" fill="#5eead4" font-size="11" text-anchor="middle">RED assignment</text>
+      </g>
+
+      <!-- arrows between steps -->
+      <line x1="150" y1="95" x2="170" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-soft)"/>
+      <line x1="300" y1="95" x2="320" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-soft)"/>
+      <line x1="450" y1="95" x2="470" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-soft)"/>
+      <line x1="600" y1="95" x2="620" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-soft)"/>
+      <line x1="750" y1="95" x2="770" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-soft)"/>
+
+      <!-- caption -->
+      <text x="490" y="190" fill="#94a3b8" font-family="-apple-system, Segoe UI, sans-serif" font-size="11" text-anchor="middle">Universal research flow (D-RP-008) — every research question runs this six-step pipe, whether analyst-initiated or surfaced mid-session</text>
+    </svg>
+  </div>
+</section>
+
+<section>
+  <h2>KB retrieval · why the answers are grounded</h2>
+  <div class="section-h">Hybrid retrieval with a cross-encoder rerank</div>
+  <p class="section-lede">When the system answers from the KB, it isn't guessing from the model's memory. Three retrieval stages compose, and the rerank stage is load-bearing — removing it demonstrably degrades evaluation accuracy.</p>
+
+  <div class="kb-cards">
+    <div class="kb-card">
+      <div class="stage-num">STAGE 01 · BM25</div>
+      <h4>Keyword match</h4>
+      <p>Classical sparse retrieval against the KB corpus. Fast, exact, good at finding the specific term. Run via <code>tools/kb_index.py</code>.</p>
+    </div>
+    <div class="kb-card">
+      <div class="stage-num">STAGE 02 · Vector</div>
+      <h4>Semantic similarity</h4>
+      <p>Dense embeddings for conceptually-adjacent matches the keyword layer misses. Merged with BM25 via reciprocal rank fusion.</p>
+    </div>
+    <div class="kb-card">
+      <div class="stage-num">STAGE 03 · Rerank</div>
+      <h4>Cross-encoder judgment</h4>
+      <p>A cross-encoder re-scores the top candidates. The load-bearing stage — the eval harness <code>.groundskeeper/eval_30q.py</code> shows disabling rerank underperforms vector-only. Never disabled.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The audit chain</h2>
+  <div class="section-h">From claim to source — every link queryable</div>
+  <p class="section-lede">When a manager challenges an answer, the system traces the chain back. Every link is a structured object with a stable ID; the trail doesn't disappear when the conversation ends.</p>
+
+  <div class="chain">
+    <div class="chain-row">
+      <span class="link-label">CLAIM</span>
+      <span class="arrow">→</span>
+      <span class="desc"><strong>An inline assertion in an answer or brief.</strong> Carries a confidence flag. Example: <code>FF sizing ≈ 47 reps [CONFIRMED: method workload-buildup-v3.2]</code>.</span>
+    </div>
+    <div class="chain-row">
+      <span class="link-label">FLAG + SOURCE</span>
+      <span class="arrow">→</span>
+      <span class="desc"><strong>The flag names the verification layer.</strong> The source is a cited URL, document, dataset, or prior finding entity. Cited inline; never detachable.</span>
+    </div>
+    <div class="chain-row">
+      <span class="link-label">RB BRIEF</span>
+      <span class="arrow">→</span>
+      <span class="desc"><strong>A structured research brief</strong> at <code>knowledge/research/RB_*.md</code>. Carries frontmatter validation score, full claims breakdown, counter-validation results.</span>
+    </div>
+    <div class="chain-row">
+      <span class="link-label">ENTITY</span>
+      <span class="arrow">→</span>
+      <span class="desc"><strong>A typed graph entity</strong> (finding, recommendation, assumption, risk...) with stable ID. Cross-referenced via <code>entity_id</code> and <code>entity_mentions</code> fields. Queryable via <code>tools/entity_graph.py</code>.</span>
+    </div>
+    <div class="chain-row">
+      <span class="link-label">DECISION</span>
+      <span class="arrow">→</span>
+      <span class="desc"><strong>A decision record</strong> tying the recommendation to the outcome. Persists across engagements. Becomes the starting context for the next time the same question surfaces.</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The honest limits</h2>
+  <div class="section-h">What the system does <em>not</em> claim</div>
+  <div class="principles">
+    <p><strong>It doesn't eliminate hallucination.</strong> LLMs still make up facts. What the system does is force every claim into a category that exposes whether it was verified — so hallucinated claims land as <code>[SPECIFIC]</code> or <code>[ESTIMATED]</code>, not as facts. The flag is the defense.</p>
+    <p><strong>Validation score isn't truth.</strong> A 0.97 score means 97% of claims carry strong confidence flags — not that 97% are true. Counter-validation catches obvious hallucination; deliberate deception or systematic gaps in the source corpus still pass through. Surface-level numeric trust isn't a substitute for the analyst's read.</p>
+    <p><strong>The chain depends on discipline.</strong> Flags only work if they're applied. Cards work only if they link to briefs. Entities work only if they carry stable IDs. Where the discipline breaks down — a brief with no counter-validation, a card with no <code>validation_score</code> — the next consumer should notice and push back. That's what the role-specific handling rules exist for.</p>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · Trust &amp; evidence</strong> · how the AI's answers earn their credibility · companion to the <a href="cap_graph_and_journeys.html">system map</a>, <a href="cap_rules_layers.html">rules layers</a>, and <a href="cap_data_toolbox.html">data toolbox</a>.
+</footer>
+
+</main>
+</body>
+</html>

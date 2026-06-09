@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — Why not out-of-the-box Claude</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.12);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.12);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.12);
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 15.5px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 48px 28px 96px; }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  /* Top nav */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 28px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 14px;
+  }
+  .topnav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+
+  /* Hero */
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 36px;
+    margin-bottom: 48px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  h1 {
+    margin: 0 0 16px;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    color: #ffffff;
+    max-width: 20ch;
+  }
+  .hero-lede {
+    color: var(--ink-soft);
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 64ch;
+    margin: 0;
+  }
+
+  section { margin-bottom: 64px; }
+  section > h2 {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  section > .section-h {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  section > .section-lede {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 72ch;
+    margin: 0 0 28px;
+  }
+
+  /* Gap grid: what OOT-B Claude can't do · what CAP layers on */
+  .gap-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .gap-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  @media (max-width: 820px) {
+    .gap-row { grid-template-columns: 1fr; }
+  }
+  .gap-side {
+    padding: 18px 22px;
+  }
+  .gap-side.problem {
+    background: var(--rose-soft);
+    border-right: 1px solid var(--rule);
+  }
+  @media (max-width: 820px) {
+    .gap-side.problem { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+  .gap-side.solution {
+    background: transparent;
+  }
+  .gap-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    color: var(--teal-ink);
+    font-size: 18px;
+    font-weight: 500;
+  }
+  @media (max-width: 820px) {
+    .gap-arrow { display: none; }
+  }
+  .gap-label {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .gap-side.problem .gap-label { color: var(--rose); }
+  .gap-side.solution .gap-label { color: var(--teal-ink); }
+  .gap-side h3 {
+    margin: 0 0 8px;
+    font-size: 16.5px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .gap-side p {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .gap-side .layer-tag {
+    margin-top: 10px;
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--teal-ink);
+    background: rgba(20, 184, 166, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* Stack diagram */
+  .stack {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 28px 30px;
+  }
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 8px 18px;
+    align-items: stretch;
+  }
+  @media (max-width: 720px) {
+    .stack-grid { grid-template-columns: 1fr; }
+  }
+  .stack-layer-label {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    padding: 14px 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  @media (max-width: 720px) {
+    .stack-layer-label {
+      justify-content: flex-start;
+      padding: 6px 0 2px;
+      border-top: 1px solid var(--rule-soft);
+    }
+    .stack-layer-label:first-child { border-top: none; }
+  }
+  .stack-layer-label .layer-id {
+    color: var(--teal-ink);
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .stack-block {
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--rule-soft);
+  }
+  .stack-block h4 {
+    margin: 0 0 4px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .stack-block p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .stack-block .files {
+    margin-top: 6px;
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+  /* Layer tones */
+  .stack-block[data-tone="harness"] { background: var(--panel-2); border-color: var(--rule-soft); }
+  .stack-block[data-tone="behavioral"] { background: rgba(20, 184, 166, 0.08); border-color: rgba(20, 184, 166, 0.3); }
+  .stack-block[data-tone="operating"] { background: rgba(20, 184, 166, 0.06); border-color: rgba(20, 184, 166, 0.25); }
+  .stack-block[data-tone="role"] { background: rgba(165, 180, 252, 0.08); border-color: rgba(165, 180, 252, 0.3); }
+  .stack-block[data-tone="memory"] { background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.3); }
+  .stack-block[data-tone="hook"] { background: rgba(251, 113, 133, 0.08); border-color: rgba(251, 113, 133, 0.3); }
+  .stack-block[data-tone="kb"] { background: rgba(251, 191, 36, 0.06); border-color: rgba(251, 191, 36, 0.25); }
+  .stack-block[data-tone="base"] { background: var(--panel-2); border-color: var(--rule-soft); opacity: 0.8; }
+
+  /* Honest callout */
+  .honest {
+    background: linear-gradient(180deg, rgba(251, 113, 133, 0.05), transparent 80%), var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rose);
+    border-radius: 10px;
+    padding: 22px 26px;
+  }
+  .honest h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .honest p {
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .honest p:last-child { margin-bottom: 0; }
+  .honest strong { color: var(--ink); font-weight: 600; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html" class="active">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · Why the layers exist</div>
+  <h1>Claude is smart. It isn't your analyst.</h1>
+  <p class="hero-lede">Any large language model answers the question in front of it — often well. What it can't do out-of-the-box is <em>remember last month's decision, know your portfolio, follow your methodology, challenge its own answers,</em> or <em>learn from being used</em>. CAP is the specific plumbing that closes each of those gaps, layer by layer. The model is the engine; these layers are what make it a commercial analyst.</p>
+</header>
+
+<section>
+  <h2>Six things out-of-the-box Claude can't do</h2>
+  <div class="section-h">And the layer that fixes each one</div>
+  <p class="section-lede">Each row is a real gap. Without the corresponding layer, the answer comes back confident and plausible — and probably wrong in a way that only a domain expert would catch.</p>
+
+  <div class="gap-list">
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Remember what happened last engagement</h3>
+        <p>Every chat starts fresh. The decisions, methodology tuning, and context from last month's FF sizing project live in someone's head or a stale deck — not in the model's working memory.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Persistent memory + session YAMLs</h3>
+        <p>An auto-memory layer (feedback, user profile, projects, references) plus an append-only session log. Every session starts by reading the last three. What was decided, why, and by whom — all recoverable.</p>
+        <span class="layer-tag">memory/ + sessions/</span>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Know your commercial architecture</h3>
+        <p>It doesn't know which assets you sell, which therapy areas you're in, which vendors you source data from, which payers matter. Asking the model about <em>your</em> portfolio returns generic industry takes.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Typed entity graph + domain KB</h3>
+        <p>Organization, product, therapy-area, market, event, and data-source entities captured as structured YAMLs. Hybrid retrieval with cross-encoder rerank over a typed knowledge base. The model reasons over <em>your</em> commercial architecture, not "pharma in general".</p>
+        <span class="layer-tag">knowledge/graph/ + knowledge/ (KB)</span>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Follow your firm's methodology</h3>
+        <p>Asked to size a field force, a raw model picks a method from whatever's in its training data. It doesn't know which method you use for specialty launches vs primary-care, which decision tree routes the question, or where the validated method config lives.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Methodology taxonomy + role skills</h3>
+        <p>A decision tree classifies the question shape. Role skills (strategist, operator, researcher, analyst) load the right procedures. Method YAMLs constrain the analysis. Every method choice is traced to the decision tree, not improvised.</p>
+        <span class="layer-tag">L5 skills + methodology/</span>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Enforce your conventions mechanically</h3>
+        <p>Reminders in a system prompt get forgotten, ignored, or papered over when the model is under pressure to finish. "Always cite sources" is a soft request; models drift from it silently.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Pre-commit hooks + layered rules</h3>
+        <p>Mechanical gates at commit time: brief-quality checks, entity-schema validation, vendor-scrub, roundtrip integrity. Rules graduate from memory → heuristics → durable rule files. Where possible, every rule has a paired hook that can fail the commit.</p>
+        <span class="layer-tag">.claude/hooks/ + .claude/rules/</span>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Challenge its own answers independently</h3>
+        <p>A single model run is a single perspective. Asked to verify itself, it tends to confirm. Confident prose reads the same whether the underlying claim is tight or wrong.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Triad review + subagent dispatch</h3>
+        <p>Consequential decisions dispatch to a three-perspective triad: challenger (adversarial), architect (structural), strategist (consequences). Parent agent is a filing clerk for their output, not an editor. Acceptance isn't validation — independent verification is.</p>
+        <span class="layer-tag">triad pattern · subagent output contract</span>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-side problem">
+        <div class="gap-label">It can't · by default</div>
+        <h3>Improve from being used</h3>
+        <p>Model weights don't update from your conversations. Good patterns discovered this month dissipate by next. Fixes land on individual sessions — not on the underlying behavior.</p>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side solution">
+        <div class="gap-label">CAP adds</div>
+        <h3>Graduation pipeline · heuristic → rule</h3>
+        <p>Analyst friction captured as feedback. Repeated firings crystallize into heuristic register entries. A triad review graduates proven heuristics to durable rule files (behavioral L2 or operating-model L3). Where mechanically enforceable, a paired hook follows. The rulebook improves without an author.</p>
+        <span class="layer-tag">HEURISTIC_REGISTER · graduation</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>The Layered Stack</h2>
+  <div class="section-h">What sits between the model and the analyst's answer</div>
+  <p class="section-lede">Reading from bottom to top: Claude, then the layers CAP adds on top. Each layer has an explicit purpose and its own file surface in the repo. Layers are composable and portable — change the domain layer, keep everything else.</p>
+
+  <div class="stack">
+    <div class="stack-grid">
+
+      <div class="stack-layer-label"><span class="layer-id">Output</span></div>
+      <div class="stack-block" data-tone="kb">
+        <h4>Commercial answer with evidence chain</h4>
+        <p>What the analyst (or stakeholder) receives. A recommendation, brief, or dashboard grounded in the graph, with every claim traceable to an entity, source, or decision record.</p>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">KB + Graph</span></div>
+      <div class="stack-block" data-tone="kb">
+        <h4>Typed knowledge · hybrid retrieval · entity graph</h4>
+        <p>Structured entities (organizations, products, findings, decisions, methodologies...) plus a typed KB with BM25 + vector + cross-encoder rerank. The reasoning substrate over which the analysis runs.</p>
+        <div class="files">knowledge/graph/ · knowledge/methodology/ · knowledge/research/ · tools/kb_index.py</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">L7 Hooks</span></div>
+      <div class="stack-block" data-tone="hook">
+        <h4>Mechanical enforcement at commit time</h4>
+        <p>Pre-commit hooks that block bad states: schema drift, missing provenance, vendor leak, stale references. Where a rule can be a regex, it becomes a hook.</p>
+        <div class="files">.claude/hooks/</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">L5 Role skills</span></div>
+      <div class="stack-block" data-tone="role">
+        <h4>Per-role procedures · triad composition</h4>
+        <p>Strategist, operator, researcher, analyst, challenger, architect, tester, facilitator, groundskeeper, dataops, finops. Each is a loadable skill with IDENTITY, procedures, dispatch pattern, and output contract.</p>
+        <div class="files">agents/{role}/ · Skill tool</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">L3 Operating + Domain</span></div>
+      <div class="stack-block" data-tone="operating">
+        <h4>Work streams, governance, domain knowledge</h4>
+        <p>Operating model (work streams, TODO scopes, multi-user isolation) and domain knowledge (pharma CE terminology, maturity model, analytical role taxonomy). The <em>domain</em> layer is the swap surface — replace it to port the capability to a different industry.</p>
+        <div class="files">cap-base-operating-model.md · cap-base-domain.md</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">L2 Behavioral</span></div>
+      <div class="stack-block" data-tone="behavioral">
+        <h4>Epistemic honesty · verification · attention · output mode</h4>
+        <p>Dispositions that fire across all roles: evidence-grounded output, independent verification, self-assessment rigor, ambitious depth default, capability-first dispatch. Governs <em>how</em> the agent thinks, not what it does.</p>
+        <div class="files">cap-base-behavioral.md</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">L1 Harness</span></div>
+      <div class="stack-block" data-tone="harness">
+        <h4>Session lifecycle · git discipline · file conventions</h4>
+        <p>How the agent uses the Claude Code CLI in this repo: session start and close routines, active markers, worktree isolation, closing gates, scope signaling, file-writing discipline.</p>
+        <div class="files">CLAUDE.md · sessions/.active/ · CLOSING_ROUTINE.md</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">Memory</span></div>
+      <div class="stack-block" data-tone="memory">
+        <h4>Persistent context across sessions</h4>
+        <p>Auto-memory system captures user profile, feedback, project state, external references. Loaded at every session start so context doesn't reset to zero.</p>
+        <div class="files">memory/MEMORY.md · memory/feedback_*.md</div>
+      </div>
+
+      <div class="stack-layer-label"><span class="layer-id">Base</span></div>
+      <div class="stack-block" data-tone="base">
+        <h4>Claude · the language model</h4>
+        <p>State-of-the-art reasoning, instruction following, and synthesis. Generic; trained on the public internet. <em>Not</em> a commercial analyst on its own — just a very capable general-purpose substrate.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The honest framing</h2>
+  <div class="section-h">What this <em>is</em>, and what it <em>isn't</em></div>
+
+  <div class="honest">
+    <h3>It <strong>is</strong> a plumbing system that makes Claude behave consistently as <em>your</em> commercial analyst.</h3>
+    <p>The layers above compose into a capability that knows your portfolio, follows your methodology, persists what it learns, and defends its answers against independent review. The model does the reasoning; the layers make that reasoning useful at a pharma company.</p>
+
+    <h3 style="margin-top:16px">It <strong>isn't</strong> magic, and it <strong>isn't</strong> a better LLM.</h3>
+    <p>The underlying model is the same one anyone can buy from Anthropic. What differs is the <em>surrounding system</em> — the memory, the rules, the graph, the enforcement, the graduation loop. Swap the model for a newer one tomorrow; the value stays in the layers. That's the point.</p>
+
+    <h3 style="margin-top:16px">It <strong>is</strong> portable.</h3>
+    <p>The domain layer is a single file. Replace it and the same capability re-points at a different industry — manufacturing, insurance, energy. Harness, behavioral, operating, role, hook, and KB plumbing all survive the swap. The agent is the product; the domain is config.</p>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · Why the layers exist</strong> · companion to the <a href="cap_graph_and_journeys.html">system map</a> and <a href="cap_gtm_lens.html">GTM lens</a>.
+</footer>
+
+</main>
+</body>
+</html>

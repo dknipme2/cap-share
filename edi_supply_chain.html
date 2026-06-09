@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>US Pharma Specialty Supply Chain — EDI & DSCSA Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #11161e;
+    --ink: #e7edf4;
+    --ink-dim: #8a97a8;
+    --accent: #5bc8af;
+    --teal: #2cb5a0;
+    --coral: #f08a6a;
+    --purple: #9b7ed9;
+    --amber: #e4b36b;
+    --border: #263140;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  header {
+    padding: 20px 28px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  header .sub {
+    color: var(--ink-dim);
+    font-size: 13px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 0;
+    height: calc(100vh - 72px);
+    min-height: 700px;
+  }
+  .canvas-wrap {
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+  #canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .toggles {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(17, 22, 30, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    backdrop-filter: blur(6px);
+  }
+  .toggles .t-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .toggles label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 3px 0;
+    cursor: pointer;
+  }
+  .toggles .chip {
+    display: inline-block;
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+  }
+  .side {
+    padding: 18px 20px;
+    overflow-y: auto;
+    background: var(--panel);
+  }
+  .side h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #141a24;
+  }
+  .card h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .card .meta {
+    color: var(--ink-dim);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .card p, .card li {
+    font-size: 13px;
+    color: var(--ink);
+    margin: 6px 0;
+  }
+  .card ul {
+    margin: 6px 0 6px 16px;
+    padding: 0;
+  }
+  .empty {
+    color: var(--ink-dim);
+    font-style: italic;
+    font-size: 13px;
+  }
+  .legend-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-dim);
+    padding: 2px 0;
+  }
+  .legend-row .chip {
+    display: inline-block;
+    width: 18px;
+    height: 3px;
+    border-radius: 2px;
+  }
+  .tx-tag {
+    display: inline-block;
+    background: #1c2431;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    margin: 2px 3px 2px 0;
+    color: var(--ink-dim);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  .tx-tag.fulfil { color: var(--teal); border-color: rgba(44, 181, 160, 0.4); }
+  .tx-tag.reverse { color: var(--coral); border-color: rgba(240, 138, 106, 0.4); }
+  .tx-tag.dscsa { color: var(--purple); border-color: rgba(155, 126, 217, 0.4); }
+  footer {
+    padding: 8px 28px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--ink-dim);
+  }
+
+  /* SVG styles */
+  .node rect {
+    stroke: var(--border);
+    stroke-width: 1;
+    rx: 8;
+    ry: 8;
+    cursor: pointer;
+    transition: fill 160ms, stroke 160ms;
+  }
+  .node.active rect {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+  .node text.title {
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--ink);
+    pointer-events: none;
+  }
+  .node text.sub {
+    font-size: 11px;
+    fill: var(--ink-dim);
+    pointer-events: none;
+  }
+  .edge {
+    stroke-width: 1.6;
+    fill: none;
+    opacity: 0.85;
+    transition: opacity 160ms, stroke-width 160ms;
+  }
+  .edge.fulfil { stroke: var(--teal); }
+  .edge.reverse { stroke: var(--coral); stroke-dasharray: 4 3; }
+  .edge.dscsa { stroke: var(--purple); stroke-dasharray: 1 3; }
+  .edge.dim { opacity: 0.12; }
+  .edge.hl { stroke-width: 2.8; opacity: 1; }
+  .edge-label {
+    font-size: 10.5px;
+    fill: var(--ink-dim);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    pointer-events: none;
+    opacity: 0.75;
+  }
+  .edge-label.hl { fill: var(--ink); opacity: 1; }
+  .edge-label.dim { opacity: 0.1; }
+  .arrow-head { fill: currentColor; }
+</style>
+</head>
+<body>
+<header>
+  <h1>US Pharma Specialty Supply Chain — EDI &amp; DSCSA Map</h1>
+  <div class="sub">Who the nodes are, what flows on each edge, at what grain. Click a node or edge for detail. Vintage 2026-04-24.</div>
+</header>
+
+<div class="layout">
+  <div class="canvas-wrap">
+    <svg id="canvas"></svg>
+    <div class="toggles">
+      <div class="t-label">Show flows</div>
+      <label><input type="checkbox" id="t-fulfil" checked> <span class="chip" style="background: var(--teal)"></span> Product &amp; fulfillment (850/855/856/810)</label>
+      <label><input type="checkbox" id="t-reverse" checked> <span class="chip" style="background: var(--coral)"></span> Reverse data (867/852/844/849)</label>
+      <label><input type="checkbox" id="t-dscsa" checked> <span class="chip" style="background: var(--purple)"></span> DSCSA (EPCIS + T3)</label>
+    </div>
+  </div>
+
+  <aside class="side">
+    <h2>Selection detail</h2>
+    <div id="detail">
+      <div class="empty">Click a node or an edge to see details. Hover to preview.</div>
+    </div>
+    <h2 style="margin-top: 22px;">Legend</h2>
+    <div class="legend-row"><span class="chip" style="background: var(--teal)"></span>Solid = product flow / fulfillment (downstream)</div>
+    <div class="legend-row"><span class="chip" style="background: var(--coral)"></span>Dashed = reverse data (upstream to manufacturer)</div>
+    <div class="legend-row"><span class="chip" style="background: var(--purple)"></span>Dotted = DSCSA track-and-trace (parallel rail)</div>
+  </aside>
+</div>
+
+<footer>
+  Market-infrastructure names (wholesalers, PBM-owned specialty pharmacies, rare-disease independents) are preserved as industry participants. Source: six research briefs synthesized 2026-04-24.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+<script>
+const nodes = [
+  { id: "mfr", row: 0, col: 1, w: 180, h: 60,
+    title: "Manufacturer",
+    sub: "SGTIN commissioner · T3 originator · GTN owner",
+    role: "Holds title from manufacture; commissions unit-serialized SGTINs at packaging; originates T3 documents (TH/TI/TS); owns the gross-to-net accrual. Recognizes revenue at 3PL-to-wholesaler handoff under ASC 606.",
+    examples: "Scale-agnostic. For CAP engagements this is the end client."
+  },
+  { id: "3pl", row: 1, col: 1, w: 180, h: 60,
+    title: "3PL / Logistics",
+    sub: "Custody only — NO title transfer",
+    role: "Warehouses, fulfills, handles cold-chain / advanced therapy, ships on manufacturer's behalf. Does NOT take title. Under DSCSA, licensed trading-partner class but not title-holder — product stays on manufacturer books.",
+    examples: "Cencora ICS · McKesson RxCrossroads · Cardinal Specialty Solutions · Knipper · LifeScience Logistics · World Courier (international)"
+  },
+  { id: "whl", row: 2, col: 0, w: 190, h: 60,
+    title: "Titled Wholesaler",
+    sub: "Big 3 · ~90%+ of Rx distribution",
+    role: "Takes title, warehouses at regional DCs, ships to retail pharmacy / hospital / LTC / physician office / specialty pharmacy against customer POs. Files 844 chargebacks for below-WAC contract sales.",
+    examples: "Cencora (fka AmerisourceBergen) · McKesson · Cardinal Health"
+  },
+  { id: "sd", row: 2, col: 2, w: 190, h: 60,
+    title: "Specialty Distributor",
+    sub: "Mostly Big-3 subsidiaries",
+    role: "Takes title and resells specialty pharmaceuticals primarily to physician offices, hospital outpatient clinics, closed-door pharmacies. Serves the buy-and-bill channel. Bundles GPO contracts, reimbursement support, practice inventory software.",
+    examples: "Cencora: ASD Healthcare · Besse Medical · Oncology Supply · ICS · McKesson: Specialty Health · Biologics by McKesson · Cardinal: Specialty Pharmaceutical Distribution · CuraScript SD (Evernorth/Cigna) · FFF Enterprises · Metro Medical"
+  },
+  { id: "sp", row: 3, col: 0, w: 190, h: 60,
+    title: "Specialty Pharmacy",
+    sub: "PBM-3 ~66% · rare-disease independents · health-system",
+    role: "Dispenses specialty drugs to patients under the pharmacy benefit (home ship) or white-bags to provider. Provides adherence, clinical care, prior auth, copay-assist enrollment.",
+    examples: "PBM-3: CVS Specialty · Accredo (Evernorth/Cigna) · Optum Specialty (UHG) · Rare/independent: PANTHERx · Biologics by McKesson · Orsini · Onco360 · AnovoRx · RareMed · Soleo · Senderra · Health-system: 553 accredited locations (2025)"
+  },
+  { id: "prov", row: 3, col: 2, w: 190, h: 60,
+    title: "Provider / Hospital",
+    sub: "Buy-and-bill channel",
+    role: "Physician office / hospital clinic takes title, stocks, administers to patient in-office, bills medical benefit (Part B / J-code for Medicare, commercial contract rate). Dominant for provider-administered oncology despite payer pressure toward white-bag.",
+    examples: "Community oncology (US Oncology Network, OneOncology) · hospital outpatient clinics · infusion centers · physician practices owned by Big-3-wholesaler MSO investments"
+  },
+  { id: "pat", row: 4, col: 1, w: 180, h: 60,
+    title: "Patient",
+    sub: "Home ship · white-bag · or in-office administration",
+    role: "End recipient. DSCSA decommissioning event occurs at dispense (specialty pharmacy) or administration (provider). Patient-level data flows back to manufacturer via hub/SP feeds, patient tokens (where permitted), and adherence signals.",
+    examples: "—"
+  },
+];
+
+const edges = [
+  // FULFILLMENT (downstream, product flow)
+  { id: "mfr-3pl-f", from: "mfr", to: "3pl", type: "fulfil",
+    label: "940/943",
+    txns: [{ code: "940", desc: "Warehouse Shipping Order" }, { code: "943", desc: "Stock Transfer Shipment" }],
+    cadence: "Daily (event-driven)", grain: "Per-shipment; pallet/case/unit hierarchy",
+    notes: "Manufacturer instructs 3PL what to ship. 3PL responds with 945 (shipping advice) and 944 (receipt advice). No title transfer."
+  },
+  { id: "3pl-whl-f", from: "3pl", to: "whl", type: "fulfil",
+    label: "855/856/810",
+    txns: [{ code: "850", desc: "Purchase Order (wholesaler initiates)" }, { code: "855", desc: "PO Acknowledgment" }, { code: "856", desc: "Advance Ship Notice (with lot + serial for DSCSA)" }, { code: "810", desc: "Invoice" }],
+    cadence: "Per shipment, daily-to-weekly volume", grain: "Per-line, NDC, lot, qty",
+    notes: "Title TRANSFERS at this hop. Manufacturer recognizes revenue (net of GTN accruals). 856 carries DSCSA-relevant lot + serial metadata — completeness is compliance-critical."
+  },
+  { id: "3pl-sd-f", from: "3pl", to: "sd", type: "fulfil",
+    label: "855/856/810",
+    txns: [{ code: "850", desc: "Purchase Order" }, { code: "855", desc: "PO Acknowledgment" }, { code: "856", desc: "Advance Ship Notice" }, { code: "810", desc: "Invoice" }],
+    cadence: "Per shipment", grain: "Per-line, NDC, lot, qty",
+    notes: "Same pattern as 3PL→wholesaler. Under exclusive distribution, the specialty distributor (e.g., ICS as a legal entity distinct from ICS the 3PL) may be the sole title-taker in the channel."
+  },
+  { id: "whl-sp-f", from: "whl", to: "sp", type: "fulfil",
+    label: "850/855/856/810",
+    txns: [{ code: "850", desc: "Purchase Order" }, { code: "855", desc: "PO Acknowledgment" }, { code: "856", desc: "Advance Ship Notice" }, { code: "810", desc: "Invoice" }],
+    cadence: "Per shipment", grain: "Per-line, NDC, lot, qty",
+    notes: "Specialty pharmacies order from wholesalers for mass-market specialty oral drugs. For limited-distribution products, this edge may not exist — SP orders direct from specialty distributor under exclusive agreements."
+  },
+  { id: "sd-prov-f", from: "sd", to: "prov", type: "fulfil",
+    label: "850/855/856/810",
+    txns: [{ code: "850", desc: "Purchase Order" }, { code: "855", desc: "PO Acknowledgment" }, { code: "856", desc: "Advance Ship Notice" }, { code: "810", desc: "Invoice" }],
+    cadence: "Per shipment", grain: "Per-line, NDC, lot, qty",
+    notes: "Buy-and-bill channel: provider orders directly from specialty distributor. Provider takes title, administers to patient, bills medical benefit."
+  },
+  { id: "sd-sp-f", from: "sd", to: "sp", type: "fulfil",
+    label: "850/855/856/810",
+    txns: [{ code: "850", desc: "Purchase Order" }, { code: "855", desc: "PO Acknowledgment" }, { code: "856", desc: "Advance Ship Notice" }, { code: "810", desc: "Invoice" }],
+    cadence: "Per shipment", grain: "Per-line, NDC, lot, qty",
+    notes: "Exclusive distribution path: specialty distributor → SP. Typical rare-disease pattern where 2-5 named SPs sit downstream of one titled specialty distributor."
+  },
+  { id: "sp-pat-f", from: "sp", to: "pat", type: "fulfil",
+    label: "dispense",
+    txns: [{ code: "—", desc: "No EDI at this boundary — pharmacy claim adjudication via NCPDP Telecom (separate standard)" }],
+    cadence: "Per fill", grain: "Patient Rx, NDC, days supply, refill number",
+    notes: "Specialty pharmacy dispenses to patient. Home ship or white-bag to provider office for administration. DSCSA decommission event occurs here."
+  },
+  { id: "prov-pat-f", from: "prov", to: "pat", type: "fulfil",
+    label: "administer",
+    txns: [{ code: "—", desc: "No EDI — medical benefit claim via 837P professional claim (separate flow)" }],
+    cadence: "Per administration", grain: "Patient encounter, J-code, dose",
+    notes: "Buy-and-bill: provider administers to patient in-office, bills payer's medical benefit. DSCSA decommission at administration."
+  },
+
+  // REVERSE DATA (upstream to manufacturer)
+  { id: "whl-mfr-r", from: "whl", to: "mfr", type: "reverse",
+    label: "867/852/844",
+    txns: [{ code: "867", desc: "Product Transfer & Resale Report — sell-through" }, { code: "852", desc: "Product Activity Data — inventory + movement" }, { code: "844", desc: "Chargeback Request — below-WAC contract claims" }, { code: "846", desc: "Inventory Advice" }, { code: "180", desc: "Return Merchandise Authorization" }],
+    cadence: "867/852 weekly · 844 daily · 180 event-driven", grain: "Aggregated by ship-to class-of-trade for broadline; often BLINDED at end-customer level",
+    notes: "The primary channel-visibility signal from broadline wholesale. Blinding is wholesaler policy, not standard — 867 may arrive reporting by class-of-trade without naming the pharmacy. 844 is the only feed that identifies the contract end-customer by ID (DEA/HIN/340B/proprietary)."
+  },
+  { id: "sd-mfr-r", from: "sd", to: "mfr", type: "reverse",
+    label: "867/852/844",
+    txns: [{ code: "867", desc: "Product Transfer & Resale Report" }, { code: "852", desc: "Product Activity Data" }, { code: "844", desc: "Chargeback Request" }],
+    cadence: "867/852 weekly · 844 daily", grain: "Often ship-to-specific, NDC, lot, date",
+    notes: "Specialty distributor feeds are TIGHTER than broadline wholesale — ship-to detail is often preserved for provider-practice visibility. Critical for buy-and-bill channel analytics."
+  },
+  { id: "sp-mfr-r", from: "sp", to: "mfr", type: "reverse",
+    label: "867 / flat-file",
+    txns: [{ code: "867", desc: "867-analog or HDA 867 with patient tokens" }, { code: "—", desc: "Custom flat-files (most common for SPs)" }, { code: "—", desc: "Hub-service portal feeds" }],
+    cadence: "Daily-to-weekly (deal-specific)", grain: "Patient-tokenized dispense detail where permitted; adherence status; hub-service linkage",
+    notes: "Under LDN agreements manufacturers contract directly with SPs for enriched 867-analog data. PBM-owned SPs tend to provide less enriched data than rare-disease independents by LDN contract design. THE single most important data visibility question for rare-disease manufacturers: do my contracted SPs send me patient-level data?"
+  },
+  { id: "mfr-whl-r", from: "mfr", to: "whl", type: "reverse",
+    label: "845/849",
+    txns: [{ code: "845", desc: "Price Authorization — contract price + eligible customers" }, { code: "849", desc: "Chargeback Response — accept/reject/adjust 844 lines" }],
+    cadence: "845 on contract change · 849 daily response to 844", grain: "Per-line",
+    notes: "The manufacturer → wholesaler response to 850/844. 845 defines which customers are eligible for which prices on which NDCs — downstream failures in 845 loading are the dominant root cause of chargeback disputes. 849 closes the chargeback loop line-by-line."
+  },
+
+  // DSCSA (separate rail, parallel to EDI)
+  { id: "mfr-3pl-d", from: "mfr", to: "3pl", type: "dscsa",
+    label: "EPCIS + T3",
+    txns: [{ code: "EPCIS", desc: "Commission, Pack, Ship events (unit-level SGTIN)" }, { code: "T3", desc: "TH / TI / TS documents" }],
+    cadence: "Within 1 business day per transfer", grain: "Unit-level SGTIN; pallet/case/unit aggregation",
+    notes: "Manufacturer commissions SGTINs and emits originating T3. 3PL is non-title custodian — propagates T3 forward but does not originate. Enforcement active since May 27, 2025 for manufacturers."
+  },
+  { id: "3pl-whl-d", from: "3pl", to: "whl", type: "dscsa",
+    label: "EPCIS + T3",
+    txns: [{ code: "EPCIS", desc: "Ship event (from 3PL), Receive event (at wholesaler)" }, { code: "T3", desc: "Forward T3 within 1 business day" }],
+    cadence: "Within 1 business day", grain: "Unit-level SGTIN",
+    notes: "Wholesale distributor enforcement active since August 27, 2025. Must receive + forward T3, verify saleable returns via VRS, respond to tracing requests within 24-48h."
+  },
+  { id: "whl-sp-d", from: "whl", to: "sp", type: "dscsa",
+    label: "EPCIS + T3",
+    txns: [{ code: "EPCIS", desc: "Ship + Receive events" }, { code: "T3", desc: "Forward T3" }],
+    cadence: "Within 1 business day", grain: "Unit-level SGTIN",
+    notes: "Specialty pharmacies (large dispensers) are in-scope today. Small dispensers (≤25 FT pharmacists/techs at parent) exempt through November 27, 2026."
+  },
+  { id: "sd-sp-d", from: "sd", to: "sp", type: "dscsa",
+    label: "EPCIS + T3",
+    txns: [{ code: "EPCIS", desc: "Ship + Receive events" }, { code: "T3", desc: "Forward T3" }],
+    cadence: "Within 1 business day", grain: "Unit-level SGTIN",
+    notes: "Exclusive distribution path carries the same DSCSA obligations as broadline — EPCIS + T3 flow on every title transfer."
+  },
+  { id: "sd-prov-d", from: "sd", to: "prov", type: "dscsa",
+    label: "EPCIS + T3",
+    txns: [{ code: "EPCIS", desc: "Ship + Receive events" }, { code: "T3", desc: "Forward T3" }],
+    cadence: "Within 1 business day", grain: "Unit-level SGTIN",
+    notes: "Provider (as dispenser equivalent for buy-and-bill) receives T3 and retains 6 years."
+  },
+  { id: "sp-pat-d", from: "sp", to: "pat", type: "dscsa",
+    label: "decommission",
+    txns: [{ code: "EPCIS", desc: "Decommission event at dispense" }],
+    cadence: "Per fill", grain: "Unit-level SGTIN",
+    notes: "Terminal DSCSA event at dispense. Enables returns analytics, diversion detection, gray-market leakage detection (if SGTIN reappears out of custody)."
+  },
+  { id: "prov-pat-d", from: "prov", to: "pat", type: "dscsa",
+    label: "decommission",
+    txns: [{ code: "EPCIS", desc: "Decommission event at administration" }],
+    cadence: "Per administration", grain: "Unit-level SGTIN",
+    notes: "Terminal DSCSA event in the buy-and-bill path."
+  },
+];
+
+// Render
+
+const svgEl = document.getElementById("canvas");
+const svg = d3.select(svgEl);
+const W = () => svgEl.clientWidth;
+const H = () => svgEl.clientHeight;
+
+const ROWS = 5;
+const COLS = 3;
+
+function nodeCenter(n, w, h) {
+  const colWidth = w / COLS;
+  const rowHeight = h / ROWS;
+  const x = colWidth * (n.col + 0.5);
+  const y = rowHeight * (n.row + 0.5);
+  return { x, y };
+}
+
+function layout() {
+  const w = W(), h = H();
+  const positions = {};
+  nodes.forEach(n => {
+    const { x, y } = nodeCenter(n, w, h);
+    positions[n.id] = { x, y };
+  });
+  return positions;
+}
+
+function render() {
+  svg.selectAll("*").remove();
+  const pos = layout();
+
+  // defs for arrowheads
+  const defs = svg.append("defs");
+  ["fulfil", "reverse", "dscsa"].forEach(t => {
+    const color = t === "fulfil" ? "#2cb5a0" : t === "reverse" ? "#f08a6a" : "#9b7ed9";
+    defs.append("marker")
+      .attr("id", "arrow-" + t)
+      .attr("viewBox", "0 -4 8 8")
+      .attr("refX", 7).attr("refY", 0)
+      .attr("markerWidth", 7).attr("markerHeight", 7)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-4L8,0L0,4")
+      .attr("fill", color);
+  });
+
+  // edges layer
+  const edgeG = svg.append("g").attr("class", "edges");
+  const edgeLabelG = svg.append("g").attr("class", "edge-labels");
+
+  // edge curves — offset multiple edges between same nodes
+  const edgesByPair = {};
+  edges.forEach(e => {
+    const key = [e.from, e.to].sort().join("-");
+    edgesByPair[key] = edgesByPair[key] || [];
+    edgesByPair[key].push(e);
+  });
+
+  // pre-count offset index for each edge
+  const edgeOffsets = {};
+  Object.keys(edgesByPair).forEach(key => {
+    const group = edgesByPair[key];
+    group.forEach((e, i) => {
+      edgeOffsets[e.id] = { index: i, total: group.length };
+    });
+  });
+
+  function pathFor(e) {
+    const from = pos[e.from];
+    const to = pos[e.to];
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    // shorten so arrow lands on border
+    const nodeFrom = nodes.find(n => n.id === e.from);
+    const nodeTo = nodes.find(n => n.id === e.to);
+    const pad = 40;
+    const tx = to.x - (dx / len) * pad;
+    const ty = to.y - (dy / len) * pad;
+    const fx = from.x + (dx / len) * pad;
+    const fy = from.y + (dy / len) * pad;
+    // perpendicular offset for edge separation
+    const off = edgeOffsets[e.id];
+    const perp = { x: -dy / len, y: dx / len };
+    const offset = (off.index - (off.total - 1) / 2) * 28;
+    const mx = (fx + tx) / 2 + perp.x * offset;
+    const my = (fy + ty) / 2 + perp.y * offset;
+    return { d: `M${fx},${fy} Q${mx},${my} ${tx},${ty}`, mx, my };
+  }
+
+  const edgeSel = edgeG.selectAll("path")
+    .data(edges, d => d.id)
+    .enter().append("path")
+    .attr("class", d => "edge " + d.type)
+    .attr("d", d => pathFor(d).d)
+    .attr("marker-end", d => `url(#arrow-${d.type})`)
+    .on("mouseenter", (ev, d) => highlightEdge(d))
+    .on("mouseleave", (ev, d) => unhighlight())
+    .on("click", (ev, d) => selectEdge(d));
+
+  const edgeLabelSel = edgeLabelG.selectAll("text")
+    .data(edges, d => d.id)
+    .enter().append("text")
+    .attr("class", "edge-label")
+    .attr("x", d => pathFor(d).mx)
+    .attr("y", d => pathFor(d).my)
+    .attr("text-anchor", "middle")
+    .attr("dy", -4)
+    .text(d => d.label)
+    .on("mouseenter", (ev, d) => highlightEdge(d))
+    .on("mouseleave", unhighlight)
+    .on("click", (ev, d) => selectEdge(d));
+
+  // nodes
+  const nodeG = svg.append("g").attr("class", "nodes");
+  const nodeSel = nodeG.selectAll("g.node")
+    .data(nodes, d => d.id)
+    .enter().append("g")
+    .attr("class", "node")
+    .attr("transform", d => {
+      const p = pos[d.id];
+      return `translate(${p.x - d.w/2}, ${p.y - d.h/2})`;
+    })
+    .on("mouseenter", (ev, d) => highlightNode(d))
+    .on("mouseleave", unhighlight)
+    .on("click", (ev, d) => selectNode(d));
+
+  nodeSel.append("rect")
+    .attr("width", d => d.w)
+    .attr("height", d => d.h)
+    .attr("fill", d => nodeFill(d));
+
+  nodeSel.append("text")
+    .attr("class", "title")
+    .attr("x", d => d.w / 2)
+    .attr("y", 22)
+    .attr("text-anchor", "middle")
+    .text(d => d.title);
+
+  nodeSel.append("text")
+    .attr("class", "sub")
+    .attr("x", d => d.w / 2)
+    .attr("y", 42)
+    .attr("text-anchor", "middle")
+    .text(d => d.sub);
+
+  applyToggles();
+}
+
+function nodeFill(n) {
+  if (n.id === "mfr") return "#1e3a33";
+  if (n.id === "3pl") return "#17232e";
+  if (n.id === "whl" || n.id === "sd") return "#22283a";
+  if (n.id === "sp" || n.id === "prov") return "#2a2338";
+  if (n.id === "pat") return "#2a2118";
+  return "#1a2028";
+}
+
+function highlightEdge(e) {
+  d3.selectAll(".edge").classed("dim", d => d.id !== e.id).classed("hl", d => d.id === e.id);
+  d3.selectAll(".edge-label").classed("dim", d => d.id !== e.id).classed("hl", d => d.id === e.id);
+}
+function highlightNode(n) {
+  d3.selectAll(".node").classed("active", d => d.id === n.id);
+  d3.selectAll(".edge").classed("dim", d => d.from !== n.id && d.to !== n.id).classed("hl", d => d.from === n.id || d.to === n.id);
+  d3.selectAll(".edge-label").classed("dim", d => d.from !== n.id && d.to !== n.id).classed("hl", d => d.from === n.id || d.to === n.id);
+}
+function unhighlight() {
+  d3.selectAll(".edge").classed("dim", false).classed("hl", false);
+  d3.selectAll(".edge-label").classed("dim", false).classed("hl", false);
+  d3.selectAll(".node").classed("active", false);
+  applyToggles();
+}
+
+function selectNode(n) {
+  const detail = document.getElementById("detail");
+  detail.innerHTML = `
+    <div class="card">
+      <h3>${n.title}</h3>
+      <div class="meta">${n.sub}</div>
+      <p>${n.role}</p>
+      ${n.examples && n.examples !== "—" ? `<p><strong>Examples:</strong> ${n.examples}</p>` : ""}
+    </div>
+  `;
+}
+function selectEdge(e) {
+  const fromN = nodes.find(n => n.id === e.from);
+  const toN = nodes.find(n => n.id === e.to);
+  const tagClass = e.type;
+  const detail = document.getElementById("detail");
+  detail.innerHTML = `
+    <div class="card">
+      <h3>${fromN.title} → ${toN.title}</h3>
+      <div class="meta">${e.type === "fulfil" ? "Product &amp; fulfillment" : e.type === "reverse" ? "Reverse data" : "DSCSA track-and-trace"}</div>
+      <div style="margin: 8px 0;">
+        ${e.txns.map(t => `<span class="tx-tag ${tagClass}">${t.code}</span> ${t.desc}<br>`).join("")}
+      </div>
+      <p><strong>Cadence:</strong> ${e.cadence}</p>
+      <p><strong>Grain:</strong> ${e.grain}</p>
+      <p>${e.notes}</p>
+    </div>
+  `;
+}
+
+function applyToggles() {
+  const showFulfil = document.getElementById("t-fulfil").checked;
+  const showReverse = document.getElementById("t-reverse").checked;
+  const showDscsa = document.getElementById("t-dscsa").checked;
+  d3.selectAll(".edge").style("display", d => {
+    if (d.type === "fulfil" && !showFulfil) return "none";
+    if (d.type === "reverse" && !showReverse) return "none";
+    if (d.type === "dscsa" && !showDscsa) return "none";
+    return null;
+  });
+  d3.selectAll(".edge-label").style("display", d => {
+    if (d.type === "fulfil" && !showFulfil) return "none";
+    if (d.type === "reverse" && !showReverse) return "none";
+    if (d.type === "dscsa" && !showDscsa) return "none";
+    return null;
+  });
+}
+
+["t-fulfil", "t-reverse", "t-dscsa"].forEach(id => {
+  document.getElementById(id).addEventListener("change", applyToggles);
+});
+
+render();
+window.addEventListener("resize", render);
+</script>
+</body>
+</html>

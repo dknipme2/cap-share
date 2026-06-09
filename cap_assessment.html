@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CAP — Honest Assessment · DRAFT</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --panel-3: #1a2238;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.12);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.14);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.14);
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.12);
+    --green: #4ade80;
+    --green-soft: rgba(74, 222, 128, 0.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 15.5px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 44px 28px 96px; }
+  code { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 24px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  .topnav a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+  .topnav .draft-pill {
+    margin-left: auto;
+    background: var(--amber-soft);
+    color: var(--amber);
+    font-family: "SF Mono", monospace;
+    font-size: 10.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+
+  /* Hero */
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  h1 {
+    margin: 0 0 18px;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    color: #ffffff;
+    max-width: 26ch;
+  }
+  .hero-lede {
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.55;
+    max-width: 64ch;
+    margin: 0 0 22px;
+  }
+  .hero-lede em { color: var(--teal-ink); font-style: normal; font-weight: 500; }
+  .draft-banner {
+    background: var(--amber-soft);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--amber);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 36px;
+    max-width: 64ch;
+  }
+  .draft-banner strong { color: #fde68a; }
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  section { margin-bottom: 56px; }
+  section > h2 {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  section > .section-h {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  section > .section-lede {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 72ch;
+    margin: 0 0 26px;
+  }
+
+  /* Status tiles */
+  .status-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 820px) { .status-row { grid-template-columns: 1fr; } }
+  .status-tile {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .status-tile.ok { border-left: 3px solid var(--green); }
+  .status-tile.care { border-left: 3px solid var(--amber); }
+  .status-tile.gap { border-left: 3px solid var(--rose); }
+  .status-tile .tag {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .status-tile.ok .tag { color: var(--green); }
+  .status-tile.care .tag { color: var(--amber); }
+  .status-tile.gap .tag { color: var(--rose); }
+  .status-tile h3 {
+    margin: 0 0 6px;
+    font-size: 15.5px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .status-tile p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .status-tile p code {
+    background: var(--panel-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+
+  /* Capability inventory */
+  .capability-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 820px) { .capability-grid { grid-template-columns: 1fr; } }
+  .cap-card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .cap-card.built { border-left: 3px solid var(--green); }
+  .cap-card h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .cap-card ul {
+    margin: 0;
+    padding-left: 16px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .cap-card li { margin-bottom: 4px; }
+  .cap-card li code {
+    background: var(--panel-2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+  .cap-card li::marker { color: var(--green); }
+
+  /* Gap list */
+  .gap-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 160px;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-items: start;
+  }
+  @media (max-width: 760px) { .gap-row { grid-template-columns: 1fr; } }
+  .gap-row .gap-label {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 700;
+    padding-top: 2px;
+  }
+  .gap-row h4 {
+    margin: 0 0 6px;
+    font-size: 14.5px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .gap-row p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .gap-row .severity {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding-top: 4px;
+  }
+  .gap-row .severity.blocking { color: var(--rose); }
+  .gap-row .severity.caution { color: var(--amber); }
+  .gap-row .severity.future { color: var(--indigo); }
+
+  /* Comparison table */
+  .comparison-table {
+    overflow-x: auto;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+  }
+  .comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .comparison-table th {
+    background: var(--panel-3);
+    color: var(--ink-faint);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .comparison-table td {
+    padding: 12px 14px;
+    color: var(--ink-soft);
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule-soft);
+    line-height: 1.5;
+  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .comparison-table td.platform {
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .comparison-table td.cap-col {
+    background: rgba(20, 184, 166, 0.06);
+    color: var(--ink);
+  }
+  .mark-ok { color: var(--green); font-weight: 600; }
+  .mark-partial { color: var(--amber); font-weight: 600; }
+  .mark-miss { color: var(--rose); font-weight: 600; }
+  .mark-na { color: var(--ink-faint); }
+
+  /* Roadmap phases */
+  .phase-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .phase-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 18px;
+    align-items: start;
+    padding: 16px 18px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+  }
+  @media (max-width: 720px) { .phase-row { grid-template-columns: 1fr; } }
+  .phase-row.now { border-left: 3px solid var(--green); }
+  .phase-row.next { border-left: 3px solid var(--teal); }
+  .phase-row.future { border-left: 3px solid var(--indigo); opacity: 0.92; }
+  .phase-row .phase-num {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+  .phase-row.now .phase-num { color: var(--green); }
+  .phase-row.next .phase-num { color: var(--teal-ink); }
+  .phase-row.future .phase-num { color: var(--indigo); }
+  .phase-row .phase-num .phase-title-sub {
+    display: block;
+    margin-top: 4px;
+    font-family: -apple-system, sans-serif;
+    color: var(--ink);
+    font-size: 14.5px;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+  .phase-row .phase-body p {
+    margin: 0 0 6px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .phase-row .phase-body p:last-child { margin-bottom: 0; }
+  .phase-row .phase-body strong { color: var(--ink); font-weight: 600; }
+
+  /* Honest callout */
+  .honest-call {
+    background: linear-gradient(180deg, rgba(251, 191, 36, 0.05), transparent 100%), var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--amber);
+    border-radius: 10px;
+    padding: 22px 26px;
+  }
+  .honest-call h3 {
+    margin: 0 0 10px;
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .honest-call p {
+    margin: 0 0 12px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .honest-call p:last-child { margin-bottom: 0; }
+  .honest-call strong { color: var(--ink); font-weight: 600; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html">Management</a>
+  <a href="cap_assessment.html" class="active" style="margin-left:auto">Assessment</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · Honest assessment</div>
+  <h1>What's built, what's missing, and how we compare</h1>
+  <p class="hero-lede">The story pages are the outward-facing view. This is the inward-facing one. <em>Where does CAP actually sit today?</em> What does it do well, where does it strain, and what does it have to become to serve more than the current scale point — single-company embed with two or three analysts and many consumers.</p>
+  <div class="draft-banner">
+    <strong>Internal framing · living document.</strong> Updated as capability lands. Named gaps, phased plan, and cross-platform comparison are point-in-time reads — revisit quarterly or when any Phase 1 / 2 item closes.
+  </div>
+</header>
+
+<!-- WHERE WE ARE -->
+<section>
+  <h2>Where we are</h2>
+  <div class="section-h">The current scale point is real — and narrow</div>
+  <p class="section-lede">CAP is proven at <strong>one company, two-to-three analysts, many consumers</strong>. Everything under that bar works well. Above it, the coordination and permissioning primitives that let the small team fly start to strain.</p>
+
+  <div class="status-row">
+    <div class="status-tile ok">
+      <div class="tag">Works today</div>
+      <h3>1 company · 2–3 analysts</h3>
+      <p>Single-tenant embed. Worktree isolation + <code>.active</code> markers + CODEOWNERS + personal sibling repos carry the whole coordination load. Disciplined, works cleanly.</p>
+    </div>
+    <div class="status-tile ok">
+      <div class="tag">Works today</div>
+      <h3>Many consumers</h3>
+      <p>claude.ai Projects serve managers and VPs at arbitrary scale. Read-only graph access, evidence-traced follow-ups, no IT install. Scales linearly without system-side pressure.</p>
+    </div>
+    <div class="status-tile care">
+      <div class="tag">Strains above bar</div>
+      <h3>5+ analysts, multi-tenant, regulated</h3>
+      <p>Coordination becomes overhead. Permissioning is catalog-level + CODEOWNERS, not per-engagement or per-entity. No SSO, no enterprise audit service, no formal governance workflow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S BUILT -->
+<section>
+  <h2>What's built</h2>
+  <div class="section-h">The capability inventory — real, running, load-bearing</div>
+  <p class="section-lede">Not a wish list. Each of these is in the repo, firing on every session, and has been used on at least one engagement (or is covered by the shipped test suite).</p>
+
+  <div class="capability-grid">
+    <div class="cap-card built">
+      <h4>Entity graph · 21 kinds</h4>
+      <ul>
+        <li>6 foundation types (org / product / TA / market / event / data_source) — 3 populated, 3 config-ready</li>
+        <li>11 work artifacts (engagement / finding / recommendation / outcome / decision / hypothesis / assumption / driver / constraint / risk / assessment)</li>
+        <li>4 system objects (methodology / golden_prompt / golden_workflow / data_pipeline)</li>
+        <li>Queryable via <code>tools/entity_graph.py</code></li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Research &amp; KB</h4>
+      <ul>
+        <li>6-per-entity research config family (shipped 2026-04-19)</li>
+        <li>Hybrid retrieval (BM25 + vector) + cross-encoder rerank — load-bearing, never disabled</li>
+        <li>KB eval harness at <code>.groundskeeper/eval_30q.py</code></li>
+        <li>Universal research flow (decompose → KB check → coverage map → dispatch → file → score)</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Agent skill system · 11 roles</h4>
+      <ul>
+        <li>Analytical: strategist, operator, researcher, analyst</li>
+        <li>Review: challenger, architect, tester</li>
+        <li>Platform ops: facilitator, groundskeeper, dataops, finops</li>
+        <li>Triad review pattern + subagent output contract</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Claim confidence + validation</h4>
+      <ul>
+        <li>7 confidence tiers + 2 dispute flags</li>
+        <li>Brief-level validation score formula</li>
+        <li>Per-role handling matrix (strategist / operator / researcher / analyst)</li>
+        <li>Flags are sticky — never stripped in propagation</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Rules stack + graduation</h4>
+      <ul>
+        <li>L1 harness (CLAUDE.md) · L2 behavioral · L3 operating+domain · L5 skills · L7 hooks</li>
+        <li>Memory → heuristic candidate → triad review → graduation to rule file</li>
+        <li>Pre-commit hooks for mechanical enforcement</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Data plane</h4>
+      <ul>
+        <li>Databricks bronze → silver → gold; Unity Catalog governance tags</li>
+        <li>Data design toolbox (12 patterns) · data tools toolbox (5 slots)</li>
+        <li>Feasibility engine (<code>tools/feasibility_check.py</code>) — analytical roles × grain match against method YAMLs</li>
+        <li>ANALYTICAL_ROLE_TAXONOMY (16-role controlled vocabulary)</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Multi-instance coordination (small scale)</h4>
+      <ul>
+        <li>Worktree isolation per analyst session</li>
+        <li><code>.active</code> markers with file-overlap warnings</li>
+        <li>Personal sibling-repo pattern for analyst workspaces</li>
+        <li>Scope signaling (business / personal / unscoped)</li>
+        <li>Session YAML append-only log</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Consumer surface</h4>
+      <ul>
+        <li>claude.ai Projects for manager / VP consumption</li>
+        <li>Evidence-traced follow-ups via graph queries</li>
+        <li>Share publish surface (this site) with strict IP-scrub contract</li>
+        <li>Session-bridge prompts for multi-session handoff</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Dashboarding · static + interactive</h4>
+      <ul>
+        <li><strong>Static</strong>: self-contained HTML dashboards (D3.js inline, no build step); the <code>share/</code> surface + GitHub Pages auto-deploy for board and meeting artifacts</li>
+        <li><strong>Interactive</strong>: claude.ai Project boards with live KPIs, bar charts, status stripes, and a cursor — the "board you can talk to"</li>
+        <li><strong>Storyboards</strong>: scenario-based artifacts (portfolio review, launch readiness, LOE defense) — board view paired with conversational drill-down</li>
+        <li><strong>PPT deliverables</strong>: template-based python-pptx for CAP-branded slide decks when the consumer workflow is deck-based</li>
+        <li>No IT install — runs in the tools stakeholders already use</li>
+      </ul>
+    </div>
+
+    <div class="cap-card built">
+      <h4>Guardrailed free-query experience</h4>
+      <ul>
+        <li>Every free-form question answered <strong>against the graph</strong>, not the model's memory — answers stitched from structured entities with stable IDs</li>
+        <li>Evidence trace attached to every answer (finding · method · source · confidence tier)</li>
+        <li>Confidence-flag system (7 tiers) surfaces unverified claims rather than hiding them — <code>[CONFIRMED]</code> / <code>[STRUCTURAL]</code> / <code>[DIRECTIONAL]</code> / <code>[CALCULABLE]</code> / <code>[SPECIFIC]</code> / <code>[STALE]</code> / <code>[ESTIMATED]</code></li>
+        <li>Cross-engagement recall: prior decisions / outcomes persist and feed current answers automatically</li>
+        <li>Hallucination defense: claims without graph grounding land as <code>[SPECIFIC]</code> or <code>[ESTIMATED]</code>, not as facts</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- GAPS -->
+<section>
+  <h2>What's missing</h2>
+  <div class="section-h">The honest gap inventory · enterprise readiness</div>
+  <p class="section-lede">Named in plain language. No euphemisms. Each gap has a severity tag — <em>blocking</em> at enterprise scale, <em>caution</em> where a workaround exists, <em>future</em> where the shape is known but the trigger hasn't fired.</p>
+
+  <div>
+    <div class="gap-row">
+      <div class="gap-label">Gap · collisions</div>
+      <div>
+        <h4>Concurrent-analyst coordination above ~3</h4>
+        <p>Today: <code>.active</code> markers warn on file overlap between concurrent sessions. Worktrees isolate working state. At 5–10+ concurrent analysts, markers become noisy and overlap becomes frequent. No merge-queue, no lock service, no conflict-auto-resolve. Two analysts editing the same entity YAML still requires a human rebase.</p>
+      </div>
+      <div class="severity blocking">BLOCKING · scale</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · permissions</div>
+      <div>
+        <h4>Per-engagement and per-entity permissioning</h4>
+        <p>Today: catalog-level (<code>cdp_dev</code> vs <code>cdp</code>), CODEOWNERS on sensitive paths, personal repos for isolation. No per-entity row-level access. No per-engagement "analyst A can see Cycle entities but not Client-B entities." No enforceable graph-layer permissions. Fine at one company; breaks at multi-tenant.</p>
+      </div>
+      <div class="severity blocking">BLOCKING · multi-tenant</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · authN / SSO</div>
+      <div>
+        <h4>Authentication is git identity + machine auth</h4>
+        <p>No SSO, no directory integration, no user-provisioning workflow. Access to the repo, Databricks catalogs, and claude.ai Projects is provisioned separately and manually. Enterprise IT won't approve this pattern at scale.</p>
+      </div>
+      <div class="severity blocking">BLOCKING · enterprise</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · audit trail</div>
+      <div>
+        <h4>Git log + session YAMLs are the audit surface</h4>
+        <p>Comprehensive for 2–3 analysts. Not regulator-grade. No centralized audit log service, no tamper-evident storage, no structured events for "who read what, when." HIPAA / SOC-2 audit responses would be manual forensic work.</p>
+      </div>
+      <div class="severity caution">CAUTION · regulated use</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · multi-tenancy</div>
+      <div>
+        <h4>Single-tenant per deployment</h4>
+        <p>The domain layer (<code>cap-base-domain.md</code>) is swappable, but per-tenant would require duplicate infrastructure today. No tenant-routing, no per-tenant KB indexes, no cross-tenant IP isolation enforced by the system. Each new company = new CAP instance.</p>
+      </div>
+      <div class="severity future">FUTURE · SaaS shape</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · governance workflow</div>
+      <div>
+        <h4>Heuristic graduation is informal</h4>
+        <p>Today: memory → heuristic register → triad review → rule file. Triad is informal (dispatched from a session); no queue, no formal approval, no role-based sign-off. Works at single-analyst pace; would need workflow enforcement at team scale.</p>
+      </div>
+      <div class="severity caution">CAUTION · team scale</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · uptime / DR</div>
+      <div>
+        <h4>No SLAs, no DR plan beyond git remote</h4>
+        <p>GitHub is the canonical store; Databricks is the compute layer. Both have their own DR. CAP itself has no "platform availability" story — if GitHub is down, sessions can still proceed in local state, but no centralized monitoring exists. Fine for embedded analyst work; not shippable as "platform uptime".</p>
+      </div>
+      <div class="severity future">FUTURE · SaaS shape</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · onboarding</div>
+      <div>
+        <h4>New-analyst onboarding is manual + disciplined</h4>
+        <p>Today: clone repo, read CLAUDE.md, skim last 3 sessions, scope-signal in <code>.active</code> marker. Works because the analyst cohort is tiny. No curriculum, no gated onboarding, no automated skill-assessment. New analysts learn by pairing.</p>
+      </div>
+      <div class="severity caution">CAUTION · team scale</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · enterprise search</div>
+      <div>
+        <h4>KB search is analyst-only</h4>
+        <p><code>tools/kb_index.py</code> runs locally during sessions. No shared search surface for managers/VPs outside claude.ai Projects. No "cross-engagement search" for discovering prior analogs automatically across companies.</p>
+      </div>
+      <div class="severity future">FUTURE · consumer expansion</div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-label">Gap · observability</div>
+      <div>
+        <h4>No system-level telemetry</h4>
+        <p>Session YAMLs capture engagement-level activity; hooks log enforcement events. No unified dashboard for "how is the capability performing across engagements" — throughput, pattern reuse rate, compound-curve position per question family. Would need to stand up to prove the compounding thesis at scale.</p>
+      </div>
+      <div class="severity caution">CAUTION · measurement</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <h2>How we compare</h2>
+  <div class="section-h">Positioning vs adjacent platforms</div>
+  <p class="section-lede">CAP sits in a space that no single category occupies. The table below maps five capability axes against comparable platforms. The thesis: most platforms are <em>framework</em>, <em>analytics</em>, or <em>chat</em>; CAP is all three stitched together for a single commercial-domain embed.</p>
+
+  <div class="comparison-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Typed entity graph</th>
+          <th>Methodology &amp; graduation</th>
+          <th>Agent skill system</th>
+          <th>KB retrieval</th>
+          <th>Domain portability</th>
+          <th>Enterprise readiness</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="platform cap-col">CAP (today)</td>
+          <td class="cap-col"><span class="mark-ok">Yes</span> — 21 kinds</td>
+          <td class="cap-col"><span class="mark-ok">Yes</span> — L1-L7 + graduation</td>
+          <td class="cap-col"><span class="mark-ok">Yes</span> — 11 roles</td>
+          <td class="cap-col"><span class="mark-ok">Yes</span> — hybrid + rerank</td>
+          <td class="cap-col"><span class="mark-ok">Yes</span> — swap domain file</td>
+          <td class="cap-col"><span class="mark-miss">No</span> — 2–3 analysts</td>
+        </tr>
+        <tr>
+          <td class="platform">Palantir Foundry</td>
+          <td><span class="mark-ok">Yes</span> — ontology first-class</td>
+          <td><span class="mark-partial">Partial</span> — code workbench</td>
+          <td><span class="mark-miss">No</span> — AIP is chat-layer</td>
+          <td><span class="mark-partial">Partial</span> — AIP search</td>
+          <td><span class="mark-partial">Partial</span> — high switching cost</td>
+          <td><span class="mark-ok">Yes</span> — enterprise-grade</td>
+        </tr>
+        <tr>
+          <td class="platform">Backstage (Spotify)</td>
+          <td><span class="mark-ok">Yes</span> — software catalog</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-ok">Yes</span> — OSS, plugin-based</td>
+          <td><span class="mark-ok">Yes</span> — OSS, run-your-own</td>
+        </tr>
+        <tr>
+          <td class="platform">Dataiku / Alteryx</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — recipe library</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-ok">Yes</span></td>
+        </tr>
+        <tr>
+          <td class="platform">Databricks Mosaic AI</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — agent framework</td>
+          <td><span class="mark-partial">Partial</span> — vector search</td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-ok">Yes</span></td>
+        </tr>
+        <tr>
+          <td class="platform">ChatGPT Enterprise / Copilot Studio</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — assistants, actions</td>
+          <td><span class="mark-partial">Partial</span> — connectors</td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-ok">Yes</span></td>
+        </tr>
+        <tr>
+          <td class="platform">LangChain / LlamaIndex</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — framework</td>
+          <td><span class="mark-ok">Yes</span> — retrieval library</td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-miss">No</span> — framework, not platform</td>
+        </tr>
+        <tr>
+          <td class="platform">Anthropic Claude Projects</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — project context</td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-ok">Yes</span></td>
+        </tr>
+        <tr>
+          <td class="platform">Confluence + Jira</td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-miss">No</span></td>
+          <td><span class="mark-partial">Partial</span> — text search</td>
+          <td><span class="mark-na">—</span></td>
+          <td><span class="mark-ok">Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px" class="honest-call">
+    <h3>The positional read</h3>
+    <p><strong>Foundry</strong> is the nearest neighbor on the graph + enterprise-readiness axes. It has the ontology and the compliance shape; it lacks the lightweight methodology+graduation loop and the agent-native skill system. Switching cost is high; consulting cost is high.</p>
+    <p><strong>Backstage</strong> is the nearest neighbor on the typed-graph-as-OSS-pattern. It proves the typed-entity pattern works at enterprise scale. It doesn't do methodology or agents. CAP borrowed the pattern; not the product.</p>
+    <p><strong>Claude Projects + connectors</strong> is the nearest neighbor on the consumer surface. Useful for managers as a front-end; it's not a platform. CAP uses it as the consumer skin over the real capability underneath.</p>
+    <p>CAP's distinctive position: <strong>typed entity graph + methodology/graduation + agent skill system + KB retrieval</strong> fused together, tuned to a single commercial domain, portable by config swap. Narrow today. Real today.</p>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section>
+  <h2>The shape of what's next</h2>
+  <div class="section-h">Phases, not promises</div>
+  <p class="section-lede">Dated commitments are a different artifact. What follows is the dependency order — which gap has to close before which becomes tractable.</p>
+
+  <div class="phase-list">
+    <div class="phase-row now">
+      <div class="phase-num">PHASE 0 · today
+        <span class="phase-title-sub">Single-company embed at 2–3 analysts</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>Proven.</strong> The capability runs. Analyst throughput is real; manager-facing consumption via claude.ai is scaling linearly. Compounding curve is demonstrable on repeated engagements of the same family.</p>
+        <p><strong>Covers.</strong> Single company, analyst team ≤ 3, many consumers (managers/VPs), governed by git + CODEOWNERS + personal repos.</p>
+      </div>
+    </div>
+
+    <div class="phase-row next">
+      <div class="phase-num">PHASE 1 · next
+        <span class="phase-title-sub">Multi-analyst coordination + governance workflow</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>What has to close.</strong> Concurrent-analyst coordination above the <code>.active</code>-marker ceiling. Formal queue for heuristic graduation (not just session-dispatched triads). Per-engagement permissions primitive — at minimum, scoped-read within the graph.</p>
+        <p><strong>What it unlocks.</strong> 5–10 analyst team at one company. Formal methodology governance. Measurable throughput dashboard.</p>
+      </div>
+    </div>
+
+    <div class="phase-row future">
+      <div class="phase-num">PHASE 2 · future
+        <span class="phase-title-sub">Enterprise IT alignment (SSO / audit / DR)</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>What has to close.</strong> SSO + directory integration. Audit service (not git log). DR plan + platform-level uptime story. Compliance-audit response shape.</p>
+        <p><strong>What it unlocks.</strong> Acceptable to enterprise IT. Deployable in regulated environments (pharma compliance, financial services analog).</p>
+      </div>
+    </div>
+
+    <div class="phase-row future">
+      <div class="phase-num">PHASE 3 · future
+        <span class="phase-title-sub">Multi-tenant SaaS shape</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>What has to close.</strong> Per-tenant isolation enforced by the system, not by swap-file discipline. Cross-tenant IP separation. Tenant-routing at KB + graph layer. Enterprise-search for managers across tenant boundary (where permitted).</p>
+        <p><strong>What it unlocks.</strong> Deployable as a managed platform across multiple companies from a single vendor instance. A real SaaS shape.</p>
+      </div>
+    </div>
+
+    <div class="phase-row future">
+      <div class="phase-num">PHASE 4 · future
+        <span class="phase-title-sub">Domain extension + cross-domain benchmarks</span>
+      </div>
+      <div class="phase-body">
+        <p><strong>What has to close.</strong> Second domain proof (e.g., manufacturing, insurance, energy). Cross-domain pattern library (which methodologies port across, which don't). Benchmark registry across companies (opt-in).</p>
+        <p><strong>What it unlocks.</strong> CAP becomes a multi-domain capability. The "agent is the product; domain is config" thesis is proven by repetition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LINE FOR THE AUDIENCE -->
+<section>
+  <h2>The line to take with a VP asking "is it ready?"</h2>
+  <div class="honest-call">
+    <h3>Ready for <em>your</em> use case, not ready for every use case.</h3>
+    <p><strong>If you have a single company, 1–3 analysts, and an ambition to stop losing the reasoning after every engagement:</strong> CAP is ready today, and the compounding curve starts on engagement one.</p>
+    <p><strong>If you have a larger analyst team, regulated handling, or multi-tenant ambitions:</strong> CAP is not there yet. The gaps above are named with severities; the phase plan is real; the investment shape is knowable.</p>
+    <p><strong>What you get today either way:</strong> a narrow but deep capability, with an honest gap list, that runs at production quality on the scale point it was designed for.</p>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · Honest Assessment</strong> · living document · <a href="index.html">back to home</a>
+</footer>
+
+</main>
+</body>
+</html>

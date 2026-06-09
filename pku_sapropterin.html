@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JAVYGTOR (Sapropterin) — PKU Analytics</title>
+<meta name="description" content="JAVYGTOR (sapropterin dihydrochloride, branded generic BH4) from Cycle Pharmaceuticals — phenylketonuria (PKU) patient journey, BH4-responsiveness, and commercial analytics in a market disrupted by next-gen Sephience (sepiapterin, PTC). Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a> · ← <a href="cluster_ultra_rare_metabolic.html">Ultra-Rare Metabolic Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Rare Disease · Metabolic</div>
+  <h1>JAVYGTOR (Sapropterin) — PKU Analytics</h1>
+  <p class="sub">Phenylketonuria (PKU) is the prototype newborn-screening rare disease — the first condition added to US NBS panels and still the most visible inborn error of metabolism. Sapropterin is the synthetic form of tetrahydrobiopterin (BH4), indicated only for the BH4-responsive subset (~25–50% of PKU patients). JAVYGTOR is Cycle Pharmaceuticals' ANDA branded generic of Kuvan; it now competes in a market being disrupted from above by next-generation sepiapterin (Sephience, PTC Therapeutics), which is pharmacologically superior and expands into classical PKU that sapropterin cannot treat.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> JAVYGTOR (sapropterin dihydrochloride)</span>
+    <span><strong>Indication:</strong> Phenylketonuria (PKU / hyperphenylalaninemia) + Phe-restricted diet</span>
+    <span><strong>Regulatory:</strong> ANDA branded generic (referenced to Kuvan, BioMarin)</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>Hub:</strong> Cycle Vita</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US PKU Prevalence</div><div class="v">~13,800–16,500</div></div>
+  <div class="card"><div class="k">BH4-Responsive Subset</div><div class="v">~3,500–7,000</div></div>
+  <div class="card"><div class="k">Birth Incidence</div><div class="v">1 in 10,000–15,000</div></div>
+  <div class="card"><div class="k">NBS Status</div><div class="v" style="color:var(--good)">Universal · all 50 states</div></div>
+  <div class="card"><div class="k">Reference Brand</div><div class="v sm">Kuvan (BioMarin) — NDA 2007</div></div>
+  <div class="card"><div class="k">Next-Gen Threat</div><div class="v sm" style="color:var(--warn)">Sephience (sepiapterin) — PTC, Jul 2025</div></div>
+  <div class="card"><div class="k">Typical Dose</div><div class="v sm">10–20 mg/kg/day oral</div></div>
+  <div class="card"><div class="k">Treatment Goal</div><div class="v sm">Phe ≤360 μmol/L lifelong</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Core insight — manage decline, not growth</div>
+  <p style="margin:0">Sapropterin as a <em>molecule class</em> is under structural pressure. Sephience (sepiapterin, approved Jul 2025) is pharmacologically superior in every measured dimension — deeper Phe reduction (~70% greater in head-to-head), CNS penetration, diet liberalization, <strong>and it rescues 43% of sapropterin non-responders</strong>, expanding the addressable population beyond what sapropterin can reach. The analytical question for JAVYGTOR is not &ldquo;how do we grow share&rdquo; — it is &ldquo;how fast is the market contracting, which patients are stable and stay, and where does the cost-positioned Cycle branded generic hold ground against unbranded generics from below and Sephience from above.&rdquo;</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">PKU is an autosomal-recessive inborn error of metabolism caused by mutations in the phenylalanine hydroxylase (<em>PAH</em>) gene. Without functional PAH, phenylalanine (Phe) accumulates to neurotoxic levels and, if untreated, causes severe cognitive impairment, seizures, and behavioral disturbance. The &gt;1,000 cataloged <em>PAH</em> variants produce a clinical spectrum from classical PKU (the most severe form, Phe &gt;1,200 μmol/L untreated) to moderate PKU to mild hyperphenylalaninemia. PKU was the first condition added to US newborn screening in the 1960s, and essentially every affected US infant is identified within the first week of life.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical hallmarks</h3>
+    <ul>
+      <li><strong>If treated from infancy:</strong> normal or near-normal cognitive development</li>
+      <li><strong>If untreated or late-diagnosed:</strong> severe intellectual disability, seizures, autistic-spectrum behavior, eczematous skin, musty odor</li>
+      <li><strong>Cognitive/mood symptoms even on treatment:</strong> subclinical executive-function deficits, anxiety, depression — associated with chronic elevated Phe</li>
+      <li><strong>Maternal PKU:</strong> uncontrolled maternal Phe during pregnancy causes fetal microcephaly, congenital heart defects, growth restriction — a distinct and severe risk</li>
+      <li><strong>Diet fatigue:</strong> lifelong low-protein diet plus medical formula is the primary driver of treatment non-adherence and loss-to-follow-up</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>US prevalence</td><td>~13,800–16,500</td></tr>
+      <tr><td>US birth incidence</td><td>1 in 10,000–15,000</td></tr>
+      <tr><td>BH4-responsive subset</td><td>~25–50% of PKU</td></tr>
+      <tr><td>Sapropterin-addressable population</td><td>~3,500–7,000 US</td></tr>
+      <tr><td>NBS coverage</td><td>Universal (all 50 states since the 1960s)</td></tr>
+      <tr><td>Adults lost to metabolic follow-up</td><td>~75% (published literature)</td></tr>
+      <tr><td>Treatment target (ACMG 2023)</td><td>Phe ≤360 μmol/L lifelong</td></tr>
+      <tr><td>Classical PKU share of population</td><td>Majority of US PKU; &lt;30% BH4-responsive</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="title">BH4 responsiveness is a <em>patient-level</em> gate</div>
+  <p style="margin:0">Sapropterin does not work for all PKU patients. It requires residual PAH enzyme activity that the cofactor can amplify. Patients are tested with a <strong>BH4 challenge</strong> (typically 24–48 hours, sometimes a 4-week trial) — responders (≥30% Phe reduction) continue; non-responders discontinue. Classical-PKU patients are typically NOT BH4-responsive; mild and variant PKU populations are enriched for response. This gate defines the sapropterin-addressable market — roughly <strong>3,500–7,000 US patients</strong>, not the full ~13,800–16,500 PKU population.</p>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>The PKU patient journey is one of the best-characterized in rare disease — every step is algorithmic from birth through early adulthood, then becomes fragmented as adult care infrastructure thins out. The commercial story happens at two well-defined inflection points: the BH4 challenge (whether to start sapropterin at all) and the adolescent-to-adult transition (whether to stay on any treatment).</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Day 2–7 of life</div>
+    <div class="t">NBS flag — elevated phenylalanine</div>
+    <div class="d">State NBS lab flags elevated Phe on DBS MS/MS. State program notifies metabolic genetics within 24–72 hours. Confirmatory plasma amino acids, Phe, tyrosine, biopterin cofactor panel (to rule out BH4 biosynthesis defects). Diagnosis is typically established within days.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Week 1–3</div>
+    <div class="t">Diet initiation</div>
+    <div class="d">Immediate Phe-restricted diet begins, built around Phe-free medical formula plus measured natural protein. The metabolic dietitian takes the lead role. Plasma Phe is monitored weekly to monthly in infancy, with tight target ranges for neurodevelopmental outcomes.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Infancy through age 4</div>
+    <div class="t">Strict diet + close monitoring</div>
+    <div class="d">Treatment team: metabolic geneticist + metabolic dietitian + genetic counselor. Diet-only management in early years. Plasma Phe targets tighter than adult targets because developing brain is most vulnerable.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 4+</div>
+    <div class="t">BH4 responsiveness challenge</div>
+    <div class="d">PAH genotype is informative (certain variants predict responsiveness). Formal 24–48 hour BH4 loading test, or a 4-week therapeutic trial. ≥30% Phe reduction = responder. Responders continue on long-term sapropterin (JAVYGTOR or Kuvan or unbranded generic) + diet; non-responders discontinue.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 5–12</div>
+    <div class="t">JAVYGTOR (or Kuvan / generic) + relaxed diet (responders)</div>
+    <div class="d">BH4 responders on sapropterin can typically tolerate more natural protein — a meaningful quality-of-life gain. Plasma Phe monitored quarterly. Diet stays restricted but less severely. Formula continues in most cases.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 13–18</div>
+    <div class="t">Adolescence — adherence erosion</div>
+    <div class="d">Diet fatigue peaks. Formula compliance drops. Phe values rise. Growing autonomy + declining parental supervision = classic adherence leak. Metabolic clinic visits become less frequent as the family-systems dynamic shifts.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 18–25</div>
+    <div class="t">Adult transition — the great drop-off</div>
+    <div class="d">Published data: roughly <strong>75% of US adults with PKU are off diet and lost to metabolic follow-up</strong>. The adult metabolic infrastructure is thin, and primary care physicians are not equipped to manage PKU. Patients who drop out at this stage are not usually re-engaged until a pregnancy or symptomatic event.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Adulthood</div>
+    <div class="t">Re-engagement — pregnancy &amp; maternal PKU</div>
+    <div class="d">Pregnancy is the single strongest re-engagement trigger. Maternal PKU syndrome carries a high fetal-risk profile if Phe is uncontrolled. Pre-conception planning + tight Phe control through pregnancy often brings previously lost-to-follow-up women back into metabolic care. JAVYGTOR (or another sapropterin product) may be initiated or re-initiated for pregnancy management.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Diagnostic workflow</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>NBS phenylalanine (DBS MS/MS)</td><td>Universal first-pass screen; flags essentially all US cases.</td></tr>
+      <tr><td>Plasma amino acids, Phe, tyrosine</td><td>Confirmatory; establishes severity tier.</td></tr>
+      <tr><td>Biopterin cofactor panel</td><td>Rules out BH4 biosynthesis / recycling defects (separate disorders, separate treatment).</td></tr>
+      <tr><td><em>PAH</em> genotype</td><td>Predicts severity and BH4 responsiveness. &gt;1,000 cataloged variants.</td></tr>
+      <tr><td>BH4 challenge (24–48h or 4-wk trial)</td><td><strong>Gate for sapropterin therapy.</strong> ≥30% Phe reduction = responder.</td></tr>
+      <tr><td>Ongoing plasma Phe monitoring</td><td>Treatment monitoring — target ≤360 μmol/L for life (ACMG 2023).</td></tr>
+      <tr><td>Maternal PKU pregnancy panel</td><td>Tight Phe control target, frequent monitoring, dietitian and OB co-management.</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who prescribes and manages?</h3>
+    <ul>
+      <li><strong>Metabolic geneticists</strong> — the primary prescriber universe. ~150–250 US physicians who actively treat PKU (inferred from GMDI + SIMD membership; no published aggregate).</li>
+      <li><strong>Metabolic dietitians</strong> — the daily-management care partner. Often more influential than the prescriber on adherence outcomes. Strong KOL lever.</li>
+      <li><strong>Genetic counselors</strong> — family testing, reproductive counseling; central to the maternal PKU pathway.</li>
+      <li><strong>Obstetricians (high-risk)</strong> — maternal PKU pregnancy co-management.</li>
+      <li><strong>Adult metabolic clinics</strong> — &lt;30 centers nationally with dedicated adult PKU expertise. The structural weakness of the care system.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>E70.0</code> &ldquo;Classical PKU&rdquo; and <code>E70.1</code> &ldquo;Other hyperphenylalaninemias&rdquo; are both specific and routinely used by metabolic genetics. Clean anchor codes.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag md">moderate</span></td><td>Specialist-concentrated prescribing &mdash; metabolic geneticists are identifiable above suppression. But a large share of PKU patients are pediatric and sit outside Part D, so the adult Part D lens understates true volume.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>JAVYGTOR (Cycle branded generic), unbranded generic sapropterin, reference brand Kuvan (BioMarin), and next-generation sepiapterin (Sephience, PTC) carry distinct NDCs. Substitution analytics are tractable at the NDC level.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag md">moderate</span></td><td>SP-distributed &mdash; visibility depends on the specific pharmacy network and whether it reports to commercial panels. Mixed picture across the JAVYGTOR / Kuvan / unbranded-generic / Sephience portfolio.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag lo">weak</span></td><td>With a next-gen competitor actively launching, defensive PAP retention programs on Kuvan-responsive patients are almost certainly material &mdash; and all of that volume is PDE-invisible. Claims data will <em>understate</em> the retention threat.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Newborn screening identifies virtually every US patient (registry-adjacent census). Metabolic-center directory enumerates the prescriber universe. Sepiapterin adoption curves from specialty-dispense analytics complete the competitive picture.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Classical PKU <strong>is</strong> fully identified via NBS &mdash; the commercial analytical question is not &ldquo;who has it&rdquo; but &ldquo;which BH4 product are they on and who is switching to sepiapterin.&rdquo; Part D + NDC-level substitution analytics work for adult cohorts. The blind spot is PAP retention: manufacturer-funded defensive programs on responsive patients generate no PDE, so naive share trend analysis <strong>materially understates</strong> the sepiapterin switching threat. Retention intelligence must come from hub dispense data, not claims.</p>
+</div>
+
+<h2>Patient Identification &amp; Commercial Landscape</h2>
+
+<p class="lead">PKU patient identification is a solved problem — NBS catches them all. The commercial analytical questions are different:</p>
+<ul>
+  <li><strong>Which BH4-responsive patients are NOT on sapropterin</strong> and should be?</li>
+  <li><strong>Which diet-only patients were never formally challenged</strong> for BH4 responsiveness?</li>
+  <li><strong>Which patients are stable on sapropterin</strong> and therefore <em>less</em> likely to switch to sepiapterin — the defensible core?</li>
+  <li><strong>Which patients have been lost to follow-up</strong> and can be re-engaged through maternal PKU, pediatrician-initiated metabolic referral, or NPKUA-style advocacy?</li>
+  <li><strong>Where is sepiapterin eroding share</strong>, at what pace, and by which payer policy patterns?</li>
+</ul>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · BH4-responsive, diet-only gap</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Patients whose <em>PAH</em> genotype or biochemistry predicts BH4 responsiveness but who are not currently on any BH4 therapy. This is the structural underuse pool and a natural JAVYGTOR acquisition target.</p>
+    <ul>
+      <li>Metabolic-clinic panels with documented PAH genotype but no active sapropterin prescription</li>
+      <li>Patients who had a negative BH4 challenge years ago — eligible for re-challenge with sepiapterin (which rescues 43% of sapropterin non-responders)</li>
+      <li>Diet-only patients above target Phe on routine monitoring</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> meaningful in aggregate but dispersed across centers — requires center-level engagement, not field broadcast.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Maternal PKU — pregnancy-only BH4 use</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Pregnancy is the single strongest re-entry trigger for lost-to-follow-up adult PKU patients. A distinct commercial segment with its own payer logic.</p>
+    <ul>
+      <li>Women age 18–45 with a documented PKU diagnosis history</li>
+      <li>OB / maternal-fetal medicine referrals from community metabolic clinics</li>
+      <li>Pre-conception metabolic consults — short-duration, high-intensity Cycle Vita hub episodes</li>
+      <li>Post-pregnancy retention rate (do patients stay on JAVYGTOR and in metabolic care after delivery?)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> small patient count, high clinical stakes, high adherence intensity during the pregnancy window. Often pays for itself on maternal-PKU alone.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Sephience substitution tracking</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The defining analytical question for the JAVYGTOR franchise — the rate, pattern, and payer dynamics of substitution from sapropterin (JAVYGTOR / Kuvan / unbranded generics) to Sephience.</p>
+    <ul>
+      <li>Monthly new-patient starts on sapropterin (by brand: JAVYGTOR, Kuvan, unbranded) vs. Sephience, by metabolic center</li>
+      <li>Switching events from sapropterin to Sephience — stable patients vs. suboptimal patients</li>
+      <li>Payer step-therapy policies — some require sapropterin trial before Sephience (which benefits JAVYGTOR if positioned as the step-through product)</li>
+      <li>Sapropterin non-responders re-challenged with Sephience (43% rescue rate per AMPLIPHY Phase 3)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> the central dashboard for the franchise. Without it, commercial strategy is blind.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Stable-patient retention</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The defensible core: long-tenured sapropterin patients with excellent Phe control and no clinical reason to switch. Cycle Vita hub stickiness is the main protective lever for JAVYGTOR.</p>
+    <ul>
+      <li>Patients with &gt;24 months continuous sapropterin therapy and Phe ≤360 μmol/L</li>
+      <li>Refill continuity, Cycle Vita interaction frequency, dietitian touchpoint cadence</li>
+      <li>Formulation preference — tablet vs. powder for oral solution (affects pediatric usage and administration)</li>
+      <li>Payer-level formulary position and DAW dispensing rates of JAVYGTOR vs. unbranded generics</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> defines the defensible segment and its size. Anchors the &ldquo;manage decline, don't panic&rdquo; analytical posture.</p>
+  </div>
+</div>
+
+<h3>Competitive landscape for BH4-responsive PKU</h3>
+<table>
+  <tr><th>Therapy</th><th>Mechanism</th><th>Company</th><th>Positioning</th></tr>
+  <tr><td>Phe-restricted diet + formula</td><td>Medical nutrition</td><td>Multiple nutrition brands</td><td><span class="tag hi">standard of care</span> for all PKU — lifelong backbone</td></tr>
+  <tr><td>Kuvan (reference brand)</td><td>BH4 cofactor</td><td>BioMarin</td><td><span class="tag md">declining</span> ~$100M FY2025, −17% YoY — generic erosion</td></tr>
+  <tr><td>JAVYGTOR (sapropterin)</td><td>BH4 cofactor</td><td>Cycle Pharmaceuticals (ANDA branded generic)</td><td><span class="tag md">cost-positioned</span> — Cycle Vita hub-differentiated against unbranded generics</td></tr>
+  <tr><td>Unbranded generic sapropterin</td><td>BH4 cofactor</td><td>Par Pharmaceutical, Dr. Reddy's</td><td><span class="tag lo">commodity</span> — ~70% below branded Kuvan on AWP</td></tr>
+  <tr><td>Palynziq (pegvaliase)</td><td>PAL enzyme substitution (injectable)</td><td>BioMarin</td><td><span class="tag hi">growing</span> — $433M FY2025, +22% YoY; adolescent expansion Feb 2026</td></tr>
+  <tr><td>Sephience (sepiapterin)</td><td>BH4 precursor (CNS-penetrant)</td><td>PTC Therapeutics</td><td><span class="tag hi">disruptor</span> — approved Jul 2025; $111M H2 2025 launch; PTC guides $700–800M 2026</td></tr>
+  <tr><td>JNT-517</td><td>SLC6A19 inhibitor (renal Phe excretion)</td><td>Jnana Therapeutics</td><td><span class="tag lo">pipeline</span> — Phase 1/2, pivotal 2025; all-genotype mechanism</td></tr>
+  <tr><td>Gene therapy / editing</td><td>Various</td><td>CHOP/Penn, Aurora, others</td><td><span class="tag lo">preclinical / early</span> — long horizon</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">The sepiapterin disruption, in one paragraph</div>
+  <p style="margin:0">AMPLIPHY (Phase 3 head-to-head, <em>Metabolism</em> 2026) showed sepiapterin produced a <strong>70% greater Phe reduction</strong> than sapropterin at the maximum licensed sapropterin dose. APHENITY (placebo-controlled pivotal) showed 84% of participants hit the ACMG &lt;360 μmol/L target within 6 weeks. The diet-liberalization extension showed <strong>97% of responders liberalized diet</strong> with a mean 126% protein-intake increase. Critically, <strong>43% of sapropterin non-responders respond to sepiapterin</strong>, and sepiapterin crosses the blood-brain barrier (addressing CNS BH4 deficiency that sapropterin cannot). This is not a minor improvement — it is a mechanism-level advance that rewrites the addressable population for the whole BH4 class.</p>
+</div>
+
+<h2>Commercial Analytics Playbook</h2>
+
+<table>
+  <tr><th>Activity</th><th>Relevance for JAVYGTOR</th></tr>
+  <tr><td>Territory alignment, call plans, reach &amp; frequency</td><td><span class="tag lo">not applicable</span> — ~100–150 metabolic centers, named-account model</td></tr>
+  <tr><td>Specialty-pharmacy dispense analytics</td><td><span class="tag hi">primary</span> — JAVYGTOR / Kuvan / Sephience / Palynziq / unbranded generic share by NDC</td></tr>
+  <tr><td>Cycle Vita hub performance analytics (BV / PA / onboarding / adherence)</td><td><span class="tag hi">primary</span> — the protective moat against unbranded generic substitution</td></tr>
+  <tr><td>BH4-responsive identification gap analytics</td><td><span class="tag hi">primary</span> — find patients who should be on BH4 therapy but aren't</td></tr>
+  <tr><td>Sephience substitution monitoring</td><td><span class="tag hi">primary</span> — the central erosion dashboard</td></tr>
+  <tr><td>Maternal PKU patient analytics</td><td><span class="tag md">secondary</span> — small segment, high-intensity episodes, clinically important</td></tr>
+  <tr><td>Stable-patient retention analytics</td><td><span class="tag hi">primary</span> — defines the defensible core</td></tr>
+  <tr><td>Pediatric-to-adult transition tracking</td><td><span class="tag md">secondary</span> — losses dominated by diet non-adherence, not product choice</td></tr>
+  <tr><td>Payer-policy tracking (step therapy vs. open access for sepiapterin)</td><td><span class="tag hi">primary</span> — step therapy through sapropterin is the best scenario; open access is the worst</td></tr>
+  <tr><td>DAW / formulary-preference modeling (branded generic vs. unbranded)</td><td><span class="tag md">secondary</span> — protects against same-class generic substitution below the brand</td></tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Precarious market position — measure substitution, not growth</div>
+  <p style="margin:0">The commercial playbook for JAVYGTOR in 2026 looks fundamentally different from a growth-stage orphan product. Analytics must be oriented around <strong>managed decline</strong>: stable-patient retention as the defensive moat, Sephience substitution as the erosion curve, step-therapy payer policies as the main defensive lever, and maternal PKU / BH4-responsive-but-untreated as the remaining growth pockets. This is a portfolio-management analytical posture, not a launch-style acquisition playbook.</p>
+</div>
+
+<h2>Open Questions</h2>
+<ol>
+  <li><strong>Sapropterin share-of-market trend.</strong> What is the current US sapropterin market split across Kuvan (BioMarin), JAVYGTOR (Cycle), and unbranded generics — and how is it trending month over month?</li>
+  <li><strong>Sephience substitution velocity.</strong> Month-over-month Sephience new-start rate, switch rate from existing sapropterin patients, and the fraction of payers implementing step-therapy-through-sapropterin vs. open first-line access.</li>
+  <li><strong>Sephience WAC and net-price positioning.</strong> Not publicly disclosed as of early 2026. Critical input to payer-coverage modeling.</li>
+  <li><strong>Maternal PKU volume and pattern.</strong> Annual US pregnancies in women with a known PKU diagnosis; how many are currently managed through metabolic genetics; what fraction use JAVYGTOR during pregnancy.</li>
+  <li><strong>BH4-responsive but untreated population.</strong> How many BH4-responsive PKU patients are on diet-only management without sapropterin, and why?</li>
+  <li><strong>Sapropterin non-responder re-challenge rate with Sephience.</strong> Given AMPLIPHY's 43% rescue finding, how fast is the metabolic community re-challenging historical non-responders?</li>
+  <li><strong>Palynziq adolescent expansion impact.</strong> Palynziq's Feb 2026 approval in ≥12-year-olds adds another switching path for uncontrolled patients. What fraction of JAVYGTOR-controlled patients in this age band are candidates?</li>
+  <li><strong>Adult care access.</strong> How many US adult metabolic clinics actively accept new adult PKU patients, and what is the geographic gap vs. pediatric-identified cohorts?</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed sapropterin ANDA labels (including JAVYGTOR); FDA ANDA approval letters (Par 207207, Dr. Reddy's 207740, additional 216361); BioMarin FY2025 financial results (Kuvan, Palynziq); PTC Therapeutics Sephience (sepiapterin) FDA approval materials; AMPLIPHY Phase 3 head-to-head (<em>Metabolism</em> 2026, ScienceDirect); APHENITY pivotal trial (<em>The Lancet</em> 2024); StatPearls PKU (NBK535378); ACMG Phenylalanine Hydroxylase Deficiency management guideline (<em>Genetics in Medicine</em> 2024); PKU Alliance (NPKUA); HRSA Newborn Screening (Phenylketonuria); published literature on pediatric-to-adult PKU transition; Cycle Pharmaceuticals JAVYGTOR launch materials.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Based on internal research brief <code>knowledge/research/domain/briefs/RB_RC_javygtor_sapropterin_pku_2026-03-19.md</code>. Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026).</p>
+</footer>
+
+</div>
+</body>
+</html>

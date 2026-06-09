@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAP — Management View</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111827;
+    --panel-2: #1e293b;
+    --panel-3: #1a2238;
+    --rule: #1f2937;
+    --rule-soft: #26324a;
+    --ink: #f1f5f9;
+    --ink-soft: #cbd5e1;
+    --ink-faint: #94a3b8;
+    --ink-dim: #64748b;
+    --teal: #14b8a6;
+    --teal-ink: #5eead4;
+    --teal-soft: rgba(20, 184, 166, 0.12);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.12);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.14);
+    --rose-dim: rgba(251, 113, 133, 0.3);
+    --indigo: #a5b4fc;
+    --indigo-soft: rgba(165, 180, 252, 0.12);
+    --green: #4ade80;
+    --green-soft: rgba(74, 222, 128, 0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    color: var(--ink);
+    font: 15.5px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 28px 96px; }
+  code, .mono { font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 28px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .topnav-brand {
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 14px;
+  }
+  .topnav a { color: var(--ink-soft); text-decoration: none; padding: 6px 12px; border-radius: 6px; }
+  .topnav a:hover { color: var(--ink); background: var(--panel); }
+  .topnav a.active { color: var(--teal-ink); background: rgba(20, 184, 166, 0.12); }
+
+  .hero { border-bottom: 1px solid var(--rule); padding-bottom: 36px; margin-bottom: 48px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-ink); font-weight: 700; margin: 0 0 14px; }
+  h1 {
+    margin: 0 0 16px;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    color: #ffffff;
+    max-width: 22ch;
+  }
+  .hero-lede { color: var(--ink-soft); font-size: 18px; line-height: 1.5; max-width: 64ch; margin: 0 0 22px; }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { background: var(--panel); border: 1px solid var(--rule-soft); color: var(--ink-soft); padding: 6px 14px; border-radius: 999px; font-size: 13px; }
+
+  section { margin-bottom: 64px; }
+  section > h2 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 8px; font-weight: 700; }
+  section > .section-h { font-size: 26px; font-weight: 600; color: var(--ink); margin: 0 0 10px; letter-spacing: -0.01em; }
+  section > .section-lede { color: var(--ink-soft); font-size: 15px; max-width: 72ch; margin: 0 0 28px; }
+
+  /* Scenario card: two-pane (board + transcript) */
+  .scenario {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 24px;
+  }
+  .scenario-head {
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .scenario-role {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .scenario h3 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .scenario .scenario-lede {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .panes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 900px) {
+    .panes { grid-template-columns: 1fr; }
+  }
+
+  /* Board mock */
+  .board {
+    background: var(--panel-3);
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .board-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .board-title .date { font-size: 11px; color: var(--ink-faint); font-weight: 400; font-family: "SF Mono", monospace; }
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid var(--rule-soft);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .kpi .k-label { font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+  .kpi .k-val { font-size: 18px; font-weight: 600; color: var(--ink); margin: 2px 0; letter-spacing: -0.01em; }
+  .kpi .k-trend { font-size: 10.5px; color: var(--ink-faint); }
+  .kpi .k-trend.up { color: var(--green); }
+  .kpi .k-trend.down { color: var(--rose); }
+
+  /* Mini bar chart built in CSS */
+  .barchart {
+    margin-top: 10px;
+  }
+  .bar-label {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 11.5px;
+  }
+  .bar-row .bar-name { color: var(--ink-soft); font-family: "SF Mono", monospace; font-size: 11px; }
+  .bar-row .bar-val { color: var(--ink-faint); font-family: "SF Mono", monospace; font-size: 11px; }
+  .bar {
+    height: 10px;
+    border-radius: 3px;
+    background: var(--teal);
+  }
+  .bar.r { background: var(--rose); }
+  .bar.a { background: var(--amber); }
+  .bar.g { background: var(--green); }
+
+  .board-status {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule-soft);
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    flex-wrap: wrap;
+  }
+  .board-status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .dot.green { background: var(--green); }
+  .dot.amber { background: var(--amber); }
+  .dot.rose { background: var(--rose); }
+
+  /* Transcript pane — claude.ai feel */
+  .transcript {
+    background: var(--panel-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .msg .avatar {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0b1220;
+  }
+  .msg.user .avatar {
+    background: var(--ink-soft);
+  }
+  .msg.ai .avatar {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #1a1a1a;
+  }
+  .msg .bubble {
+    flex: 1;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .msg.user .bubble {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .msg.ai .bubble {
+    color: var(--ink-soft);
+  }
+  .msg.ai .bubble .trace {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(20, 184, 166, 0.06);
+    border-left: 2px solid var(--teal);
+    border-radius: 4px;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+  .msg.ai .bubble .trace .trace-label {
+    font-family: "SF Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .msg.ai .bubble strong { color: var(--ink); font-weight: 600; }
+  .msg.ai .bubble code {
+    font-size: 11.5px;
+    background: var(--panel);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .transcript-input {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule-soft);
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+
+  /* How it works */
+  .plumbing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+  }
+  @media (max-width: 820px) { .plumbing { grid-template-columns: 1fr; } }
+  .plumbing-card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .plumbing-card h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .plumbing-card p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .plumbing-card code { font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 3px; color: var(--ink); }
+  .plumbing-card .num {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    color: var(--teal-ink);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  /* Key distinction */
+  .distinction {
+    background: linear-gradient(180deg, rgba(20, 184, 166, 0.05), transparent 100%), var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--teal);
+    border-radius: 10px;
+    padding: 22px 26px;
+  }
+  .distinction h3 {
+    margin: 0 0 12px;
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .distinction .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) { .distinction .two-col { grid-template-columns: 1fr; } }
+  .distinction .col-label {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-ink);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .distinction ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  .distinction li { margin-bottom: 4px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  footer a { color: var(--teal-ink); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">CAP</span>
+  <a href="index.html">Home</a>
+  <a href="cap_gtm_lens.html">Story</a>
+  <a href="cap_frontier.html">Frontier</a>
+  <a href="cap_graph_and_journeys.html">Map</a>
+  <a href="cap_rules_layers.html">Why CAP</a>
+  <a href="cap_trust_and_evidence.html">Trust</a>
+  <a href="cap_data_toolbox.html">Toolbox</a>
+  <a href="cap_management_view.html" class="active">Management</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">CAP · The Management View</div>
+  <h1>The deliverable you can talk to</h1>
+  <p class="hero-lede">Managers don't want to read briefs. They want a dashboard that answers the current question — and lets them ask the <em>next</em> one. CAP delivers a board or storyboard through claude.ai. Every number traces back to a source; every follow-up pulls from the graph instead of guessing. The conversation <em>is</em> the drill-down.</p>
+  <div class="pills">
+    <span class="pill">Interface: claude.ai Projects</span>
+    <span class="pill">Artifact: dashboard or storyboard</span>
+    <span class="pill">Interaction: drill-down via follow-up</span>
+    <span class="pill">Every answer cites evidence</span>
+  </div>
+</header>
+
+<section>
+  <h2>Three scenarios · three boards</h2>
+  <div class="section-h">What a manager sees, and what happens next</div>
+  <p class="section-lede">Each scenario opens with the artifact (portfolio board, launch readiness dashboard, LOE defense tracker) and then shows the manager driving deeper with three follow-up turns — the kind of conversation that normally needs an analyst in the room.</p>
+
+  <!-- SCENARIO 1: Portfolio review -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-role">Scenario 1 · Chief Commercial Officer · quarterly review</div>
+      <h3>"Walk me through the portfolio."</h3>
+      <p class="scenario-lede">Monday morning. The CCO opens the Portfolio board in claude.ai before the exec team meeting. The numbers are current to last week's gold-table refresh.</p>
+    </div>
+    <div class="panes">
+      <div class="board">
+        <div class="board-title">Portfolio Status <span class="date">w/e 2026-04-17</span></div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="k-label">Revenue YTD</div><div class="k-val">$847M</div><div class="k-trend up">▲ 6.4% vs plan</div></div>
+          <div class="kpi"><div class="k-label">Assets on plan</div><div class="k-val">4 of 7</div><div class="k-trend">2 ahead · 1 behind</div></div>
+          <div class="kpi"><div class="k-label">LOE exposure 24mo</div><div class="k-val">$142M</div><div class="k-trend down">▼ decline risk</div></div>
+        </div>
+        <div class="barchart">
+          <div class="bar-label">Revenue vs plan · by asset</div>
+          <div class="bar-row"><span class="bar-name">asset-a</span><span class="bar" style="width:92%"></span><span class="bar-val">+12%</span></div>
+          <div class="bar-row"><span class="bar-name">asset-b</span><span class="bar" style="width:78%"></span><span class="bar-val">+3%</span></div>
+          <div class="bar-row"><span class="bar-name">asset-c</span><span class="bar g" style="width:68%"></span><span class="bar-val">on plan</span></div>
+          <div class="bar-row"><span class="bar-name">asset-d</span><span class="bar a" style="width:55%"></span><span class="bar-val">−4%</span></div>
+          <div class="bar-row"><span class="bar-name">asset-e</span><span class="bar r" style="width:38%"></span><span class="bar-val">−18%</span></div>
+          <div class="bar-row"><span class="bar-name">asset-f</span><span class="bar" style="width:62%"></span><span class="bar-val">on plan</span></div>
+          <div class="bar-row"><span class="bar-name">asset-g</span><span class="bar" style="width:48%"></span><span class="bar-val">on plan</span></div>
+        </div>
+        <div class="board-status">
+          <span><span class="dot green"></span>on plan (4)</span>
+          <span><span class="dot amber"></span>below plan (2)</span>
+          <span><span class="dot rose"></span>underperforming (1)</span>
+        </div>
+      </div>
+
+      <div class="transcript">
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">Why is asset-e 18% below plan?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            Two drivers account for ~85% of the shortfall. <strong>New-patient starts</strong> fell 12% vs plan after a competing agent launched in the same indication in Feb. <strong>Payer access</strong> tightened in two top-10 plans — prior-auth criteria changed, fulfillment friction up ~30% in those books.
+            <div class="trace">
+              <span class="trace-label">Trace · evidence chain</span>
+              Finding f-2026-041 · source: silver.prescriptions w/e 2026-04-17 · compared against plan-e-2026-v2 · cross-checked against event e-competitor-launch-asset-h-2026-02
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">Can we offset the payer side?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            Three defensive levers are in scope. Renegotiating prior-auth criteria in the two affected plans (evidence base ready; medical affairs would lead). Accelerating patient-hub enrollment in affected territories (hub-architecture mapped; ready to scale). Physician education on the switching protocol (education materials need refresh).
+            <div class="trace">
+              <span class="trace-label">Trace · decision record draft</span>
+              Recommendation r-2026-089 draft · drawing from methodology entity me-defense-playbook-2026 · matched against asset-e access profile in data_source ds-payer-claims
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">Put the payer negotiation on the agenda for Thursday. Who leads it?</div>
+        </div>
+        <div class="transcript-input">Ctrl-K to continue · decisions captured to the graph</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2: Launch readiness -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-role">Scenario 2 · VP Launch Excellence · pre-launch review</div>
+      <h3>"Why is launch FF sizing 47, not 52?"</h3>
+      <p class="scenario-lede">Tuesday 8am prep session. The VP pulled the latest launch readiness board. The sizing recommendation came in at 47 reps; the team had been planning against 52.</p>
+    </div>
+    <div class="panes">
+      <div class="board">
+        <div class="board-title">Launch Readiness · asset-new <span class="date">D-91 · w/e 2026-04-17</span></div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="k-label">FF Size (rec)</div><div class="k-val">47</div><div class="k-trend">prior: 52</div></div>
+          <div class="kpi"><div class="k-label">Target HCPs</div><div class="k-val">2,340</div><div class="k-trend">decile A + B</div></div>
+          <div class="kpi"><div class="k-label">Access tier</div><div class="k-val">Tier 2</div><div class="k-trend up">80% covered</div></div>
+        </div>
+        <div class="barchart">
+          <div class="bar-label">Readiness · workstream status</div>
+          <div class="bar-row"><span class="bar-name">field force</span><span class="bar g" style="width:88%"></span><span class="bar-val">88%</span></div>
+          <div class="bar-row"><span class="bar-name">payer access</span><span class="bar" style="width:74%"></span><span class="bar-val">74%</span></div>
+          <div class="bar-row"><span class="bar-name">hub / patient svc</span><span class="bar a" style="width:58%"></span><span class="bar-val">58%</span></div>
+          <div class="bar-row"><span class="bar-name">HCP education</span><span class="bar g" style="width:82%"></span><span class="bar-val">82%</span></div>
+          <div class="bar-row"><span class="bar-name">commercial ops</span><span class="bar g" style="width:91%"></span><span class="bar-val">91%</span></div>
+        </div>
+        <div class="board-status">
+          <span><span class="dot green"></span>on track (3)</span>
+          <span><span class="dot amber"></span>needs attention (1)</span>
+          <span><span class="dot green"></span>near target (1)</span>
+        </div>
+      </div>
+
+      <div class="transcript">
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">Why 47 and not 52?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            The shift is driven by two things in the updated workload buildup. <strong>Target universe refined</strong> down 8% after the decile update — ~200 low-intensity HCPs moved out of tier A/B. <strong>Call productivity benchmark</strong> revised up 6% based on the January Q1 response analysis — each rep now covers more at the same reach/frequency.
+            <div class="trace">
+              <span class="trace-label">Trace · method + inputs</span>
+              Method: workload-buildup v3.2 · target universe: finding f-2026-031 · call-productivity input: finding f-2026-028 · prior sizing recommendation: r-2026-015 (52 reps)
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">What's the revenue risk if we go with 47 instead of 52?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            At 47 reps and current access tier, peak-year revenue lands at ~$220M with 88% confidence. At 52, peak would rise ~$8M but the marginal ROI is thin — incremental reps 48–52 sit at ~0.7× productivity of reps 1–47. The 47 sizing is the knee of the curve; going higher mostly adds cost.
+            <div class="trace">
+              <span class="trace-label">Trace · sensitivity</span>
+              Sensitivity analysis at tools/method_sensitivity.py over FF range 40–60 · adoption-curve confidence tier: likely · marginal-rep productivity from asset-similarity benchmark
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">Good. Lock 47. Show me the territory design.</div>
+        </div>
+        <div class="transcript-input">Ctrl-K to continue · territory design in next view</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3: LOE defense -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-role">Scenario 3 · Chief Strategy Officer · risk review</div>
+      <h3>"Which assets are in the red zone?"</h3>
+      <p class="scenario-lede">Friday 4pm. The CSO opens the LOE defense board ahead of the board meeting next week. Three assets flag.</p>
+    </div>
+    <div class="panes">
+      <div class="board">
+        <div class="board-title">LOE Defense · 24mo horizon <span class="date">as of 2026-04-17</span></div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="k-label">Revenue at risk</div><div class="k-val">$142M</div><div class="k-trend">3 assets</div></div>
+          <div class="kpi"><div class="k-label">Nearest LOE</div><div class="k-val">14mo</div><div class="k-trend">asset-b</div></div>
+          <div class="kpi"><div class="k-label">Levers ready</div><div class="k-val">7 of 9</div><div class="k-trend up">2 pending</div></div>
+        </div>
+        <div class="barchart">
+          <div class="bar-label">Revenue-at-risk by asset</div>
+          <div class="bar-row"><span class="bar-name">asset-b</span><span class="bar r" style="width:88%"></span><span class="bar-val">$68M</span></div>
+          <div class="bar-row"><span class="bar-name">asset-d</span><span class="bar a" style="width:58%"></span><span class="bar-val">$44M</span></div>
+          <div class="bar-row"><span class="bar-name">asset-f</span><span class="bar a" style="width:42%"></span><span class="bar-val">$30M</span></div>
+        </div>
+        <div class="board-status">
+          <span><span class="dot rose"></span>imminent (1)</span>
+          <span><span class="dot amber"></span>near-term (2)</span>
+          <span>Confidence: likely</span>
+        </div>
+      </div>
+
+      <div class="transcript">
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">What's our best lever on asset-b?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            Strongest lever is the <strong>label-extension filing</strong> targeting the pediatric indication (est. 18-month exclusivity extension, adds ~$42M of the $68M at risk). Secondary lever is <strong>lifecycle formulation</strong> — an extended-release reformulation is in phase 2, would land ~9 months post-LOE. Lifecycle team has both on the plan.
+            <div class="trace">
+              <span class="trace-label">Trace · decision records</span>
+              Defense playbook methodology me-defense-2026 · exclusivity extension analysis in finding f-2026-055 · lifecycle formulation status from hypothesis h-reformulation-2026
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">What's the probability the pediatric filing goes through?</div>
+        </div>
+        <div class="msg ai">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            Regulatory affairs rates it at <strong>70% likely</strong>. Basis: FDA conditional encouragement in the pre-submission meeting (Nov 2025), enrollment target met in the Phase 3b study, safety profile clean to date. Risk factors: one competitor's pediatric filing is pending with a similar mechanism — if they're denied, ours may face tighter scrutiny.
+            <div class="trace">
+              <span class="trace-label">Trace · assumption + risk records</span>
+              Assumption a-2026-012 (70% filing probability) · underlying evidence in RB_pediatric_filing_2026-03-22 · risk record r-competitor-filing-2026
+            </div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">U</div>
+          <div class="bubble">If the filing fails, what's plan B?</div>
+        </div>
+        <div class="transcript-input">Ctrl-K to continue · contingency plan pulled from recommendation graph</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>How the plumbing actually works</h2>
+  <div class="section-h">What makes the conversation possible</div>
+  <p class="section-lede">The reason the manager can drill three layers deep and still get grounded answers — instead of confident hallucination — is that the conversation runs against the graph, not against the model's memory.</p>
+
+  <div class="plumbing">
+    <div class="plumbing-card">
+      <div class="num">01 · THE INTERFACE</div>
+      <h4>claude.ai Projects with CAP connector</h4>
+      <p>Manager opens a <code>Project</code> on claude.ai scoped to their engagement. The project is preloaded with entity summaries, current KPIs, and the methodology scope. No IT install, no new tool — the interface they already use.</p>
+    </div>
+    <div class="plumbing-card">
+      <div class="num">02 · THE GROUND</div>
+      <h4>Entity graph + KB in the background</h4>
+      <p>Every follow-up triggers a graph query — <em>this</em> asset, <em>this</em> method, <em>this</em> finding. The model stitches the answer from structured sources instead of making it up. The graph is shared: the same asset referenced in the board is referenced in the answer, with the same ID.</p>
+    </div>
+    <div class="plumbing-card">
+      <div class="num">03 · THE EVIDENCE</div>
+      <h4>Trace attached to every answer</h4>
+      <p>Each answer carries a trace block: which finding, which method, which assumption, which source table. The manager can click one level deeper and see the underlying record. If they want to challenge the answer, they have the receipts in the next click.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The key distinction</h2>
+  <div class="section-h">Who builds vs. who consumes</div>
+
+  <div class="distinction">
+    <h3>Two roles, two interfaces. Both Claude.</h3>
+    <div class="two-col">
+      <div>
+        <div class="col-label">The analyst · builds</div>
+        <ul>
+          <li>Forge + Atlas for deep analytical work</li>
+          <li>Subagents, triad review, methodology selection</li>
+          <li>Writes entities, briefs, methods, recommendations</li>
+          <li>Outputs: the board, the storyboard, the underlying evidence</li>
+          <li>Context: the full CAP system map</li>
+        </ul>
+      </div>
+      <div>
+        <div class="col-label">The manager · consumes</div>
+        <ul>
+          <li>claude.ai Projects — the interface they already use</li>
+          <li>Dashboard / storyboard as the starting artifact</li>
+          <li>Follow-up questions drill through the graph</li>
+          <li>Decisions captured back to the graph</li>
+          <li>Context: the engagement scope, not the plumbing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:#94a3b8">CAP · Management View</strong> · the dashboard / storyboard manager interface · paired with the analyst's <a href="cap_graph_and_journeys.html">system map</a> · business framing in the <a href="cap_gtm_lens.html">GTM lens</a>.
+</footer>
+
+</main>
+</body>
+</html>

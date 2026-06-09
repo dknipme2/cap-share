@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAJAZIR (Icatibant) — HAE On-Demand · Patient Journey &amp; Claims Identification</title>
+<meta name="description" content="SAJAZIR (icatibant ANDA generic) from Cycle Pharmaceuticals — patient journey, testing, and claims-based identification opportunities for hereditary angioedema (HAE), treated with icatibant (bradykinin B2 receptor antagonist). Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav span.sep { color: var(--ink-faint); margin: 0 6px; }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a><span class="sep">·</span>← <a href="cluster_hae.html">HAE Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Allergy/Immunology · Rare Bradykinin-Mediated Angioedema</div>
+  <h1>SAJAZIR (Icatibant) — HAE On-Demand</h1>
+  <p class="sub">SAJAZIR (icatibant) is a synthetic decapeptide bradykinin B2 receptor antagonist, delivered as a subcutaneous self-administered injection for acute HAE attacks in adults 18+. Marketed as an ANDA generic by Cycle Pharmaceuticals after the original Firazyr brand lost exclusivity in July 2019; multiple generics now compete. The commercial surface is Cycle Vita hub services and Orsini specialty-pharmacy training, not clinical differentiation.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> SAJAZIR (icatibant ANDA generic)</span>
+    <span><strong>Disease:</strong> Hereditary angioedema (types I, II, III)</span>
+    <span><strong>Mechanism:</strong> Bradykinin B2 receptor antagonist</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> Orsini Specialty Pharmacy · <strong>Hub:</strong> Cycle Vita</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US HAE Prevalence</div><div class="v">~8,500–9,500</div></div>
+  <div class="card"><div class="k">Global Rate</div><div class="v sm">~1 in 50,000</div></div>
+  <div class="card"><div class="k">Attacks/Year (mean)</div><div class="v sm">Variable — weekly to yearly</div></div>
+  <div class="card"><div class="k">Type I / II / III</div><div class="v sm">80–85% / 15–20% / &lt;1%</div></div>
+  <div class="card"><div class="k">Age of Diagnosis</div><div class="v sm">Typically adulthood</div></div>
+  <div class="card"><div class="k">Self-Administration</div><div class="v sm">After training, widely adopted</div></div>
+  <div class="card"><div class="k">Time to 50% Symptom Relief</div><div class="v sm">~2.0 hr vs. 19.8 hr placebo</div></div>
+  <div class="card"><div class="k">Single-Dose Efficacy</div><div class="v sm">88.2% of attacks</div></div>
+  <div class="card"><div class="k">Generic Competitors</div><div class="v">4+ generics</div></div>
+  <div class="card"><div class="k">Oral Alternative (2025)</div><div class="v" style="color:var(--warn)">Ekterly (sebetralstat)</div></div>
+</div>
+
+<div class="callout warn">
+  <div class="title">Shifting Treatment Landscape</div>
+  <p style="margin:0">As of mid-2025, the HAE on-demand segment faces direct displacement pressure from <strong>Ekterly (sebetralstat)</strong> — the first oral on-demand therapy. SAJAZIR (and the icatibant class broadly) retains clinical legitimacy (proven B2 antagonist mechanism, sub-2-hour onset, laryngeal-attack experience) but loses on patient-experience dimensions: no injection, no needle anxiety, approved down to age 12. Analytics for SAJAZIR should focus on the retention pocket (intolerance, failure, access-restricted patients) rather than growth.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Hereditary angioedema is an autosomal dominant disorder of the complement / kinin pathway. In <strong>type I</strong> (80–85% of cases), the <em>SERPING1</em> gene encodes deficient C1-esterase inhibitor (C1-INH). In <strong>type II</strong> (15–20%), C1-INH levels are normal or elevated but the protein is dysfunctional. In <strong>type III</strong> (HAE-nl-C1INH), C1-INH is normal and mutations in <em>F12</em>, <em>ANGPT1</em>, <em>PLG</em>, or other genes drive pathology — often estrogen-sensitive, often female. Deficient C1-INH allows unchecked kallikrein activity, bradykinin overproduction, and episodic vascular permeability — swelling of extremities, face, GI tract, and larynx.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical hallmarks</h3>
+    <ul>
+      <li><strong>Recurrent angioedema attacks</strong> — swelling of extremities, face, or GI tract lasting hours to days</li>
+      <li><strong>Laryngeal attacks</strong> are life-threatening; 36.9% of HAE-C1INH patients report family members who died from an HAE attack</li>
+      <li><strong>Non-pitting, non-pruritic</strong> — distinguishes from histamine-mediated angioedema</li>
+      <li><strong>Abdominal attacks</strong> can mimic acute abdomen — multiple patients have had exploratory laparotomies before diagnosis</li>
+      <li><strong>Triggers:</strong> trauma, dental procedures, infections, stress, estrogen, ACE inhibitors</li>
+      <li>Attack frequency varies — some patients weekly, others yearly; unpredictable</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>Global prevalence</td><td>~1 in 50,000</td></tr>
+      <tr><td>US claims-based prevalence (2018)</td><td>2.67 per 100,000 (~9,559)</td></tr>
+      <tr><td>US claims-based prevalence (2020)</td><td>2.43 per 100,000 (~8,694)</td></tr>
+      <tr><td>Type I (C1-INH deficiency)</td><td>80–85%</td></tr>
+      <tr><td>Type II (C1-INH dysfunction)</td><td>15–20%</td></tr>
+      <tr><td>Type III (C1-INH normal)</td><td>Rare</td></tr>
+      <tr><td>Female predominance</td><td>65–69%</td></tr>
+      <tr><td>Dx delay from first attack</td><td>Often 10+ years</td></tr>
+      <tr><td>ICD-10</td><td>D84.1 (complement defect)</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Patient Journey</h2>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Childhood / adolescence</div>
+    <div class="t">First attacks — often unrecognized</div>
+    <div class="d">First angioedema attacks typically begin in late childhood or adolescence. Triggers may not be obvious. Family history is often present but not always disclosed or elicited. Many patients are dismissed as having allergic reactions and trialed on antihistamines or steroids (which do not work for bradykinin-mediated angioedema).</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Decades of misdiagnosis</div>
+    <div class="t">Recurrent attacks attributed to allergy, anxiety, or idiopathic angioedema</div>
+    <div class="d">Patients may see PCPs, allergists, gastroenterologists (for abdominal attacks mimicking acute abdomen), dermatologists, and ER physicians. Repeated courses of corticosteroids, epinephrine, and antihistamines fail to prevent or abort attacks — because none of these treat the bradykinin pathway. Some patients undergo exploratory laparotomies for what was really an HAE abdominal attack.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Allergy/immunology referral</div>
+    <div class="t">Specialist workup — C4 is the gateway test</div>
+    <div class="d">A specialist (allergist/immunologist) with HAE awareness orders C4 as the screening test. Low C4 between attacks is highly suggestive. C1-INH antigen and C1-INH functional assays follow. Genetic testing for <em>SERPING1</em> confirms type I/II; type III testing is broader (<em>F12</em>, <em>PLG</em>, <em>ANGPT1</em>, etc.).</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Diagnosis</div>
+    <div class="t">Treatment plan: on-demand + (usually) prophylaxis</div>
+    <div class="d">Modern HAE care pairs an on-demand rescue therapy (icatibant — SAJAZIR (Cycle), Firazyr (Takeda), or other generics — C1-INH concentrates, or now oral sebetralstat) with long-term prophylaxis (Takhzyro, Orladeyo, or newer entrants). Patients are trained on self-injection for on-demand treatment. Action plans for laryngeal attacks (auto-injector carry, ER identification cards) are established.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Ongoing care</div>
+    <div class="t">Attack plan, prophylaxis adjustment, advocacy integration</div>
+    <div class="d">Patients typically engage with the HAEA (US Hereditary Angioedema Association), register with the HAEA Scientific Registry, and are managed long-term by an HAE-literate allergy/immunology specialist. Prophylaxis choice is revisited as new options arrive (Orladeyo 2020, Takhzyro pediatric 2023, Andembry 2025, Dawnzera 2025).</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Confirmatory testing</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>C4 level</td><td>Screening — low C4 is highly suggestive of HAE type I/II.</td></tr>
+      <tr><td>C1-INH antigen (protein level)</td><td>Low in type I; normal in type II.</td></tr>
+      <tr><td>C1-INH functional assay</td><td>Reduced in both type I and type II. Key discriminator.</td></tr>
+      <tr><td><em>SERPING1</em> sequencing</td><td>Confirms type I/II molecular diagnosis.</td></tr>
+      <tr><td>Extended gene panel</td><td><em>F12</em>, <em>PLG</em>, <em>ANGPT1</em>, <em>KNG1</em> — for type III (HAE-nl-C1INH).</td></tr>
+      <tr><td>C1q</td><td>Normal in HAE (distinguishes from acquired C1-INH deficiency).</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who orders testing?</h3>
+    <ul>
+      <li><strong>Allergists / immunologists</strong> — primary prescriber universe (~4,000–5,000 board-certified in US, with a smaller HAE-literate subset)</li>
+      <li><strong>HAE Centers of Excellence</strong> — academic programs with dedicated HAE clinics (Penn State ICE-HAE, USHAEA affiliates, GA2LEN ACARE network)</li>
+      <li><strong>Emergency medicine</strong> — acute attacks present to ED; HAE-aware EPs can trigger workup</li>
+      <li><strong>Medical geneticists</strong> — increasingly involved in <em>SERPING1</em> testing</li>
+      <li><strong>PCPs</strong> — can order C4 as first step but referral to allergy/immunology is typical</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag md">moderate</span></td><td><code>D84.1</code> &ldquo;Defects in the complement system&rdquo; covers HAE (specific subcode <code>D84.1</code> since 2019), but <code>T78.3</code> &ldquo;Angioneurotic edema&rdquo; is frequently used in ED encounters. Dual-code cohorting is required.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag md">moderate</span></td><td>Allergy / immunology prescribers captured; the HAE patient count sits above suppression in most regions. Adequate for prescriber-level analytics.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>SAJAZIR (Cycle), Firazyr brand, and other icatibant generics carry distinct NDCs. Within-molecule share computable from Part D.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag md">moderate</span></td><td>Orsini Specialty Pharmacy is the primary SAJAZIR distribution path; panel-reporting status varies by network. Retail component small but present.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Market contraction drives defensive PAP retention &mdash; volumes PDE-invisible. Naive share calculations will overstate rate of decline for Cycle and other manufacturers running active retention programs.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>ER-visit patterns (angioedema attack coding) flag uncontrolled patients. C4 and C1-INH lab-testing orders identify diagnostic-workup episodes. Strong signal triangulation for a defensively-scoped analysis.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Claims data is <strong>adequate for defensive analytics</strong> &mdash; retention analysis, switching patterns to oral prophylaxis, payer-specific on-demand access mapping. But the market trajectory is downward as oral prophylaxis and oral on-demand erode injectable on-demand use. Analysis <em>confirms</em> the decline and <em>optimizes</em> defensive positioning; it does not reverse the direction. Frame ROI accordingly: this is a portfolio-defense workstream, not a growth workstream.</p>
+</div>
+
+<h2>Claims-Based Identification Opportunities</h2>
+
+<p class="lead">Unlike alkaptonuria (no specific ICD) or periodic paralysis (under-coded), HAE has a usable specific ICD (<code>D84.1</code>) and dedicated billing codes for the major therapeutics. Claims-based identification is the primary substrate, supplemented by allergy / immunology visit patterns and ED-utilization signals.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Structured Claims Signal</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">D84.1 + treatment-specific claims are the canonical HAE identification algorithm. Enrich with attack coding for higher specificity.</p>
+    <ul>
+      <li>Primary ICD: <code>D84.1</code> (defects in the complement system, including HAE subcodes)</li>
+      <li>Attack context: <code>T78.3XXA</code> / <code>T78.3XXD</code> (angioneurotic edema)</li>
+      <li>HCPCS J-codes: <code>J1744</code> (icatibant), <code>J0596</code> (C1-INH concentrate), <code>J0597</code>, <code>J0598</code>, <code>J1290</code> (ecallantide), <code>J0599</code> (lanadelumab)</li>
+      <li>NDCs for oral prophylaxis (Orladeyo) and oral on-demand (Ekterly) once claims mature</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> Approximately 8,000–10,000 patients identifiable through combined algorithms. Claims-based prevalence studies converge on this range.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Rx Pattern Signals — On-Demand + Prophylaxis Overlap</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Modern HAE patients typically carry BOTH an on-demand therapy AND a long-term prophylaxis. The overlap pattern is diagnostic and identifies treatment-shift patterns.</p>
+    <ul>
+      <li>Chronic dispense of injectable on-demand (icatibant, C1-INH)</li>
+      <li>Chronic dispense of oral prophylaxis (Orladeyo) or SC prophylaxis (Takhzyro, Andembry, Dawnzera)</li>
+      <li>Co-occurrence identifies "dual-therapy" patients (the dominant modern HAE phenotype)</li>
+      <li>Switching patterns: injectable on-demand → oral on-demand (Ekterly) transition tracking</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Allergy/Immunology Visit Frequency</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Repeated allergy/immunology visits in a young adult, especially female, with recurrent angioedema codes is a diagnostic signature.</p>
+    <ul>
+      <li>≥3 allergy/immunology visits within 12 months with angioedema ICD</li>
+      <li>Patient age 15–50, female predominant</li>
+      <li>Family history of angioedema (structured or narrative)</li>
+      <li>Referral from ER → allergy/immunology</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>4 · ED Utilization Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Pre-diagnosis HAE patients present to the ED repeatedly with angioedema, abdominal pain, or airway symptoms. Unexplained ED utilization is a patient-finding signal.</p>
+    <ul>
+      <li>ED visits for angioedema (<code>T78.3XXA</code>) in young adults</li>
+      <li>Repeated abdominal-pain ED visits without alternative diagnosis</li>
+      <li>ED visits with laryngeal edema, particularly recurrent</li>
+      <li>Corticosteroid / epinephrine / antihistamine treatment without durable response</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>5 · Negative-Workup Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">HAE patients carry the distinctive signature of an angioedema workup that rules OUT allergic causes. Negative-test patterns are identification leads.</p>
+    <ul>
+      <li>Negative IgE panels, negative tryptase, negative skin-prick testing</li>
+      <li>C4 ordered (or notably NOT ordered despite recurrent angioedema)</li>
+      <li>Multiple courses of H1 / H2 antihistamines without response</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>6 · Genetic-Panel Order Signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)"><em>SERPING1</em> sequencing orders, HAE gene panels, and C1-INH functional assays at reference labs are the highest-precision diagnosed-but-unreached signals.</p>
+    <ul>
+      <li>Commercial lab HAE panel orders (<em>SERPING1</em>, <em>F12</em>, <em>PLG</em>)</li>
+      <li>C1-INH functional assay results at reference labs</li>
+      <li>Positive-result patients not yet on therapy (diagnostic delay)</li>
+    </ul>
+  </div>
+
+</div>
+
+<h2>Commercial Analytics (Defensive)</h2>
+
+<table>
+  <tr><th>Analysis</th><th>Relevance</th></tr>
+  <tr><td>Retention analysis — who is NOT switching to oral</td><td><span class="tag hi">primary</span> durable segment sizing in a contracting market</td></tr>
+  <tr><td>Payer-specific on-demand access</td><td><span class="tag hi">primary</span> step-therapy and PA-restriction maps</td></tr>
+  <tr><td>Intolerance / failure patients on oral prophylaxis</td><td><span class="tag hi">primary</span> candidates for injectable on-demand</td></tr>
+  <tr><td>Cycle Vita hub / Orsini SP service-tier ROI</td><td><span class="tag md">high</span> only differentiator for SAJAZIR against unbranded generics</td></tr>
+  <tr><td>ED-avoidance payer story</td><td><span class="tag md">high</span> cost-offset narrative for payer contracting</td></tr>
+  <tr><td>Breakthrough-attack rescue positioning</td><td><span class="tag md">medium</span> prophylaxis patients carrying on-demand rescue</td></tr>
+  <tr><td>Pediatric injectable persistence</td><td><span class="tag md">conditional</span> depending on oral on-demand pediatric uptake</td></tr>
+  <tr><td>Territory alignment / call planning</td><td><span class="tag lo">not applicable</span> named-specialty model, not R&F</td></tr>
+  <tr><td>Growth-focused prescriber acquisition</td><td><span class="tag lo">not applicable</span> structurally declining segment</td></tr>
+</table>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>Ekterly (oral on-demand) uptake</strong> in the first 12–18 months post-launch — what percentage of injectable on-demand patients convert?</li>
+  <li><strong>Intolerance / failure cohort size</strong> — how many oral-prophylaxis patients experience breakthrough attacks requiring injectable on-demand?</li>
+  <li><strong>Payer step-therapy posture</strong> — do payers restrict injectable on-demand in favor of oral, and which payers move first?</li>
+  <li><strong>Pediatric market dynamics</strong> — Ekterly is 12+; does the &lt;12 injectable market persist, and for how long?</li>
+  <li><strong>Orsini Specialty Pharmacy</strong> data-reporting status to commercial Rx panels — typical hub-driven rare-disease data-visibility questions apply; Cycle Vita hub telemetry is the fallback if Orsini doesn't report</li>
+  <li><strong>Laryngeal-attack-history segment</strong> — do clinicians retain injectable preference for this high-risk subgroup?</li>
+  <li><strong>WAC pricing of oral on-demand (Ekterly) vs. injectable on-demand</strong> — price-sensitive payers may drive injectable preservation if oral is priced aggressively</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (icatibant injection label, ANDA 212446); NEJM 2009 (icatibant in HAE, DOI 10.1056/NEJMoa0906393); Cicardi et al., JACI 2012 (FAST-3, PMID 22123383); US HAE claims-based prevalence study (PubMed PMID 40414286, 2025); HAEA Scientific Registry (Annals of Allergy 2023, PMID 37619776); FDA approval announcements for Ekterly (KalVista, July 2025), Andembry (CSL, June 2025), Dawnzera (Ionis, 2025); HCPCS code J1744; ICD10Data.com (D84.1); US Hereditary Angioedema Association.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_sajazir_icatibant_hae_2026-03-19.md</code>.</p>
+</footer>
+
+</div>
+</body>
+</html>

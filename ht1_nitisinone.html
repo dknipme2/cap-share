@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NITYR (Nitisinone Tablets) — HT-1 Patient Identification &amp; Analytics</title>
+<meta name="description" content="NITYR (nitisinone tablets 2/5/10 mg) from Cycle Pharmaceuticals — hereditary tyrosinemia type 1 (HT-1) patient journey, newborn screening context, and commercial analytics. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a> · ← <a href="cluster_ultra_rare_metabolic.html">Ultra-Rare Metabolic Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Rare Disease · Metabolic</div>
+  <h1>NITYR (Nitisinone Tablets) — HT-1 Patient Identification &amp; Analytics</h1>
+  <p class="sub">Hereditary tyrosinemia type 1 (HT-1) is an autosomal-recessive inborn error of tyrosine metabolism that is universally fatal within the first decade without treatment and nearly normalized to age-matched life expectancy on nitisinone. Newborn screening catches essentially every US case — the commercial problem is not finding patients, it is competing for an identified patient pool against Orfadin (the reference capsule) and, increasingly, generic nitisinone capsules. NITYR (nitisinone tablets 2/5/10 mg) from Cycle Pharmaceuticals is the room-temperature-stable, once-daily-eligible tablet 505(b)(2).</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> NITYR (nitisinone tablets 2/5/10 mg)</span>
+    <span><strong>Indication:</strong> Hereditary tyrosinemia type 1 (HT-1) + strict Tyr/Phe-restricted diet</span>
+    <span><strong>Regulatory:</strong> 505(b)(2) NDA 209449; QD-dosing supplement 2020</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> LeMed (exclusive) · <strong>Hub:</strong> Cycle Vita</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US Living Patients</div><div class="v">~500–1,000</div></div>
+  <div class="card"><div class="k">Birth Incidence</div><div class="v">~1 in 100,000</div></div>
+  <div class="card"><div class="k">Annual US Births with HT-1</div><div class="v">~30–40/yr</div></div>
+  <div class="card"><div class="k">NBS Status</div><div class="v" style="color:var(--good)">RUSP-recommended</div></div>
+  <div class="card"><div class="k">Reference Product</div><div class="v sm">Orfadin (Sobi) — capsules + suspension, 2002</div></div>
+  <div class="card"><div class="k">NITYR Formulation</div><div class="v sm">505(b)(2) NDA, 2017; once-daily option 2020</div></div>
+  <div class="card"><div class="k">Dose Range</div><div class="v sm">1 mg/kg/day (typical)</div></div>
+  <div class="card"><div class="k">Survival on Therapy</div><div class="v" style="color:var(--good)">&gt;90% when started in infancy</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Core insight</div>
+  <p style="margin:0">Unlike alkaptonuria, HT-1 is a <em>known patient</em> market. Newborn screening catches virtually every US case within the first week of life, so the treated population is close to the true prevalent population. The commercial challenge for NITYR is not patient finding — it is <strong>patient <em>capture</em> and retention</strong> against an established capsule reference (Orfadin, Sobi) and an AB-rated generic capsule (Analog Pharma / Dipharma, 2023). Analytics value lives in formulation-preference dynamics, metabolic-center portfolio penetration, and the pediatric-to-adult transition window.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">HT-1 is caused by biallelic pathogenic variants in the <em>FAH</em> gene (chromosome 15q25.1), producing deficient fumarylacetoacetate hydrolase — the terminal enzyme in tyrosine catabolism. Toxic upstream metabolites (fumarylacetoacetate, maleylacetoacetate, succinylacetone) accumulate and drive severe hepatotoxicity, nephrotoxicity, and neurologic crises. Nitisinone rescues the pathway by blocking an earlier step (HPPD), preventing toxic metabolite formation at the cost of elevated plasma tyrosine — which dietary restriction must manage.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical hallmarks</h3>
+    <ul>
+      <li><strong>Acute form</strong> (onset &lt;6 months) — severe liver failure, coagulopathy, markedly elevated AFP (mean ~160,000 ng/mL), fatal within months to years without treatment</li>
+      <li><strong>Chronic form</strong> (onset &gt;6 months) — Fanconi-type renal tubular dysfunction, rickets, growth failure, progressive cirrhosis</li>
+      <li><strong>Neurologic crises</strong> — painful peripheral neuropathy episodes lasting 1–7 days, can cause respiratory paralysis</li>
+      <li><strong>Hepatocellular carcinoma</strong> — major long-term risk without treatment; can develop in childhood</li>
+      <li><strong>On therapy</strong> — life expectancy approaches normal; HCC risk ~5% or less when nitisinone started in the newborn period</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>Worldwide incidence</td><td>~1 in 100,000 births</td></tr>
+      <tr><td>US carrier frequency</td><td>~1 in 100 to 1 in 150</td></tr>
+      <tr><td>US annual births with HT-1</td><td>~30–40</td></tr>
+      <tr><td>US living patient count</td><td>~500–1,000 (inferred)</td></tr>
+      <tr><td>Quebec (Saguenay–Lac St. Jean) prevalence</td><td>~1 in 1,846 (founder effect)</td></tr>
+      <tr><td>Norway prevalence</td><td>~1 in 60,000–74,000</td></tr>
+      <tr><td>Untreated prognosis</td><td>Death typically before age 10</td></tr>
+      <tr><td>15-yr treated follow-up</td><td>3,172 patient-years; low AE burden</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="title">Newborn screening is the identification engine</div>
+  <p style="margin:0">HT-1 is on the US Recommended Uniform Screening Panel (RUSP). <strong>Succinylacetone</strong> in dried blood spots is pathognomonic — a single elevated value essentially confirms the diagnosis. Every US state newborn screening program now includes HT-1 (adoption completed in the late 2010s). Because HT-1 is diagnosed in the first days of life, there is no &ldquo;diagnostic odyssey&rdquo; comparable to AKU or adult-onset rare disease — patients are identified, referred, and treated at a consistent and well-characterized rate each year.</p>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>The HT-1 patient journey is short on the diagnostic side (NBS flags → metabolic genetics → treatment within days) and long on the therapeutic side (lifelong daily therapy plus strict diet, through puberty, adult transition, and adulthood). Commercial value lives almost entirely in retention and care-team relationships, not in initial diagnosis.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Day 2–7 of life</div>
+    <div class="t">NBS flag — elevated succinylacetone</div>
+    <div class="d">State newborn screening lab flags succinylacetone on MS/MS. State program notifies the metabolic genetics program of record within 24–72 hours. Parents are informed and immediate referral is arranged.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Week 1–2</div>
+    <div class="t">Metabolic genetics confirmation</div>
+    <div class="d">Confirmatory testing: quantitative plasma + urine succinylacetone, plasma amino acids (elevated tyrosine, methionine), liver function, AFP, coagulation, <em>FAH</em> gene sequencing. Immediate initiation of nitisinone therapy — clinicians do not wait for molecular confirmation if biochemistry is consistent.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Week 2 onward</div>
+    <div class="t">Nitisinone initiation + Tyr/Phe-restricted diet</div>
+    <div class="d">Typical starting dose 1 mg/kg/day; titrate to undetectable urinary succinylacetone. <strong>Strict dietary tyrosine and phenylalanine restriction is mandatory</strong> (unlike AKU) because nitisinone-induced tyrosinemia can cause corneal keratopathy, hyperkeratotic skin plaques, and potential neurocognitive effects. Metabolic formula + measured natural protein.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Infancy through school age</div>
+    <div class="t">Pediatric metabolic follow-up</div>
+    <div class="d">Monthly to quarterly plasma tyrosine, succinylacetone, LFTs, AFP. Slit-lamp exam at baseline and with symptom change. Annual liver MRI starting in later childhood for HCC surveillance. Metabolic dietitian visits drive adherence.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 5+</div>
+    <div class="t">Once-daily dosing eligibility (NITYR)</div>
+    <div class="d">Patients with undetectable serum and urine succinylacetone for ≥4 weeks on stable dose become candidates for once-daily dosing (NITYR QD supplement approved September 2020). This is a meaningful quality-of-life differentiator for stable patients and a key NITYR vs. Orfadin capsule differentiator.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Adolescence</div>
+    <div class="t">Adherence challenges</div>
+    <div class="d">Diet fatigue, body-image concerns around protein restriction, and transition-planning begin. Metabolic dietitian contact becomes episodic. Subclinical non-adherence rises; plasma tyrosine/succinylacetone monitoring catches drift but can't fix it.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Age 18–25</div>
+    <div class="t">Pediatric-to-adult transition</div>
+    <div class="d">Transition from pediatric metabolic center to adult metabolic or internal medicine provider. A high-risk window: adult metabolic expertise is scarcer, patients may move geographically for college or work, and a subset drops out of care. Retention here is the single highest-leverage commercial lever.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Adulthood</div>
+    <div class="t">Lifelong therapy + HCC surveillance</div>
+    <div class="d">Continued nitisinone + diet. Annual liver imaging remains standard. Women of childbearing age need pre-conception planning (tight Tyr control through pregnancy). Rare late-diagnosis or treatment-failure patients may proceed to liver transplant.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Confirmatory testing</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>NBS succinylacetone (DBS MS/MS)</td><td><strong>Primary screen.</strong> Pathognomonic when elevated; captures essentially all US births.</td></tr>
+      <tr><td>Plasma &amp; urine succinylacetone (quantitative)</td><td>Confirmatory. Also the treatment-monitoring endpoint — goal is undetectable.</td></tr>
+      <tr><td>Plasma amino acids</td><td>Elevated tyrosine, methionine support the biochemical diagnosis.</td></tr>
+      <tr><td>Liver function panel, AFP, coagulation</td><td>Baseline severity + ongoing monitoring (AFP trajectory for HCC risk).</td></tr>
+      <tr><td><em>FAH</em> gene sequencing</td><td>Molecular confirmation; informs family carrier testing and prenatal counseling.</td></tr>
+      <tr><td>Liver MRI</td><td>HCC surveillance — annual in older children and adults.</td></tr>
+      <tr><td>Slit-lamp ophthalmology</td><td>Baseline + symptom-driven; monitors for nitisinone-induced corneal keratopathy.</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who prescribes and manages?</h3>
+    <ul>
+      <li><strong>Pediatric metabolic geneticists</strong> — the primary prescriber universe. ~50 pediatric metabolic centers of excellence nationally; ~100–200 US physicians who actively treat HT-1 (inferred — no published census).</li>
+      <li><strong>Metabolic dietitians</strong> — care-team members who translate treatment into daily protein-measured meal plans. Critical adherence partners and strong KOL influencers at the practice level.</li>
+      <li><strong>Adult metabolic specialists</strong> — a much smaller universe (~30–60 centers nationally). The pediatric-to-adult handoff is the weakest link in the care chain.</li>
+      <li><strong>Hepatology consultants</strong> — HCC surveillance, transplant evaluation in the rare treatment-failure case.</li>
+      <li><strong>Genetic counselors</strong> — family testing, reproductive counseling for adult women on therapy.</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Incidence &amp; prevalence math</h3>
+<p>At ~3.6M annual US births and an incidence of 1:100,000, the expected birth yield is <strong>~36 new HT-1 cases per year</strong>. Applying &gt;90% treated survival to adulthood and accumulating over ~30 birth cohorts yields a modeled treated population in the low thousands — but the practical treated pool is substantially smaller (~500–1,000) because comprehensive NBS for HT-1 is relatively recent (phased adoption across states completed in the late 2010s), and older cohorts include both unscreened miss-rate and late-diagnosed patients with confounding morbidity. The treated pool is growing slowly as NBS-identified cohorts age into adulthood.</p>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>E70.21</code> &ldquo;Tyrosinemia&rdquo; is HT-1-specific. Low miscoding noise. Anchor code for cohort definition.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag md">moderate</span></td><td>Rare but not ultra-rare &mdash; specialist-concentrated prescribing sits above CMS suppression thresholds for most metabolic centers. Pediatric-skewed cohorts sit largely outside Part D.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>NITYR tablets have a distinct NDC from Orfadin capsule / oral suspension and from the generic capsule. NITYR-vs-Orfadin-vs-generic share can be computed where Rx data is available.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag md">moderate (gate question)</span></td><td>LeMed exclusive distribution for NITYR. LeMed panel-reporting status determines retail-analytics feasibility &mdash; must be confirmed before scoping competitive-share work.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Premium pricing above the reference drug drives PAP enrollment for access. PAP volumes generate no PDE, so CMS share figures structurally understate true market.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Newborn screening identifies nearly all US patients (registry-adjacent census). Metabolic-center directory enumerates the prescriber universe. Hub CRM closes the retention loop.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Claims data <strong>can</strong> identify HT-1 patients and quantify aggregate prescribing &mdash; <code>E70.21</code> is clean, NBS catches nearly everyone, and the metabolic-center universe is enumerable. But NITYR-vs-Orfadin <em>switching</em> analytics require Xponent or LeMed dispense data because Part D under-represents pediatric use and LeMed panel-reporting status is not yet confirmed. PAP volumes almost certainly understate true market, so naive share calculations will mislead on launch trajectory.</p>
+</div>
+
+<h2>Patient Identification &amp; Commercial Landscape</h2>
+
+<p class="lead">The patient-identification problem in HT-1 is fundamentally different from most rare diseases: the population is already found. The commercial questions become (1) <strong>how are identified patients distributed across prescribers</strong>, (2) <strong>which formulation do they receive</strong>, and (3) <strong>who is lost in the pediatric-to-adult transition</strong>. These are hub-data and SP-data questions, not claims-discovery questions.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Metabolic-center census</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Map the universe of US metabolic centers and their HT-1 patient volumes — the denominator for every downstream question.</p>
+    <ul>
+      <li>GMDI (Genetic Metabolic Dietitians International) clinic directory as the seed list</li>
+      <li>SIMD (Society for Inherited Metabolic Disorders) member institutions</li>
+      <li>HRSA-funded Regional Collaboratives newborn screening follow-up data (state-level)</li>
+      <li>Academic tertiary children's hospitals with funded metabolic programs</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected output:</strong> ~50 pediatric metabolic centers that cover &gt;90% of HT-1 patients; ~30–60 adult metabolic centers. Named-account target list, not a territory map.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Formulation-share dynamics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The analytical core of the HT-1 market: how is the nitisinone molecule split across NITYR tablets vs. Orfadin capsules vs. generic capsules vs. oral suspension?</p>
+    <ul>
+      <li>LeMed dispense data by NDC (segments NITYR tablets from Orfadin capsules / suspension / generic capsules)</li>
+      <li>Newly-started-patient formulation choice by metabolic center</li>
+      <li>Switching dynamics — capsule-to-tablet and tablet-to-capsule rates</li>
+      <li>Age-based formulation patterns — infants/toddlers often start on oral suspension (capsule form only), transitioning to solid dose later</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected output:</strong> share-by-formulation trend, center-level loyalty patterns, identification of conversion-opportunity centers.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Transition-window patient tracking</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The pediatric-to-adult handoff is the highest-risk adherence window and a known leak point in rare metabolic care.</p>
+    <ul>
+      <li>Hub-enrollment records flagging age-18 boundary events</li>
+      <li>Refill gaps &gt;60 days in the 16–22 age band</li>
+      <li>Center-of-care changes inferred from SP-dispense shipping addresses</li>
+      <li>New adult-provider enrollment vs. loss-to-follow-up (continued refills but no clinic encounter)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected output:</strong> transition-failure rate benchmark, intervenable window, list of high-risk patients for proactive hub outreach.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Diet-adherence proxy signals</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Plasma tyrosine values are the ground truth for dietary adherence — but they live in lab systems, not claims. Hub-reported lab integrations change the picture.</p>
+    <ul>
+      <li>Plasma tyrosine trend at the patient level (where hub has lab integration)</li>
+      <li>Metabolic-formula co-dispensing patterns (formula is separately prescribed / reimbursed)</li>
+      <li>Dietitian visit frequency from hub interaction logs</li>
+      <li>Correlation between adherence signals and formulation choice</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected output:</strong> adherence-benchmarking substrate; differentiates product-level outcomes from disease-management outcomes.</p>
+  </div>
+</div>
+
+<h3>Competitive landscape for the nitisinone molecule</h3>
+<table>
+  <tr><th>Competitor</th><th>Form</th><th>Key differentiators</th><th>Commercial stance</th></tr>
+  <tr><td>Orfadin (Sobi)</td><td>Capsules (2/5/10/20 mg) + oral suspension 4 mg/mL</td><td>The originator (2002). Capsules historically required cold chain; oral suspension is the only pediatric liquid option.</td><td><span class="tag hi">reference</span> established KOL base, pediatric breadth</td></tr>
+  <tr><td>NITYR (Cycle Pharmaceuticals)</td><td>Tablets 2/5/10 mg (505(b)(2))</td><td>Room-temperature stable, take with or without food, once-daily dosing option (2020), patent-protected through 2035</td><td><span class="tag md">premium</span> convenience-led, hub-supported (Cycle Vita)</td></tr>
+  <tr><td>Generic nitisinone capsules</td><td>Capsules (AB-rated to Orfadin)</td><td>ANDA approved May 2023 (Analog Pharma / Dipharma). Room-temperature stable. Priced 12–27% below branded capsules.</td><td><span class="tag lo">price pressure</span> payer-driven substitution risk</td></tr>
+  <tr><td>Liver transplant</td><td>Procedure</td><td>Historical treatment path, now reserved for treatment failure / late-diagnosed cirrhosis. Not a meaningful commercial competitor at current standard of care.</td><td><span class="tag lo">edge-case</span></td></tr>
+  <tr><td>Gene therapy (preclinical)</td><td>AAV, lentiviral, mRNA, CRISPR</td><td>No HT-1 gene-therapy clinical trials as of early 2026. Preclinical pipeline active.</td><td><span class="tag lo">long-horizon</span></td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Same molecule, different indication — distinguishing NITYR (HT-1) from HARLIKU (AKU)</div>
+  <p style="margin:0">Nitisinone is the active ingredient in both NITYR (HT-1) and HARLIKU (AKU) — separate Cycle Pharmaceuticals NDAs, separate brand names. The clinical use differs materially:
+  <br><br><strong>NITYR (HT-1):</strong> Initiated in infancy after NBS. <strong>Dose ~1 mg/kg/day.</strong> <em>Strict</em> dietary tyrosine + phenylalanine restriction is <strong>mandatory</strong> — nitisinone-induced tyrosinemia can cause corneal keratopathy and hyperkeratotic skin lesions.
+  <br><br><strong>HARLIKU (AKU):</strong> Initiated in adulthood after decades of diagnostic delay. <strong>Fixed 2 mg QD dose.</strong> Dietary restriction is monitored but is <em>not routinely required</em> at the approved AKU dose.
+  <br><br>Commercially, this means NITYR prescribing is deeply entangled with the metabolic dietitian relationship and cannot be separated from dietary management infrastructure — an analytics consideration for any prescriber or patient-level modeling. HARLIKU does not carry the same dietary-management overhead.</p>
+</div>
+
+<h2>Commercial Analytics Playbook</h2>
+
+<table>
+  <tr><th>Activity</th><th>Relevance for NITYR</th></tr>
+  <tr><td>Territory alignment, call plans, reach &amp; frequency</td><td><span class="tag lo">not applicable</span> — ~50 pediatric centers, named-account model</td></tr>
+  <tr><td>Decile segmentation</td><td><span class="tag lo">not applicable</span> — universe too small</td></tr>
+  <tr><td>LeMed dispense analytics</td><td><span class="tag hi">primary</span> — complete visibility into formulation share and refill continuity</td></tr>
+  <tr><td>Cycle Vita hub performance analytics</td><td><span class="tag hi">primary</span> — onboarding speed, PA approval rate, adherence curves, time-to-first-fill</td></tr>
+  <tr><td>Center-level portfolio penetration (NITYR + HARLIKU + JAVYGTOR)</td><td><span class="tag hi">primary</span> — the cluster-level cross-sell lever for Cycle Pharmaceuticals' metabolic portfolio</td></tr>
+  <tr><td>Transition-window retention analytics</td><td><span class="tag hi">primary</span> — the single highest-leverage intervention point</td></tr>
+  <tr><td>Formulation-share tracking (NITYR / Orfadin capsule / generic capsule / suspension)</td><td><span class="tag hi">primary</span> — the competitive core of the market</td></tr>
+  <tr><td>Pricing-sensitivity modeling</td><td><span class="tag md">secondary</span> — NITYR sits at a premium to Orfadin capsules; generic capsule (2023) is creating new payer pressure</td></tr>
+  <tr><td>Dietitian-influence modeling</td><td><span class="tag md">secondary</span> — dietitian relationship often drives adherence more than prescriber relationship drives initiation</td></tr>
+  <tr><td>Claims-based patient finding</td><td><span class="tag lo">low value</span> — patients are already found via NBS</td></tr>
+</table>
+
+<h2>Open Questions</h2>
+<ol>
+  <li><strong>Formulation share today.</strong> What is the current US split between NITYR tablets, Orfadin capsules, generic capsules, and oral suspension — by center, by age band, by payer?</li>
+  <li><strong>Transition-window retention rate.</strong> Of HT-1 patients turning 18 each year, what fraction stay continuously on NITYR through age 25? Which pediatric centers have the best handoff performance, and what do they do differently?</li>
+  <li><strong>Generic substitution risk.</strong> Since the 2023 generic-capsule approval, what is the substitution rate on new starts vs. existing patients, and how are payer policies evolving relative to NITYR?</li>
+  <li><strong>Metabolic center portfolio-penetration overlap.</strong> Of ~50 pediatric metabolic centers, which are prescribing NITYR but not HARLIKU for adult AKU, or JAVYGTOR for PKU — and why?</li>
+  <li><strong>Oral-suspension switch dynamics.</strong> Which infants start on Orfadin suspension because no liquid formulation is otherwise available, and when / how do they transition to NITYR solid dose?</li>
+  <li><strong>Adult-provider landscape.</strong> How many adult metabolic specialists treat HT-1 nationally, and what is the geographic gap relative to where pediatric patients originate?</li>
+  <li><strong>Hub data-sharing posture.</strong> Is Cycle Vita patient-level interaction data available for analytics in a de-identified / compliant form, and if so, at which granularity?</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed NDA 209449 (NITYR / nitisinone tablets); FDA Clinical Review NDA 209449; GeneReviews Tyrosinemia Type I (NBK1515); StatPearls Nitisinone (NBK589678); HRSA Newborn Screening (Tyrosinemia Type I); Chinsky et al., US/Canadian HT-1 Consensus (Genetics in Medicine, 2017); Lancet Diabetes &amp; Endocrinology 15-year nitisinone follow-up (2021); Sobi Orfadin WAC disclosure (Connecticut, 2024); Analog Pharma / Dipharma generic nitisinone capsule ANDA approval (2023); Cycle Pharmaceuticals launch materials.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Based on internal research brief <code>knowledge/research/domain/briefs/RB_RC_nityr_nitisinone_ht1_2026-03-19.md</code>. Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026).</p>
+</footer>
+
+</div>
+</body>
+</html>

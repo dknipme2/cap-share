@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TASCENSO ODT (Fingolimod ODT) — MS Dysphagia Niche</title>
+<meta name="description" content="TASCENSO ODT (fingolimod orally-disintegrating tablet) from Cycle Pharmaceuticals — S1P receptor modulator in a formulation protected to 2036, differentiated by swallowing-ease and potency-assurance vs subpotent generic fingolimod capsules. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  .crumb { font-size: 13px; color: var(--ink-faint); margin-bottom: 10px; }
+  .crumb a { color: var(--accent); text-decoration: none; margin-right: 10px; }
+  .crumb a:hover { text-decoration: underline; }
+  header.hero { padding: 24px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="crumb"><a href="portfolio_index.html">&larr; Portfolio Index</a> <a href="cluster_ms_oral_dmt.html">&larr; MS Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · MS Oral DMT · S1P Modulator</div>
+  <h1>TASCENSO ODT (Fingolimod ODT) &mdash; MS Dysphagia Niche</h1>
+  <p class="sub">TASCENSO ODT (fingolimod orally-disintegrating tablet) is Cycle Pharmaceuticals' 505(b)(2) reformulation of the first-in-class S1P receptor modulator. Bioequivalent to the reference fingolimod capsule (Gilenya), but filed against its own NDA with independent patent protection to January 2036 and <strong>not AB-rated</strong> &mdash; the pharmacist cannot substitute a generic fingolimod capsule for TASCENSO ODT. Commercial positioning rests on the ODT format for MS patients with dysphagia (33&ndash;45% prevalence in the disease population) and on potency-assurance messaging versus documented subpotent generic fingolimod capsules.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> TASCENSO ODT (fingolimod 0.25 / 0.5 mg ODT)</span>
+    <span><strong>Indication:</strong> Relapsing MS (CIS, RRMS, active SPMS), &ge;10 yrs</span>
+    <span><strong>Regulatory:</strong> 505(b)(2) NDA 214962 (Dec 2021 / Dec 2022)</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · Retail distribution · Patent: earliest generic ~Jan 2036</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">S1P Class Global Market</div><div class="v">~$3.2B (2025)</div></div>
+  <div class="card"><div class="k">Patent Protected To</div><div class="v">Jan 2036</div></div>
+  <div class="card"><div class="k">Dysphagia Prevalence in MS</div><div class="v">33&ndash;45%</div></div>
+  <div class="card"><div class="k">Pharmacy Substitutable?</div><div class="v" style="color:var(--warn)">No &mdash; not AB-rated</div></div>
+  <div class="card"><div class="k">Target Population</div><div class="v sm">Branded + ODT-preferring + dysphagia</div></div>
+  <div class="card"><div class="k">Dose Form</div><div class="v sm">0.25 / 0.5 mg ODT, dissolves in seconds</div></div>
+  <div class="card"><div class="k">Reference Drug Revenue Trend</div><div class="v sm">$3.3B (2018) &rarr; $109M (2024)</div></div>
+  <div class="card"><div class="k">Generic Capsule Assay Failures</div><div class="v sm">76.8% / 85.5% of label (documented)</div></div>
+</div>
+
+<div class="callout">
+  <div class="title">Core differentiation</div>
+  <p style="margin:0">Three structural protections distinguish TASCENSO ODT from both Gilenya (the reference branded capsule, declining rapidly) and generic fingolimod capsules (commodity-priced but quality-variable): <strong>(1) long patent runway to 2036</strong>, <strong>(2) non-substitutable ODT form</strong> that cannot be swapped at the pharmacy, and <strong>(3) a dysphagia subsegment</strong> representing roughly a third to half of the MS population. Analytics for TASCENSO ODT is not primarily defensive &mdash; there is a defensible growth thesis within a fingolimod franchise that is otherwise declining at the class level.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Multiple sclerosis is a chronic immune-mediated demyelinating disease of the CNS, affecting approximately 1 million US patients. TASCENSO ODT is indicated for relapsing forms (CIS, RRMS, active SPMS) in patients aged 10 and older. The S1P receptor modulator class reduces lymphocyte egress from lymph nodes, lowering CNS inflammation. The relevant subpopulation for TASCENSO ODT is the intersection of fingolimod-appropriate patients and patients with swallowing difficulty or a preference for ODT formulation.</p>
+
+<div class="two">
+  <div>
+    <h3>S1P-appropriate patient profile</h3>
+    <ul>
+      <li><strong>Relapsing MS</strong> with breakthrough activity on first-line therapy (or high-activity from baseline warranting S1P efficacy)</li>
+      <li><strong>Cardiac clearance</strong> for first-dose observation (no recent MI, unstable angina, stroke, TIA, decompensated HF in prior 6 months; no high-grade AV block; baseline QTc &lt; 500 ms)</li>
+      <li><strong>Not contraindicated</strong> with Class Ia/III antiarrhythmics</li>
+      <li><strong>Baseline fundus exam</strong> clear of macular edema</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:10px;">The contraindication list skews the fingolimod population younger or cardiovascularly healthier than the broader MS population.</p>
+  </div>
+  <div>
+    <h3>Dysphagia in MS</h3>
+    <ul>
+      <li><strong>33&ndash;45% prevalence</strong> of dysphagia in MS patients (recent systematic review: ~43%)</li>
+      <li>Caused by lesions in corticobulbar tracts, cranial-nerve paresis, and brainstem/cerebellum disease</li>
+      <li>Progressive with disease duration; higher prevalence in older patients and progressive subtypes</li>
+      <li>Associated with aspiration risk and reduced adherence to oral medications</li>
+      <li>Often under-assessed in routine MS practice (no universal screening)</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:10px;">Claims markers: swallowing studies, speech pathology referrals, PEG placement in MS patients.</p>
+  </div>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>The journey to TASCENSO ODT typically runs through an existing fingolimod-capsule prescription rather than fresh DMT initiation. The key transitions are (1) existing Gilenya patients migrating as the reference drug&rsquo;s commercial support recedes, (2) patients on generic fingolimod capsules whose prescriber flags potency or swallowing concerns, and (3) new fingolimod starts where the prescriber preempts dysphagia or generic-quality issues. The older MS patient with progressive swallowing difficulty is the highest-value TASCENSO ODT sub-segment.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">MS diagnosis</div>
+    <div class="t">Confirmed per McDonald criteria</div>
+    <div class="d">Neurology workup via MRI, CSF, and clinical dissemination-in-space-and-time. Most patients diagnosed between ages 20 and 50; female predominance ~74%.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">First-line DMT</div>
+    <div class="t">Oral, injectable, or infusion initiation</div>
+    <div class="d">First-line selection has shifted toward anti-CD20 infusions for high-activity disease. Orals remain common for moderate-activity and patient-preference-driven starts. Fingolimod is typically second-line or later after breakthrough activity; historically also a first-line option.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Transition to fingolimod class</div>
+    <div class="t">First-dose observation (FDO) required</div>
+    <div class="d">Any fingolimod product requires 6-hour FDO with hourly pulse/BP and ECG before/after. Cycle Pharmaceuticals-supported in-home FDO (via the Cycle Vita hub) is a rare differentiator for TASCENSO ODT; capsule generics offer no manufacturer-sponsored FDO. This is a real operational barrier that in-home FDO removes.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Generic-era switching</div>
+    <div class="t">Reference brand &rarr; generic capsule (forced)</div>
+    <div class="d">Most fingolimod patients have been forced onto generic capsules by payer policy since 2020. Multiple assay studies have documented subpotent generic capsules (76&ndash;86% of labeled dose in independent testing); clinical literature has documented ~5&times; higher relapse rate and ~6.6&times; higher adverse event rate on some generics vs. Gilenya (the reference brand).</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Dysphagia / swallowing difficulty emerges</div>
+    <div class="t">Aging MS cohort, progressive disease</div>
+    <div class="d">Swallowing studies, speech pathology referrals, or clinician-noted difficulty appear in the record. Capsule adherence degrades. ODT formulation resolves the mechanical problem &mdash; tablet dissolves on the tongue in seconds without water.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Conversion to TASCENSO ODT</div>
+    <div class="t">Prescriber-initiated switch from capsule to TASCENSO ODT</div>
+    <div class="d">Conversion drivers: potency concern after generic exposure, documented dysphagia, patient preference, in-home FDO support for re-starts after treatment gaps. Cycle Vita hub handles benefits verification, PA, and bridge drug while insurance clears. Initial starts use the 0.5 mg TASCENSO ODT for adults (0.25 mg is the pediatric strength).</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Maintenance</div>
+    <div class="t">Ongoing TASCENSO ODT + safety monitoring</div>
+    <div class="d">Adherence monitoring, lymphocyte-count surveillance, ongoing macular edema surveillance, liver function, infection vigilance. Cycle Vita hub captures refill gaps, abandonment, and discontinuation reasons. Single 14-day treatment gap triggers a repeat FDO.</div>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>G35</code> &ldquo;Multiple sclerosis&rdquo; &mdash; specific and universally coded. Standard cohort anchor.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag hi">strong</span></td><td>S1P-modulator prescribers are well-captured; the MS neurologist universe sits well above CMS suppression thresholds.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>TASCENSO ODT carries a distinct NDC from Gilenya capsule and generic fingolimod. Brand-level share is computable from Part D alone &mdash; no Xponent license required for basic TASCENSO ODT analytics.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag hi">strong</span></td><td>Retail-visible. Commercial pharmacies dispense and report.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag hi">strong</span></td><td>Retail + commercial insurance dominate; PAP volumes are immaterial. Claims represent the true market.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Open Payments for KOL targeting. EHR markers for dysphagia (swallowing studies, speech-pathology referrals, PEG placement) enable <strong>target-patient identification</strong> within the MS population &mdash; a rare combination of class ICD + sub-segment phenotype.</td></tr>
+</table>
+
+<div class="callout good">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">The <strong>strongest claims-data substrate in the portfolio</strong> for product-level analytics. Distinct NDC means Part D alone is sufficient for brand-level share work &mdash; no Xponent dependency. The dysphagia-subsegment angle additionally lets claims + EHR data identify the right patients inside the MS population, not just the right prescribers. Both prescriber-level and patient-level targeting are feasible on publicly accessible data.</p>
+</div>
+
+<h2>Commercial Analytics Opportunities</h2>
+
+<p class="lead">Because TASCENSO ODT is not pharmacy-substitutable and carries a dysphagia-subsegment claim with real clinical grounding, analytics has more growth optionality than BAFIERTAM (the fumarate peer in Cycle's MS cluster). Five analyses define the menu.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 &middot; Class&rarr;Brand Adoption Funnel (Conversion Subtype)</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Of the prescribers writing any fingolimod (Gilenya, generic capsule, or TASCENSO ODT), identify those who have NOT yet adopted TASCENSO ODT. Rank-order by fingolimod volume to produce a conversion targeting list.</p>
+    <ul>
+      <li>Class denominator: fingolimod prescribers (Gilenya + generic + TASCENSO ODT) over trailing 12 months</li>
+      <li>Brand numerator: TASCENSO ODT-writing prescribers</li>
+      <li>Non-adopter list &mdash; ranked by total fingolimod volume</li>
+      <li>Enriched with patient-dysphagia density (see #3) and payer-access friendliness</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> primary conversion targeting list &mdash; fingolimod prescribers who should be considering TASCENSO ODT.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 &middot; Retention Defense &mdash; Prescribers NOT Switching to TASCENSO ODT</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Among existing TASCENSO ODT adopters, identify prescribers whose TASCENSO ODT share of their fingolimod Rx is declining (patients regressing to generic capsule). This is the within-prescriber retention signal.</p>
+    <ul>
+      <li>Longitudinal Rx by prescriber: TASCENSO ODT share of total fingolimod, trailing quarters</li>
+      <li>Declining-share prescribers flagged for retention intervention</li>
+      <li>Triangulate with payer-policy changes that may have forced switches</li>
+      <li>Intervention: peer-reviewed potency data, Cycle Vita hub support offers, in-home FDO for re-starts</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> monthly retention priority list &mdash; defending the TASCENSO ODT base against capsule regression.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 &middot; Dysphagia-Marker Patient Identification</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The dysphagia subsegment is the strongest clinical differentiation. Claims-based identification enables targeting at the prescriber level (who is treating the most dysphagic MS patients?) and at the patient level (via hub outreach where legal).</p>
+    <ul>
+      <li>MS diagnosis codes: <code>G35</code> (multiple sclerosis)</li>
+      <li>Swallowing study claims: <code>74230</code> (modified barium swallow), <code>92610</code> (clinical swallow evaluation)</li>
+      <li>Speech-language pathology referrals and procedure codes</li>
+      <li>PEG tube placement in MS patients: <code>43246</code>, <code>49440</code> (late-stage, high-signal)</li>
+      <li>Pill-swallowing complaints in clinical notes (where NLP is available)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> prescriber ranking by dysphagia-patient density; addressable sub-population size estimate; high-specificity targeting overlay for analysis #1.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 &middot; Competitive Position vs. Generic Fingolimod Capsules</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Quantify market share dynamics across Gilenya, generic capsules (twelve+ approved ANDAs), and TASCENSO ODT. Identify prescribers most responsive to potency-assurance messaging.</p>
+    <ul>
+      <li>TRx trajectory across three fingolimod products: Gilenya, generic capsule, TASCENSO ODT</li>
+      <li>Prescriber-level share migration 2020&ndash;present</li>
+      <li>Overlay known assay-failure events (FDA Warning Letters / Import Alerts) with prescriber switching patterns</li>
+      <li>Identify prescribers in geographies with high exposure to implicated generic manufacturers</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> message-responsiveness map &mdash; where TASCENSO ODT potency-assurance messaging is credible to a prescriber who has seen generic failures.</p>
+  </div>
+
+  <div class="sig">
+    <h4>5 &middot; Cycle Vita Hub Performance &amp; In-Home FDO ROI</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Cycle Pharmaceuticals' in-home first-dose observation (coordinated through the Cycle Vita hub) is a unique operational differentiator for TASCENSO ODT. Quantify the funnel lift it produces vs. clinic-based FDO.</p>
+    <ul>
+      <li>Enrollment-to-first-fill conversion rate with and without in-home FDO</li>
+      <li>Time-to-first-fill distributions by FDO pathway</li>
+      <li>Patient drop-off points: referral, BV, PA, FDO scheduling, FDO completion, dispense</li>
+      <li>Benchmarks: enrollment-to-BV ~83%, PA approval ~52%, first-fill rate ~47% (industry averages)</li>
+      <li>Cost per patient started; value of FDO abandonment averted</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> hub-ROI quantification; sizing for expanded FDO investment; payer value story.</p>
+  </div>
+
+  <div class="sig">
+    <h4>6 &middot; Territory &amp; KOL Mapping</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Combine prescriber targeting, KOL engagement, and geographic workload for cluster-level territory design.</p>
+    <ul>
+      <li>KOL identification via CMS Open Payments for S1P-related activity</li>
+      <li>Conference-presentation tracking (CMSC, AAN, ECTRIMS) for generic-fingolimod outcomes data</li>
+      <li>Territory-level call capacity against combined Cycle MS cluster targeting (TASCENSO ODT + BAFIERTAM)</li>
+      <li>Named-account treatment for high-volume MS centers (Cleveland Clinic, Mayo, Mount Sinai, UCSF, etc.)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> engagement priority ranking for KOL + institution layer.</p>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="title">Key differentiation &mdash; summary</div>
+  <p style="margin:0"><strong>Patent runway to 2036</strong> means analytical investment in TASCENSO ODT compounds across a decade rather than racing a cliff. <strong>Non-substitutable ODT form</strong> protects against pharmacy-level generic swapping, so prescriber-level growth does not leak out at the dispense. <strong>Dysphagia subsegment</strong> grounds the clinical differentiation in a measurable claims signal, not a marketing slogan. Together these place TASCENSO ODT in a fundamentally different analytical posture from BAFIERTAM in the Cycle MS cluster &mdash; conversion opportunity with structural defense, rather than pure defense.</p>
+</div>
+
+<h2>Open Questions</h2>
+
+<ul>
+  <li><strong>TASCENSO ODT TRx volume and share of the fingolimod franchise</strong> &mdash; not publicly disclosed; determines whether statistical S&amp;T is viable or whether a named-account flywheel model is the right mode.</li>
+  <li><strong>Conversion origin mix</strong> &mdash; what share of current TASCENSO ODT volume comes from Gilenya switches vs. generic-capsule switches vs. fresh starts? Each origin implies a different message and a different target universe.</li>
+  <li><strong>Cycle Vita hub enrollment share</strong> &mdash; what percentage of TASCENSO ODT prescriptions route through Cycle Vita? Hub-enrolled patients are more measurable on abandonment and adherence; non-hub patients are analytically darker.</li>
+  <li><strong>Payer access gap</strong> &mdash; how much TASCENSO ODT volume is lost to formulary exclusion or step-edit requiring generic capsule failure first? Access-heatmap results need actual denial rates, not just policy language.</li>
+  <li><strong>In-home FDO utilization rate</strong> &mdash; what percentage of TASCENSO ODT FDOs are in-home vs. clinic? Drives the hub-ROI calculation.</li>
+  <li><strong>Dysphagia-subsegment sizing at the prescriber level</strong> &mdash; the 33&ndash;45% disease-population prevalence is known; the prescriber-panel-level concentration is not. Claims-based dysphagia-marker analysis answers this.</li>
+</ul>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (TASCENSO ODT NDA 214962, setid bf8e7f89-ea09-43c7-a7eb-e44724350721); FDA 2024 label (214962s002lbl.pdf); DrugPatentWatch; PMC dysphagia systematic review (PMC 7114936); Medical News Today (MS dysphagia management); Practical Neurology (2025 CMSC, generic fingolimod relapse data); ScienceDirect (fingolimod assay analysis, 2023); Okuda et al. (SAGE Journals 2024, subpotent generic case series); PubMed 37099833 (Gilenya-to-generic switch outcomes); Novartis Q4 2024 financial report; Precedence Research (S1P modulator market); National MS Society; Catalent (Zydis ODT technology); Cycle Pharmaceuticals TASCENSO ODT launch materials.</p>
+  <p><strong>Methodology references:</strong> Class&rarr;brand conversion funnel; claims-based sub-segment identification (dysphagia markers); Cycle Vita hub-performance KPI framework (FIND / ACCESS / START / MAINTAIN / MEASURE); prescriber territory workload modeling.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Based on internal research brief <code>knowledge/research/domain/briefs/RB_RC_tascenso_odt_fingolimod_ms_2026-03-19.md</code>. Competitor products from unaffiliated manufacturers (Gilenya, Mayzent, Zeposia, Ponvory, Aubagio, Tecfidera, VUMERITY, Mavenclad, Ocrevus, Kesimpta, Briumvi) are market-context references.</p>
+</footer>
+
+</div>
+</body>
+</html>

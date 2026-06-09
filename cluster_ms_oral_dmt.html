@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MS Oral DMTs — Cluster Analytics</title>
+<meta name="description" content="Two-product oral-DMT cluster analytics: shared ~7,400 MS neurologist prescriber universe, class→brand adoption funnel methodology, and generic defense playbook for fumarate and S1P modulator products.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  .crumb { font-size: 13px; color: var(--ink-faint); margin-bottom: 10px; }
+  .crumb a { color: var(--accent); text-decoration: none; margin-right: 10px; }
+  .crumb a:hover { text-decoration: underline; }
+  header.hero { padding: 24px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 780px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .member-products { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 8px; }
+  @media (max-width: 780px) { .member-products { grid-template-columns: 1fr; } }
+  .mp { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; text-decoration: none; color: var(--ink); display: block; transition: border-color 0.15s, transform 0.15s; }
+  .mp:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .mp .cls { font-size: 11px; font-family: var(--mono); letter-spacing: 0.08em; color: var(--accent-2); text-transform: uppercase; margin-bottom: 6px; }
+  .mp .nm { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .mp .dc { font-size: 13px; color: var(--ink-dim); line-height: 1.45; margin: 0 0 10px; }
+  .mp .rw { font-size: 12px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.04em; }
+  .mp .arr { margin-top: 10px; font-size: 13px; color: var(--accent); font-weight: 600; }
+
+  .funnel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0; }
+  .funnel .fstep { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .funnel .fstep:last-child { border-bottom: none; }
+  .funnel .fstep .n { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; flex-shrink: 0; width: 40px; }
+  .funnel .fstep .ft { font-weight: 600; font-size: 14px; }
+  .funnel .fstep .fd { font-size: 13px; color: var(--ink-dim); margin-top: 3px; }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .mp, .callout, .funnel { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="crumb"><a href="portfolio_index.html">&larr; Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Cluster Analytics · MS Oral DMTs</div>
+  <h1>MS Oral DMTs Cluster &mdash; BAFIERTAM + TASCENSO ODT</h1>
+  <p class="sub">Cycle Pharmaceuticals' two-product oral cluster inside the multiple sclerosis disease-modifying therapy (DMT) segment: BAFIERTAM (monomethyl fumarate, acquired from Banner Life Sciences in 2024) and TASCENSO ODT (fingolimod ODT). Both products address the same ~7,400 MS neurologist prescriber universe, share the Cycle Vita patient support hub, and face the same competitive dynamic &mdash; defending branded share against low-cost generic equivalents. Cluster-level analytics outperform per-product analytics because the Cycle rep carries both and the prescriber writes both.</p>
+  <div class="meta">
+    <span><strong>Cluster:</strong> MS Oral DMTs (Cycle Pharmaceuticals)</span>
+    <span><strong>Members:</strong> BAFIERTAM (MMF) + TASCENSO ODT (fingolimod)</span>
+    <span><strong>Analytical world:</strong> World 1 &mdash; retail, Xponent-visible</span>
+    <span><strong>Primary methodology:</strong> Class&rarr;brand adoption funnel</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US MS Patient Universe</div><div class="v">~1M</div></div>
+  <div class="card"><div class="k">Relapsing MS Share</div><div class="v">~85%</div></div>
+  <div class="card"><div class="k">MS DMT Prescribers</div><div class="v">~7,400</div></div>
+  <div class="card"><div class="k">Top Decile Write</div><div class="v">41% of DMT Rx</div></div>
+  <div class="card"><div class="k">Fumarate Class Trajectory</div><div class="v" style="color:var(--warn)">17.6% &rarr; 7.9%</div></div>
+  <div class="card"><div class="k">S1P Class (Branded)</div><div class="v sm">Declining; ODT protected to 2036</div></div>
+  <div class="card"><div class="k">Dysphagia Prevalence in MS</div><div class="v">33&ndash;45%</div></div>
+  <div class="card"><div class="k">Class&rarr;Brand Funnel Construct</div><div class="v sm">Primary for both products</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Core cluster insight</div>
+  <p style="margin:0">Neither BAFIERTAM nor TASCENSO ODT is growing on its own. The MS DMT market is migrating from oral DMTs toward higher-efficacy anti-CD20 infusions (Ocrevus, Kesimpta, Briumvi), and inside the oral segment, generic dimethyl fumarate and generic fingolimod capsules have destroyed branded economics at the molecule level. Cluster analytics exist to defend a shared Cycle prescriber relationship &mdash; the question is not &ldquo;how do we grow share?&rdquo; but &ldquo;which of the ~7,400 neurologists are worth the two-product call from Cycle's ~29 US reps, and what message sequence retains them?&rdquo;</p>
+</div>
+
+<h2>Strategic Framing &mdash; Why Treat as a Cluster</h2>
+
+<p class="lead">Four structural facts force cluster-level analytics rather than independent product analytics:</p>
+
+<div class="two">
+  <div>
+    <h3>1 &middot; Shared prescriber universe</h3>
+    <p>Both products are prescribed by MS-treating neurologists &mdash; a well-defined ~7,400-provider universe in which the top decile writes 41% of all DMT prescriptions. The overlap between fumarate-class prescribers and S1P-class prescribers is high because MS neurologists typically carry a multi-class DMT panel. Targeting, call planning, and territory design should be built around the combined basket.</p>
+  </div>
+  <div>
+    <h3>2 &middot; Shared patient-support infrastructure</h3>
+    <p>The Cycle Vita hub supports both BAFIERTAM and TASCENSO ODT. Clinical Education Managers (CEMs) cover both. Copay support, bridge/free-drug programs, first-dose observation services (for TASCENSO ODT), and benefits verification flow through the same Cycle organization. Hub analytics &mdash; enrollment, PA approval, bridge utilization, abandonment &mdash; are natively cluster-level.</p>
+  </div>
+  <div>
+    <h3>3 &middot; Shared competitive threat</h3>
+    <p>Both products face the same commercial pressure: a molecule-level generic available at 1&ndash;5% of branded price. The generic defense playbook is structurally the same for both &mdash; identify prescribers at risk of switching, support GI-tolerability or potency-assurance messaging, and secure payer access for documented-need patients. Defense sequencing is cluster logic, not product logic.</p>
+  </div>
+  <div>
+    <h3>4 &middot; Shared methodology</h3>
+    <p>The class&rarr;brand adoption funnel &mdash; &ldquo;of the prescribers writing the molecule class, what share has adopted BAFIERTAM or TASCENSO ODT?&rdquo; &mdash; is the primary analytical construct for both products. Non-adopters become the targeting list; adopters become retention priorities. The method is identical; only the class denominator changes (fumarate prescribers for BAFIERTAM, fingolimod prescribers for TASCENSO ODT).</p>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify across the MS oral-DMT cluster. Variation between member products noted.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>G35</code> &ldquo;Multiple sclerosis&rdquo; is specific and universally coded. Largest well-identified rare-disease cohort in the portfolio.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag hi">strong</span></td><td>~7,400 active MS DMT neurologists &mdash; class-level prescriber counts sit well above CMS suppression thresholds. Retail pharmacy dispense fully captured.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag md">mixed</span></td><td><strong>TASCENSO ODT:</strong> distinct NDC from <em>Gilenya</em> and generic fingolimod &mdash; Part D sufficient for brand share. <strong>BAFIERTAM:</strong> Part D cannot cleanly separate BAFIERTAM from <em>Tecfidera</em> / generic DMF at prescriber level &mdash; Xponent or Cycle TRx required.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag hi">strong</span></td><td>Retail-visible across both products. Commercial pharmacies report. No SP gate question blocking basic analytics.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag hi">strong</span></td><td>Retail + commercial insurance dominate. PAP volumes are de minimis. Claims represent the true market faithfully.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Open Payments for KOL identification. Xponent for brand-level resolution when licensed. EHR dysphagia markers enable sub-segment patient targeting for the ODT product.</td></tr>
+</table>
+
+<div class="callout good">
+  <div class="title">Bottom line</div>
+  <p style="margin:0"><strong>Strongest cluster-level claims substrate in Cycle's portfolio.</strong> <code>G35</code> specific, retail-visible, Part D above suppression, and a class&rarr;brand adoption funnel is computable on public data. Brand-level work on BAFIERTAM requires Xponent; TASCENSO ODT is self-contained in Part D thanks to its distinct NDC. The cluster is where claims-based commercial analytics earns its highest ROI for Cycle Pharmaceuticals.</p>
+</div>
+
+<h2>Member Products</h2>
+
+<div class="member-products">
+  <a class="mp" href="ms_monomethyl_fumarate.html">
+    <div class="cls">Fumarate class &middot; 505(b)(2)</div>
+    <div class="nm">BAFIERTAM (Monomethyl Fumarate) &middot; Relapsing MS</div>
+    <div class="dc">Cycle Pharmaceuticals' active metabolite of dimethyl fumarate (acquired from Banner Life Sciences, 2024); bioequivalent to Tecfidera at a lower absolute dose. Primary differentiation is GI tolerability in DMF-intolerant patients. Faces relentless generic-DMF pricing pressure (~$49/month). Patent protection to ~February 2035.</div>
+    <div class="rw">Retail &middot; Xponent-visible &middot; PA-gated after generic DMF failure</div>
+    <div class="arr">Open product page &rarr;</div>
+  </a>
+  <a class="mp" href="ms_fingolimod_odt.html">
+    <div class="cls">S1P modulator &middot; 505(b)(2) ODT</div>
+    <div class="nm">TASCENSO ODT (Fingolimod) &middot; Relapsing MS</div>
+    <div class="dc">Cycle Pharmaceuticals' orally-disintegrating tablet formulation of fingolimod; bioequivalent to Gilenya capsules but NOT AB-rated and not substitutable at the pharmacy. Long patent runway to January 2036. Competes on ODT form (dysphagia subsegment) and potency-assurance vs. subpotent generics.</div>
+    <div class="rw">Retail &middot; Xponent-visible &middot; cannot be generic-substituted</div>
+    <div class="arr">Open product page &rarr;</div>
+  </a>
+</div>
+
+<h2>Analytical Playbook</h2>
+
+<p>The playbook below is the cluster-level analytical menu. Each analysis is scoped to the combined prescriber basket and designed to produce decision-grade output without product-level TRx disclosure from the manufacturer (see Open Questions, below).</p>
+
+<table>
+  <tr><th>Analysis</th><th>Method</th><th>Output</th><th>Data source</th></tr>
+  <tr>
+    <td>Class&rarr;brand adoption funnel</td>
+    <td>For each class (fumarate, S1P): count prescribers writing the molecule class; intersect with prescribers writing BAFIERTAM or TASCENSO ODT; compute adoption share</td>
+    <td>Ranked non-adopter list per product &mdash; targeting universe</td>
+    <td>IQVIA Xponent (brand-level) + CMS Part D (class-level)</td>
+  </tr>
+  <tr>
+    <td>Cluster prescriber segmentation</td>
+    <td>Decile on total MS DMT Rx volume crossed with class-share (fumarate share, S1P share); identify high-volume neurologists not yet carrying either brand</td>
+    <td>Priority list for two-product call with message allocation</td>
+    <td>Xponent + Part D + claims proxy</td>
+  </tr>
+  <tr>
+    <td>Competitive position mapping</td>
+    <td>Share of DMT starts by class (fumarate vs S1P vs anti-CD20 vs other oral); time series over 2018&ndash;present</td>
+    <td>Class-trajectory dashboard &mdash; where the MS market is going, and where defensive effort is worth it</td>
+    <td>CMS Part D + published market data</td>
+  </tr>
+  <tr>
+    <td>Co-promotion overlap analysis</td>
+    <td>Identify prescribers writing fumarates AND S1P modulators vs. single-class prescribers; quantify two-product call efficiency</td>
+    <td>Territory-level call plan: where a two-product detail is economic vs. where a single-product detail dominates</td>
+    <td>Xponent</td>
+  </tr>
+  <tr>
+    <td>Generic defense targeting</td>
+    <td>Detect prescribers showing Rx-switching patterns from branded to generic within each class over trailing 12 months</td>
+    <td>Retention priority list per product &mdash; prescribers at highest switch risk</td>
+    <td>Claims (longitudinal Rx switching)</td>
+  </tr>
+  <tr>
+    <td>Payer-access heatmap</td>
+    <td>Map formulary position by regional payer; overlay on prescriber footprint to identify prescribers whose patients face step-edit walls</td>
+    <td>Where the PA battle is winnable vs. blocked; regional pull-through targeting</td>
+    <td>Formulary data (Managed Markets) + prescriber geography</td>
+  </tr>
+  <tr>
+    <td>Territory alignment &amp; workload</td>
+    <td>Geography-weighted workload model for the cluster; capacity analysis against combined targeting universe</td>
+    <td>Territory map with two-product call capacity; rep sizing recommendation</td>
+    <td>Xponent + NPI geography</td>
+  </tr>
+  <tr>
+    <td>Dysphagia subsegment sizing (TASCENSO ODT only)</td>
+    <td>Claims markers of swallowing difficulty (swallowing studies, speech pathology referrals, PEG placement) intersected with MS diagnosis codes</td>
+    <td>Addressable sub-population for TASCENSO ODT differentiation; prescriber ranking by dysphagia-patient density</td>
+    <td>Medical claims</td>
+  </tr>
+  <tr>
+    <td>KOL &amp; speaker network mapping</td>
+    <td>CMS Open Payments for MS DMT&ndash;related payments; identify payment recipients across fumarate and S1P activities</td>
+    <td>KOL engagement priority list covering both products</td>
+    <td>CMS Open Payments</td>
+  </tr>
+</table>
+
+<h2>Class&rarr;Brand Adoption Funnel &mdash; Primary Analytical Construct</h2>
+
+<p class="lead">The class&rarr;brand funnel is not a visualization. It is a targeting workflow. It converts &ldquo;prescriber segmentation&rdquo; from an observational exercise into a ranked action list.</p>
+
+<div class="funnel">
+  <div class="fstep">
+    <div class="n">01</div>
+    <div>
+      <div class="ft">Define the class denominator</div>
+      <div class="fd">Enumerate all prescribers who wrote the molecule class within a defined window (e.g., any fumarate DMT in trailing 12 months, any fingolimod in trailing 12 months). Source: CMS Part D for the Part D-visible tail; Xponent for full-market visibility.</div>
+    </div>
+  </div>
+  <div class="fstep">
+    <div class="n">02</div>
+    <div>
+      <div class="ft">Intersect with brand numerator</div>
+      <div class="fd">Of class-writing prescribers, which ones have written BAFIERTAM (or TASCENSO ODT, per funnel) at least once? Split into adopters (&ge;1 script) vs. non-adopters (zero scripts). Adopters are retention priorities; non-adopters are Cycle conversion targets.</div>
+    </div>
+  </div>
+  <div class="fstep">
+    <div class="n">03</div>
+    <div>
+      <div class="ft">Rank non-adopters by class volume</div>
+      <div class="fd">Volume-weighted prioritization. A non-adopter writing 200 fumarate scripts/yr is a higher-value target than a non-adopter writing 5. This single reorder of the target list typically outperforms generic deciling.</div>
+    </div>
+  </div>
+  <div class="fstep">
+    <div class="n">04</div>
+    <div>
+      <div class="ft">Overlay access feasibility</div>
+      <div class="fd">Intersect with payer mix: non-adopters whose dominant payer mix is friendly (no step-edit, open formulary) rank higher than those in hostile payer geographies. Practical targeting respects what the prescriber can actually fill.</div>
+    </div>
+  </div>
+  <div class="fstep">
+    <div class="n">05</div>
+    <div>
+      <div class="ft">Monitor adopter retention</div>
+      <div class="fd">For adopters, track Rx trajectory. Early signs of switching-to-generic (declining branded share within their class volume) trigger retention interventions. This is the second half of the funnel &mdash; measured monthly.</div>
+    </div>
+  </div>
+</div>
+
+<h3>Why this is the primary construct</h3>
+<p>Traditional decile segmentation answers &ldquo;who is a big prescriber?&rdquo; It does not distinguish &ldquo;big prescriber who already uses us&rdquo; from &ldquo;big prescriber who uses our class but not our brand.&rdquo; In a defensive branded niche where molecule-level generics destroy price, the second group is the only economically viable targeting universe. The funnel enforces that discipline at the target-list level.</p>
+
+<h2>Data Substrate</h2>
+
+<table>
+  <tr><th>Source</th><th>What it provides</th><th>Cluster use</th><th>Confidence</th></tr>
+  <tr>
+    <td>CMS Medicare Part D prescriber-level data</td>
+    <td>Class-level prescriber counts for fumarates and fingolimod in the Part D-visible tail</td>
+    <td>Builds the class denominator for both funnels; publicly available; grounded in real Rx</td>
+    <td><span class="tag hi">high</span></td>
+  </tr>
+  <tr>
+    <td>IQVIA Xponent (retail, national)</td>
+    <td>Brand-level TRx at prescriber level across both oral DMTs</td>
+    <td>Required to distinguish BAFIERTAM from generic DMF, and TASCENSO ODT from Gilenya / generic fingolimod capsules. Without it, funnel adoption status is incomplete.</td>
+    <td><span class="tag hi">high</span> &mdash; when licensed</td>
+  </tr>
+  <tr>
+    <td>Commercial + Medicare Part D claims</td>
+    <td>Longitudinal patient-level Rx history, switching patterns, dispense channel</td>
+    <td>Generic-defense signals (switch detection); competitive-share trajectories by class; payer pathway visibility</td>
+    <td><span class="tag hi">high</span></td>
+  </tr>
+  <tr>
+    <td>CMS Open Payments</td>
+    <td>Manufacturer payments to MS prescribers for speaker / consulting / research</td>
+    <td>KOL network mapping across both products; quantifies existing engagement</td>
+    <td><span class="tag hi">high</span></td>
+  </tr>
+  <tr>
+    <td>Medical claims (procedure + diagnosis)</td>
+    <td>MS diagnosis codes (G35) + dysphagia / swallowing / PEG markers</td>
+    <td>Dysphagia-subsegment sizing for TASCENSO ODT; patient-journey reconstruction</td>
+    <td><span class="tag md">medium</span> &mdash; quality of dysphagia coding varies</td>
+  </tr>
+  <tr>
+    <td>Formulary / payer policy databases</td>
+    <td>Regional PA, step-edit, and formulary-exclusion positions</td>
+    <td>Access heatmap; targets PA winnability, not just prescribing propensity</td>
+    <td><span class="tag md">medium</span></td>
+  </tr>
+  <tr>
+    <td>Hub CRM (patient support)</td>
+    <td>Enrollment, BV, PA approval, bridge utilization, abandonment at patient level</td>
+    <td>Cluster-level hub analytics &mdash; shared infrastructure means shared KPI; not externally sourceable</td>
+    <td><span class="tag md">medium</span> &mdash; internal only</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <div class="title">Part D visibility note</div>
+  <p style="margin:0">Part D captures only the high-volume prescriber tail above CMS suppression thresholds. For low-volume branded products in a generic-dominated class, this can understate true prescriber reach. The class denominator from Part D is directional; Xponent is required for complete class-level coverage.</p>
+</div>
+
+<h2>Open Questions &amp; ROI Gate</h2>
+
+<p class="lead">The cluster analytical playbook described above is executable on public data (CMS Part D + Open Payments) and on a licensed Xponent panel. Three unknowns determine the ROI ceiling &mdash; each has a concrete unlock.</p>
+
+<table>
+  <tr><th>Open question</th><th>Why it matters</th><th>Unlock</th></tr>
+  <tr>
+    <td>What are BAFIERTAM and TASCENSO ODT absolute TRx volumes?</td>
+    <td>Volume determines whether statistical segmentation &amp; targeting (S&amp;T) is viable or whether the cluster needs a named-account / flywheel model. If combined cluster TRx is low, decile-based methods break down.</td>
+    <td>Product-level TRx disclosure from Cycle Pharmaceuticals, or Xponent licensing</td>
+  </tr>
+  <tr>
+    <td>Is Cycle's ~29-rep field force dedicated MS or shared with other portfolio products?</td>
+    <td>Workload modeling and territory alignment depend on knowing which reps carry BAFIERTAM + TASCENSO ODT and what other call points they cover. Drives the &ldquo;combined basket&rdquo; call capacity calculation.</td>
+    <td>Field-force structure disclosure from Cycle Pharmaceuticals</td>
+  </tr>
+  <tr>
+    <td>What is the net-of-rebate realized price per branded prescription?</td>
+    <td>PA win-rate ROI requires net price, not WAC. With copay assistance capped at annual limits and payer step-edits pervasive, realized revenue per patient may be materially below list.</td>
+    <td>Gross-to-net disclosure; can be triangulated from aggregated CMS rebate data as a secondary signal</td>
+  </tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">What blocks full analytical value</div>
+  <p style="margin:0">The single hardest constraint is <strong>product-level TRx data access</strong>. Xponent provides retail-pharmacy resolution for both products; without it, the class&rarr;brand funnel can identify class prescribers but cannot confirm brand adoption status. Every cluster-level analysis downstream (targeting, retention, defense) degrades from &ldquo;who writes the brand&rdquo; to &ldquo;who writes the class.&rdquo; This is the first ROI gate to clear.</p>
+</div>
+
+<h2>Summary &mdash; What the Cluster Delivers</h2>
+
+<ol>
+  <li><strong>A cluster target list, not two product target lists.</strong> One ranked universe of MS neurologists, scored on combined basket value, with message allocation per prescriber.</li>
+  <li><strong>A defense-oriented funnel, not a growth funnel.</strong> Both products live in declining classes against generic-level pricing. The funnel optimizes retention plus selective conversion, not blanket acquisition.</li>
+  <li><strong>A two-class view of market trajectory.</strong> Fumarate class direction, S1P class direction, anti-CD20 pull-through &mdash; one dashboard tells the neurologist and the commercial team where the market is moving.</li>
+  <li><strong>Access-aware targeting.</strong> PA win-rate geographies prioritized over theoretical prescriber volume &mdash; what can actually be filled beats what could theoretically be written.</li>
+  <li><strong>Co-detail efficiency.</strong> Measurable call-plan lift from carrying both products into a single visit rather than two separate visits.</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (monomethyl fumarate NDA 210296; fingolimod ODT NDA 214962); FDA Drugs@FDA; DrugPatentWatch; CMS Medicare Part D Prescriber Public Use File; CMS Open Payments; Truveta Research (DMT initiation trends); PMC 12406943 (industry payments to MS neurologists, 2015&ndash;2019); PMC dysphagia systematic review; Practical Neurology (2025 CMSC generic fingolimod relapse data); National MS Society; Precedence Research (US MS DMT market sizing).</p>
+  <p><strong>Methodology references:</strong> Class&rarr;brand adoption funnel (primary construct, cross-engagement pattern); World 1 vs World 2 analytical taxonomy; prescriber-concentration and decile segmentation; CMS Part D suppression modeling.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>RB_RC_bafiertam_mmf_ms_2026-03-19.md</code> and <code>RB_RC_tascenso_odt_fingolimod_ms_2026-03-19.md</code>. Competitor products from unaffiliated manufacturers (Gilenya, Tecfidera, Vumerity, Mayzent, Zeposia, Ponvory, Aubagio, Mavenclad, Ocrevus, Kesimpta, Briumvi) are named because they are market infrastructure context, not Cycle IP.</p>
+</footer>
+
+</div>
+</body>
+</html>

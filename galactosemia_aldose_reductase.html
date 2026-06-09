@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GOVORESTAT (Classic Galactosemia) — Pipeline · Aldose Reductase Inhibitor</title>
+<meta name="description" content="GOVORESTAT (aldose reductase inhibitor, AT-007) — pipeline asset for classic galactosemia, acquired by Cycle Pharmaceuticals from Applied Therapeutics (Feb 2026). FDA Complete Response Letter received, data-integrity warning active, resubmission timeline unresolved. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warn); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+  .callout.prominent { padding: 18px 22px; border-left-width: 4px; margin: 24px 0; background: var(--surface-2); }
+  .callout.prominent .title { font-size: 13px; }
+  .callout.prominent p { font-size: 15px; margin: 6px 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Pipeline · Investigational · Regulatory Pathway Uncertain</div>
+  <h1>GOVORESTAT (Classic Galactosemia) — Pipeline Aldose Reductase Inhibitor</h1>
+  <p class="sub">GOVORESTAT (AT-007) is an investigational, CNS-penetrant aldose reductase inhibitor for classic galactosemia — the first-in-class candidate for a disease with zero approved pharmacotherapies. Regulatory path is currently stalled: FDA Complete Response Letter issued November 2024; FDA data-integrity warning letter issued December 2024. Cycle Pharmaceuticals acquired GOVORESTAT from Applied Therapeutics in February 2026; no resubmission timeline has been publicly disclosed.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> GOVORESTAT (AT-007)</span>
+    <span><strong>Disease:</strong> Classic galactosemia</span>
+    <span><strong>Mechanism:</strong> Aldose reductase inhibitor (oral, CNS-penetrant)</span>
+    <span><strong>Status:</strong> Investigational — CRL received, not approved</span>
+    <span><strong>Marketer (if approved):</strong> Cycle Pharmaceuticals (acquired from Applied Therapeutics, Feb 2026)</span>
+  </div>
+</header>
+
+<div class="callout warn prominent">
+  <div class="title">Pipeline · not approved</div>
+  <p><strong>Analytical prioritization for GOVORESTAT is premature until the FDA pathway clarifies.</strong> The therapy is not available for prescription. The NDA was rejected via Complete Response Letter in November 2024. A separate FDA Warning Letter issued December 2024 documented significant data-integrity findings — including deleted electronic trial data for all 47 enrolled subjects. Applied Therapeutics (the original sponsor) was acquired by Cycle Pharmaceuticals in February 2026. No resubmission timeline has been publicly disclosed. A Contingent Value Right structure in the acquisition prices an 8-year approval window, signaling a multi-year timeline if approval comes at all.</p>
+  <p>This page describes the disease, the patient population, and the commercial framework that <em>would</em> apply if GOVORESTAT's regulatory path clarifies. It does not represent a current commercial analytics recommendation for Cycle Pharmaceuticals.</p>
+</div>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">Classic Galactosemia US Prevalence</div><div class="v">~3,300</div></div>
+  <div class="card"><div class="k">EU Prevalence</div><div class="v sm">~4,400</div></div>
+  <div class="card"><div class="k">US New Births/Year</div><div class="v sm">~80–100</div></div>
+  <div class="card"><div class="k">Newborn Screening</div><div class="v sm">All 50 states (GALT)</div></div>
+  <div class="card"><div class="k">Current Standard of Care</div><div class="v sm">Galactose-restricted diet</div></div>
+  <div class="card"><div class="k">Approved Pharmacotherapies</div><div class="v" style="color:var(--warn)">Zero</div></div>
+  <div class="card"><div class="k">FDA CRL Date</div><div class="v sm">Nov 27, 2024</div></div>
+  <div class="card"><div class="k">Data Integrity Warning</div><div class="v sm">Dec 3, 2024</div></div>
+  <div class="card"><div class="k">Orphan Designation</div><div class="v sm">FDA + EMA</div></div>
+  <div class="card"><div class="k">Fast Track</div><div class="v sm">Yes (galactosemia)</div></div>
+  <div class="card"><div class="k">Pediatric Rare Disease</div><div class="v sm">Yes</div></div>
+  <div class="card"><div class="k">Acquisition Close</div><div class="v sm">Feb 3, 2026</div></div>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Classic galactosemia is an autosomal recessive deficiency of the GALT enzyme (galactose-1-phosphate uridylyltransferase). Without GALT, galactose cannot be converted to glucose-1-phosphate, and three toxic metabolites accumulate: galactose, galactose-1-phosphate (Gal-1-P), and galactitol. Galactitol is a polyol that cannot be further metabolized and accumulates in the brain, lens, and connective tissues. Gal-1-P is also considered pathogenic. An aldose reductase inhibitor blocks the galactose-to-galactitol arm but does not address Gal-1-P — an important scientific limitation.</p>
+
+<div class="two">
+  <div>
+    <h3>Classic vs. Duarte galactosemia</h3>
+    <ul>
+      <li><strong>Classic galactosemia</strong> — severe GALT deficiency (typically &lt;1% of normal activity). Autosomal recessive. Life-threatening in neonates without dietary intervention. Long-term complications despite diet. US prevalence ~1:50,000–60,000 births (~3,300 living US patients).</li>
+      <li><strong>Duarte galactosemia</strong> — compound heterozygosity with milder genotypes. ~10x more common (~1:4,000) but clinically milder and largely asymptomatic. Managed very differently.</li>
+      <li>The two conditions are genetically distinct and should not be conflated in commercial or analytical framing.</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Genetic basis</h3>
+    <ul>
+      <li><em>GALT</em> gene (chromosome 9p13) — the causative locus</li>
+      <li>&gt;300 known <em>GALT</em> variants; Q188R and K285N are common severe alleles</li>
+      <li>Duarte variant (N314D) confers partial activity</li>
+      <li>Classic genotype: biallelic severe variants (&lt;1% GALT activity)</li>
+      <li>Duarte / classic compound heterozygotes: variable outcomes</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Long-term complications despite dietary management</h3>
+<p>A galactose-restricted diet resolves neonatal life-threatening complications (hepatic failure, sepsis risk, cataracts) but does <strong>not</strong> prevent long-term sequelae. This unmet-need narrative is the central argument for pharmacotherapy development.</p>
+
+<table class="tight">
+  <tr><th>Complication</th><th>Approximate frequency (classic galactosemia)</th></tr>
+  <tr><td>Global developmental delay</td><td>~52%</td></tr>
+  <tr><td>Speech / language disorder</td><td>~66%</td></tr>
+  <tr><td>Motor abnormalities (tremor, ataxia, dystonia)</td><td>~27%</td></tr>
+  <tr><td>Primary ovarian insufficiency (female)</td><td>&gt;80–90%</td></tr>
+  <tr><td>Cognitive impairment (adulthood)</td><td>Common</td></tr>
+  <tr><td>Reduced bone density</td><td>Common</td></tr>
+</table>
+
+<p style="font-size:13px; color:var(--ink-faint); margin-top:8px">Natural-history literature (Rubio-Gozalbo et al., <em>JIMD</em> 2025; PMC PMC12963900, 2026 galactose tolerance study) confirms that strict dietary adherence does not prevent long-term complications, and that moderate dietary relaxation (up to 500 mg galactose/day) may be tolerated in adults. IgG N-glycan profiling is emerging as a personalized monitoring biomarker.</p>
+
+<h2>Patient Journey</h2>
+
+<p>The patient-identification problem here is structurally different from most rare diseases. Newborn screening catches essentially 100% of classic galactosemia cases at birth — the challenge is <em>not</em> finding undiagnosed patients.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Day 1–7</div>
+    <div class="t">Newborn screening — positive GALT activity</div>
+    <div class="d">Every US state includes galactosemia on its newborn screening (NBS) panel. Reduced GALT activity on dried blood spot triggers urgent follow-up. Confirmatory testing (GALT enzyme assay, genotype, galactose-1-phosphate levels) is typically completed within 1–2 weeks.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Week 1–2</div>
+    <div class="t">Immediate dietary intervention</div>
+    <div class="d">Upon confirmation, breast milk and galactose-containing formula are discontinued. Soy- or elemental formula is started. Galactose-1-phosphate levels are monitored weekly then monthly until stable. Metabolic genetics takes over long-term management.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Infancy / early childhood</div>
+    <div class="t">Strict galactose restriction, metabolic genetics follow-up</div>
+    <div class="d">Lifelong galactose-restricted diet is established. Regular metabolic genetics visits. Speech-language assessment around age 2. Early intervention services for developmental concerns. Family genetic counseling.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Childhood / adolescence</div>
+    <div class="t">Long-term complication surveillance</div>
+    <div class="d">Speech-language therapy (frequently required). Cognitive assessment. Motor-function evaluation. For girls, adolescent endocrinology evaluation for primary ovarian insufficiency. Bone-density monitoring. Multidisciplinary metabolic clinic typical.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Adulthood</div>
+    <div class="t">Chronic multi-specialist management</div>
+    <div class="d">Ongoing metabolic genetics management. Endocrine (ovarian insufficiency, bone density). Neurology (tremor, dystonia, cognitive support). Dietary relaxation as tolerated in some adults. Many adults require daily support; social isolation and mental health burden are common. Short-term memory difficulties and tremors are the most commonly cited daily-life impacts.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Future (if approved)</div>
+    <div class="t">Pharmacotherapy as adjunct to dietary management</div>
+    <div class="d">An approved GOVORESTAT would be added to dietary management to reduce galactitol accumulation. Gal-1-P would remain unaddressed by this mechanism. Long-term clinical-benefit data would continue to accumulate post-approval. Integration with gene-therapy approaches (JAG101 and others, currently preclinical) would be a future consideration.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Confirmatory testing</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>NBS (dried blood spot GALT activity)</td><td>Universal primary screen — all 50 US states.</td></tr>
+      <tr><td>Quantitative GALT enzyme assay</td><td>Confirmatory — red blood cell GALT activity.</td></tr>
+      <tr><td><em>GALT</em> genotype</td><td>Defines classic vs. Duarte vs. compound heterozygote.</td></tr>
+      <tr><td>Galactose-1-phosphate (Gal-1-P)</td><td>Monitoring; elevated in classic galactosemia.</td></tr>
+      <tr><td>Galactitol (urine)</td><td>Elevated; candidate biomarker for therapeutic response.</td></tr>
+      <tr><td>AMH / FSH (ovarian reserve)</td><td>POI surveillance in adolescent / adult females.</td></tr>
+      <tr><td>DXA</td><td>Bone density monitoring.</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Who orders / manages care?</h3>
+    <ul>
+      <li><strong>Metabolic geneticists</strong> — primary prescriber universe (~200–300 in the US), concentrated in academic Inborn Errors of Metabolism (IEM) centers; same audience that prescribes Cycle's HARLIKU, NITYR, and JAVYGTOR</li>
+      <li><strong>Pediatric IEM / metabolic clinics</strong> — long-term management</li>
+      <li><strong>Speech-language pathologists</strong> — high-volume referral</li>
+      <li><strong>Reproductive endocrinologists</strong> — POI management in female patients</li>
+      <li><strong>Neurologists</strong> — movement-disorder management (tremor, dystonia)</li>
+      <li><strong>Pediatric / adult neuropsychology</strong> — cognitive assessment</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>E74.21</code> &ldquo;Galactosemia&rdquo; is specific &mdash; but with no approved therapy, claims show <strong>diet-only management</strong>, not drug use. The ICD identifies patients; it does not identify market signal.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag lo">n/a</span></td><td>No approved therapy. No NDC. Part D has nothing to capture for this indication yet.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag lo">n/a</span></td><td>Investigational / pre-approval.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag lo">n/a</span></td><td>No distribution footprint yet.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag lo">n/a</span></td><td>No commercial product.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong (prospective)</span></td><td>Newborn screening catches virtually all classical galactosemia &mdash; the prevalent US cohort is registry-identifiable at a metabolic-center level. When approval lands, the patient-finding layer already exists.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">For an unapproved asset, &ldquo;claims validity&rdquo; is <strong>prospective</strong>. The existing patient population is already identifiable via NBS and metabolic-center census &mdash; so <em>when</em> approval lands, registry-adjacent patient identification is strong. Until then, commercial analytics is premature. The correct pre-approval deliverable is a metabolic-center census and a regulatory-milestone scenario map, not a market-sizing exercise.</p>
+</div>
+
+<h2>Patient Identification</h2>
+
+<p class="lead">Unlike most rare diseases, classic galactosemia is NOT a patient-finding problem. Newborn screening catches essentially every case at birth. The challenge is <strong>cataloging existing diagnosed patients</strong> in a commercially usable form — not surfacing undiagnosed ones.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Metabolic-Genetics Clinic Mapping</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Classic galactosemia patients are concentrated at academic Inborn Errors of Metabolism centers. A small number of clinics manage the majority of US patients.</p>
+    <ul>
+      <li>Academic IEM center mapping — typically &lt;30 major centers nationally</li>
+      <li>Pediatric metabolic genetics patient-volume estimation</li>
+      <li>Adult metabolic genetics coverage (notable gap — pediatric-to-adult transition is a known care-continuity problem)</li>
+      <li>Overlap with existing Cycle metabolic portfolio relationships — HARLIKU (AKU), NITYR (HT-1), JAVYGTOR (PKU) prescriber bases share personnel</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Registry-Based Identification</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The international GalNet registry and the Galactosemia Foundation maintain known-patient networks. Partnership access is the highest-precision patient list.</p>
+    <ul>
+      <li>Galactosemia Foundation — US-based patient advocacy; partnership-critical</li>
+      <li>GalNet — International Galactosemia Network, patient registry since 2014</li>
+      <li>SIMD (Society for Inherited Metabolic Disorders) — clinical community</li>
+      <li>ACMG screening and diagnostic guidelines — sets the clinical standard</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>3 · Claims / EHR Signals (Secondary)</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Claims and EHR data are rarely the primary source for galactosemia patient counts, given NBS-driven diagnosis and concentrated academic care. They validate geographic distribution.</p>
+    <ul>
+      <li>ICD-10 <code>E74.21</code> (galactosemia)</li>
+      <li>Soy / elemental formula claims in infants</li>
+      <li>Chronic speech-language therapy CPT codes in childhood</li>
+      <li>POI / AMH testing in adolescent females</li>
+      <li>Multi-specialty cascade (metabolic genetics + speech + endocrine)</li>
+    </ul>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Newborn Screening Data Accessibility</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">State NBS programs identify essentially every classic galactosemia case at birth, but aggregated NBS data for commercial patient-finding is restricted by state-level regulations. A useful aggregate, but not a directly queryable one.</p>
+    <ul>
+      <li>State NBS program reporting to CDC aggregated surveillance</li>
+      <li>State-specific Duarte-variant inclusion policies (vary)</li>
+      <li>Denominator validation for state-level prevalence models</li>
+    </ul>
+  </div>
+
+</div>
+
+<h2>Commercial Analytics — Premature</h2>
+
+<div class="callout warn">
+  <div class="title">Deferred</div>
+  <p style="margin:0">Commercial analytics investment for GOVORESTAT at the current regulatory state is premature. When and if approval is secured, the analytical framework would follow the metabolic-center model used for Cycle's existing ultra-rare metabolic products (HARLIKU / NITYR / JAVYGTOR) — a named-account, hub-driven approach focused on academic IEM centers, patient-advocacy partnerships, and adherence analytics via the Cycle Vita hub in a newly-treatable population.</p>
+</div>
+
+<p>The pre-approval work that <em>would</em> be useful in parallel with regulatory resolution is scoping and infrastructure — not commercial targeting. That list includes:</p>
+
+<ul>
+  <li><strong>Metabolic-center inventory</strong> — build the IEM-center map that also serves NITYR (HT-1), JAVYGTOR (PKU), HARLIKU (AKU)</li>
+  <li><strong>Overlap analysis</strong> — quantify prescriber-base overlap with Cycle's existing metabolic portfolio to size the GOVORESTAT launch efficiency</li>
+  <li><strong>Patient-advocacy partnership architecture</strong> — Galactosemia Foundation is the critical node; relationship investment is time-sensitive regardless of approval timing</li>
+  <li><strong>Registry data-sharing exploration</strong> — GalNet and local registries as future post-approval data substrate</li>
+  <li><strong>Scenario planning</strong> — commercial sizing under three regulatory outcomes (CRL resolved on existing data, new trial required, approval not achieved)</li>
+</ul>
+
+<h2>Regulatory Status</h2>
+
+<div class="callout crit prominent">
+  <div class="title">Active Regulatory Issues</div>
+  <p><strong>FDA Complete Response Letter (Nov 27, 2024):</strong> NDA rejected. Deficiencies cited were in the clinical application rather than CMC or safety, per sponsor disclosures. The Phase 3 ACTION-Galactosemia Kids trial (n=47, ages 2–17, 18-month treatment) missed its primary composite endpoint (p=0.1030). Secondary and post-hoc analyses showed plasma galactitol reduction (~40%, p&lt;0.001), and signals on tremor (p=0.0428), adaptive skills (p=0.0265), and cognition (p=0.0698 trend), but FDA has historically been skeptical of post-hoc composite reconfiguration.</p>
+  <p><strong>FDA Warning Letter (Dec 3, 2024):</strong> Following a bioresearch monitoring (BIMO) inspection, the FDA cited: (a) dosing errors affecting at least 19 patients who received doses ~80% below protocol between March–June 2021; (b) deletion of electronic trial data in Q-global on March 27, 2024 — two days after the FDA pre-announced its inspection — for all 47 enrolled subjects, including audit trails; (c) failure to allow FDA officers to access and verify trial records. Applied Therapeutics' founder/CEO resigned December 20, 2024. Shareholder litigation followed.</p>
+  <p><strong>Three indications under evaluation:</strong> galactosemia (CRL received), CMT-SORD (positive 24-month INSPIRE data at PNS 2025; NDA submission targeted for 2025, status post-acquisition unclear), and PMM2-CDG (single-patient expanded-access case report, 2025 publication). CMT-SORD may be the more viable near-term approval path.</p>
+  <p><strong>Acquisition closed Feb 3, 2026.</strong> Cycle Pharmaceuticals acquired Applied Therapeutics. Deal terms include contingent value rights: up to $0.10/share for galactosemia approval within 8 years, $0.10/share for CMT-SORD approval, and $0.20/share if any CVR product reaches $200M global sales within 10 years. The 8-year window signals that Cycle prices in a multi-year — not near-term — GOVORESTAT approval timeline. No resubmission timeline has been publicly disclosed. The Galactosemia Foundation characterized the path in a December 2025 message to the community: "It could take years. FDA review is slow but important for safety."</p>
+</div>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>FDA Type A meeting outcome</strong> — an FDA meeting was requested for Q4 2025 to discuss resubmission requirements. No public disclosure of whether it occurred or what it produced.</li>
+  <li><strong>Resubmission timeline</strong> — not disclosed. The CVR 8-year window suggests multi-year expectations.</li>
+  <li><strong>New clinical trial requirement</strong> — given the data-integrity findings (deleted audit trails for all 47 subjects), the FDA may require a new confirmatory trial rather than accept a resubmission based on the existing dataset. A new Phase 3 in a population of ~3,300 US patients would add 3–5+ years.</li>
+  <li><strong>EMA MAA status</strong> — an MAA was validated in late 2023 / early 2024. Current status (under review, withdrawn, rejected) is not documented in public sources.</li>
+  <li><strong>CMT-SORD NDA submission</strong> — was targeted for 2025 pre-acquisition. Post-acquisition status under Cycle Pharmaceuticals has not been disclosed.</li>
+  <li><strong>Gal-1-P mechanism gap</strong> — GOVORESTAT reduces galactitol but does not address galactose-1-phosphate, which is also considered pathogenic. Whether galactitol reduction alone produces meaningful long-term clinical benefit remains scientifically debated.</li>
+  <li><strong>Competitive landscape</strong> — Jaguar Gene Therapy's JAG101 (AAV9-based gene therapy) remains preclinical with no post-2022 updates. No confirmed Beam or Moderna galactosemia programs despite earlier pipeline mentions. GOVORESTAT remains the most advanced galactosemia candidate by several years — but the risk is regulatory failure, not competition.</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> FDA Complete Response Letter (sponsor IR announcement, 2024-11-27); FDA Warning Letter 696833 (2024-12-03); Cooley LLP BIMO analysis (2025-01-14); Bailey et al., ACTION-Galactosemia Kids trial results (PubMed PMID 39569553); Perfetti et al. Phase 1/2 PK/PD (PMID 38988185); acquisition announcements (BusinessWire 2026-02-03, GlobeNewsWire 2025-12-11); Galactosemia Foundation community statement (December 2025); GeneReviews Classic Galactosemia (NBK1518); Rubio-Gozalbo et al., <em>JIMD</em> 2025 (DOI 10.1002/jimd.70013); galactose tolerance study (PMC PMC12963900, 2026); INSPIRE trial 12- and 24-month results (PNS 2025); aldose reductase inhibitor PMM2-CDG case report (PubMed PMID 41089670); CMT-SORD prevalence (CMTA, CMT Research Foundation); BIO Clinical Development Success Rates 2011–2020; FDA CRL and BIMO reference materials.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_govorestat_galactosemia_2026-03-19.md</code> and <code>RB_RC_govorestat_gap_fill_2026-04-01.md</code>. GOVORESTAT is not approved. This page does not constitute a commercial recommendation.</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHYRAGO (Dasatinib ASD) — CML PPI-Compatible Reformulation · Patient Journey &amp; Commercial Analytics</title>
+<meta name="description" content="PHYRAGO (dasatinib amorphous solid dispersion) from Cycle Pharmaceuticals — launch-phase niche analytics for the 505(b)(2) PPI/H2RA-compatible dasatinib. Disease profile, prescriber universe, claims-based identification, and time-pressured competitive landscape. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+  .tag.good { background: rgba(127,184,129,0.12); color: var(--good); border-color: rgba(127,184,129,0.4); }
+
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a> · ← <a href="cluster_cml_tki.html">CML Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Oncology · Launch-Phase · Time-Bound Commercial Window</div>
+  <h1>PHYRAGO (Dasatinib ASD) — CML PPI-Compatible Reformulation</h1>
+  <p class="sub">PHYRAGO (dasatinib amorphous solid dispersion) is a 505(b)(2) NDA-approved reformulation of dasatinib from Cycle Pharmaceuticals, differentiated by bioavailability that is preserved under gastric acid suppression. Independent pricing; distinct NDC; <strong>not</strong> an AB-rated generic of Sprycel — a regulatory pathway that creates its own formulary and reimbursement category. Launched October 2025.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> PHYRAGO (dasatinib ASD, 505(b)(2) NDA)</span>
+    <span><strong>Disease:</strong> Ph+ CML and Ph+ ALL (adult + pediatric)</span>
+    <span><strong>Reference product:</strong> Sprycel</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> Onco360 Specialty Pharmacy</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US CML Prevalence</div><div class="v">~150K</div></div>
+  <div class="card"><div class="k">US CML Incidence</div><div class="v sm">~9,650 new cases / yr</div></div>
+  <div class="card"><div class="k">CML-TKI Market (US)</div><div class="v">~$1.0B dasatinib alone</div></div>
+  <div class="card"><div class="k">Dasatinib Share of TKI</div><div class="v">~20–25% (declining)</div></div>
+  <div class="card"><div class="k">PPI / H2RA Co-med Rate</div><div class="v" style="color:var(--warn)">~33%</div></div>
+  <div class="card"><div class="k">Bioavailability Advantage</div><div class="v sm">~30× Cmax vs reference with H2RA</div></div>
+  <div class="card"><div class="k">Approval Year</div><div class="v">2023 (adults); 2025 (ped)</div></div>
+  <div class="card"><div class="k">US Launch</div><div class="v">Oct 2025</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Commercial thesis in one line</div>
+  <p style="margin:0">PHYRAGO is the only dasatinib that keeps working when the patient is on a PPI or H2RA — and about one in three TKI-treated CML patients is. The clinical differentiation is real; the commercial window is narrow (Dasynoc PDUFA Aug 2026); the analytical priority for Cycle Pharmaceuticals is identifying the PPI-niche at prescriber and institution level fast enough to drive pre-competitor formulary landings via Onco360.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Chronic myeloid leukemia (CML) is a myeloproliferative neoplasm driven by the <strong>BCR-ABL1 fusion oncogene</strong>, the product of a reciprocal translocation between chromosomes 9 and 22 (the Philadelphia chromosome). BCR-ABL1 encodes a constitutively active tyrosine kinase that drives clonal proliferation of myeloid cells. Untreated, CML progresses through chronic phase (CP) → accelerated phase → blast crisis, which is rapidly fatal. Tyrosine kinase inhibitors (TKIs) have transformed CML from a terminal disease to a chronic condition — annual mortality dropped from 10–20% pre-imatinib to ~1% today.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical profile</h3>
+    <ul>
+      <li><strong>Median age at diagnosis:</strong> ~64 years (SEER)</li>
+      <li><strong>Presentation:</strong> fatigue, weight loss, night sweats, splenomegaly; often incidentally on CBC</li>
+      <li><strong>Diagnosis:</strong> BCR-ABL1 PCR (peripheral blood) + bone marrow biopsy with cytogenetics</li>
+      <li><strong>Treatment phases:</strong> chronic → accelerated → blast crisis; ~90% of incident cases are chronic phase</li>
+      <li><strong>Monitoring:</strong> quantitative BCR-ABL1 PCR (IS scale); MR3 / MR4 / MR4.5 milestones</li>
+      <li><strong>Life expectancy on TKI:</strong> approaching that of age-matched controls in well-managed patients</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>US incidence</td><td>~9,650 new cases / yr</td></tr>
+      <tr><td>US prevalence</td><td>~150,000 (growing ~8–9K / yr)</td></tr>
+      <tr><td>Incidence rate</td><td>2.0 per 100,000</td></tr>
+      <tr><td>Annual mortality</td><td>~1,290</td></tr>
+      <tr><td>Share of all leukemia</td><td>~15%</td></tr>
+      <tr><td>Median age at diagnosis</td><td>~64 years</td></tr>
+      <tr><td>Pediatric CML-CP</td><td>Small subset; dasatinib approved ≥1 yr</td></tr>
+      <tr><td>Ph+ ALL (separate indication)</td><td>Resistant / intolerant adult + ped</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>CML follows a relatively stereotyped journey compared with most rare diseases — symptom onset is often subtle, but once a CBC abnormality appears the diagnostic pathway is fast and well-standardized.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Pre-diagnosis</div>
+    <div class="t">Subtle systemic symptoms</div>
+    <div class="d">Fatigue, unintentional weight loss, early satiety from splenomegaly, night sweats. Primary care or episodic visit; may be dismissed as nonspecific.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Index CBC</div>
+    <div class="t">Incidental leukocytosis</div>
+    <div class="d">CBC on a routine visit shows elevated WBC with left-shift and basophilia / eosinophilia. Thrombocytosis common. Triggers hematology referral.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Diagnosis</div>
+    <div class="t">BCR-ABL1 PCR + bone marrow</div>
+    <div class="d">Quantitative PCR confirms BCR-ABL1 fusion transcript; bone marrow biopsy with cytogenetics characterizes phase and karyotype. Baseline MRI / molecular response benchmarks set.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">First-line TKI</div>
+    <div class="t">Imatinib or 2G TKI (dasatinib / nilotinib / bosutinib) or asciminib</div>
+    <div class="d">Guidelines (v1.2026) recommend all approved 1L TKIs. Choice is driven by comorbidities, risk score, patient preference, and side-effect profile. Dasatinib preferred for higher-risk scores, intolerance to imatinib, or CNS involvement.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">3 / 6 / 12 months</div>
+    <div class="t">Molecular response milestones</div>
+    <div class="d">PCR monitoring at 3 months (BCR-ABL &lt;10%), 6 months (&lt;1%), 12 months (MR3 / MMR). Failure to meet milestones triggers switch.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Switch scenarios</div>
+    <div class="t">Intolerance or inadequate response</div>
+    <div class="d">Common switch patterns: imatinib → 2G TKI; 2G → alternate 2G or Scemblix; 2G → ponatinib if T315I mutation. PPI / H2RA co-medication is a key factor for dasatinib patients specifically.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Long-term</div>
+    <div class="t">Deep molecular response → treatment-free-remission candidacy</div>
+    <div class="d">MR4.5 sustained &gt;2 years with &gt;3 yrs total TKI exposure makes a patient eligible for a TFR attempt. Dasatinib-specific TFR rates: ~54% at 1 year (1L), ~43% at 1 year (2L+); DASFREE 5-year data supports durability.</div>
+  </div>
+</div>
+
+<h2>Testing &amp; Diagnosis</h2>
+
+<div class="two">
+  <div>
+    <h3>Diagnostic pathway</h3>
+    <table class="tight">
+      <tr><th>Test</th><th>Role</th></tr>
+      <tr><td>CBC with differential</td><td>Index abnormality; leukocytosis, basophilia, thrombocytosis</td></tr>
+      <tr><td>BCR-ABL1 qualitative PCR</td><td>Confirmatory diagnosis (peripheral blood)</td></tr>
+      <tr><td>BCR-ABL1 quantitative PCR (IS)</td><td>Baseline and serial molecular monitoring (MR3 / MR4 / MR4.5)</td></tr>
+      <tr><td>Bone marrow biopsy + cytogenetics</td><td>Phase determination, karyotype, Ph chromosome confirmation</td></tr>
+      <tr><td>FISH for BCR-ABL1</td><td>Alternative confirmation; helpful for variant translocations</td></tr>
+      <tr><td>Mutation analysis (ABL kinase domain)</td><td>On TKI failure — identifies resistance mutations (e.g., T315I)</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Molecular response milestones</h3>
+    <table class="tight">
+      <tr><th>Milestone</th><th>Threshold</th><th>Clinical meaning</th></tr>
+      <tr><td>Early MR</td><td>BCR-ABL &lt;10% at 3 mo</td><td>On-track response</td></tr>
+      <tr><td>Complete cytogenetic</td><td>0% Ph+ metaphases</td><td>Typically by 12 mo</td></tr>
+      <tr><td>MR3 / MMR</td><td>BCR-ABL ≤0.1%</td><td>Major molecular response</td></tr>
+      <tr><td>MR4</td><td>BCR-ABL ≤0.01%</td><td>Deep molecular response</td></tr>
+      <tr><td>MR4.5</td><td>BCR-ABL ≤0.0032%</td><td>TFR eligibility threshold</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>C92.10</code>, <code>C92.11</code>, <code>C92.12</code> &ldquo;Chronic myeloid leukemia, BCR-ABL-positive&rdquo; &mdash; specific and routinely coded. Clean cohort anchor.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag hi">strong</span></td><td>Oral TKIs are heavily Part D-billed; hematology-oncology prescribers sit well above suppression thresholds.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag hi">strong</span></td><td>PHYRAGO carries a distinct NDC from <em>Sprycel</em> innovator dasatinib. Substitution analytics tractable from Part D alone.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag hi">strong</span></td><td>Onco360 is the primary PHYRAGO distribution path; major oncology SPs report to Xponent/DDD. Retail leak small.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Launch-phase PAP is likely material in the first 12 months (bridge / co-pay assistance / affordability programs) &mdash; volumes PDE-invisible. First-12-month share figures will be conservative.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag hi">strong</span></td><td>Part B for BCR-ABL PCR testing orders. Open Payments for KOL targeting. PPI/H2RA co-medication claims scope the differentiated niche. Clean triangulation.</td></tr>
+</table>
+
+<div class="callout good">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">The <strong>strongest combined substrate</strong> in the portfolio &mdash; specific ICD, NDC-level brand resolution, retail+SP visibility, and a differentiating co-medication signal (PPI/H2RA) that can be sized directly from claims. The only caveat is launch-phase PAP: first-6-to-12-month share calculations will understate true trajectory, so validation against hub enrollment data is essential before writing the launch narrative.</p>
+</div>
+
+<h2>Prescriber Universe</h2>
+
+<p class="lead">CML is managed almost exclusively by hematology-oncologists. The universe is large nationally (~14,500 heme-onc MDs billing Medicare) but the CML-active subset is a concentrated fraction of that — CML is a niche within heme-onc, and not every heme-onc physician actively manages it.</p>
+
+<table>
+  <tr><th>Segment</th><th>Estimated size</th><th>Relevance</th></tr>
+  <tr><td>High-volume academic CML specialists</td><td>~200–400</td><td>KOL anchors; guideline contributors; earliest adopters of new formulations; Open Payments-visible</td></tr>
+  <tr><td>Community heme-onc managing CML</td><td>~2,000–3,000</td><td>Bulk of prescribing volume; price-sensitive; generic preference</td></tr>
+  <tr><td>Dasatinib-active subset</td><td>~1,500–2,500</td><td>Those actively prescribing 2G TKIs; refined target universe for this product</td></tr>
+  <tr><td>Hospital outpatient / 340B</td><td>Overlapping subset</td><td>May prefer branded formulations for margin spread</td></tr>
+  <tr><td>NCCN CML Panel</td><td>~20–30 members</td><td>Highest single-institution leverage for formulary and guideline narrative</td></tr>
+</table>
+
+<p><strong>Site-of-care split:</strong> community oncology accounts for ~55–60% of CML care; academic medical centers ~30–35%; hospital outpatient ~10–15% (overlapping). Treatment concentration is highest at NCI-designated cancer centers and large integrated delivery networks.</p>
+
+<h2>Claims-Based Identification Opportunities</h2>
+
+<p>Unlike ultra-rare diseases that need EHR / NLP or hub data, CML is visible in public claims. Part D captures every oral TKI fill at NDC granularity; Part B captures BCR-ABL PCR ordering. The PPI-niche is identifiable by claims overlap.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 · Part D TKI Utilization — The Dasatinib Universe</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">CMS Part D prescriber file captures NDC-level prescribing at provider granularity. Dasatinib — branded, reformulation, and generic — each has its own NDC and each is separately identifiable.</p>
+    <ul>
+      <li>Dasatinib NDCs — reference (Sprycel), PHYRAGO ASD reformulation, and generic ANDA products</li>
+      <li>Other TKI NDCs — imatinib (generic), nilotinib (Tasigna), bosutinib (Bosulif), ponatinib (Iclusig)</li>
+      <li>Asciminib (Scemblix) NDC — STAMP inhibitor, primary 1L competitor</li>
+      <li>Total annual dasatinib claims per prescriber (volume decile)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> complete prescriber-level map of the dasatinib universe; refresh lag ~18 months. Supplemented by Xponent / Symphony for near-real-time Rx data if subscribed.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 · Part B BCR-ABL PCR Frequency — The CML-Active Signal</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">BCR-ABL1 quantitative PCR is billed under Part B. Prescribers with high PCR ordering volume are actively monitoring CML patients — a complementary signal to Part D TKI prescribing.</p>
+    <ul>
+      <li>BCR-ABL1 quantitative PCR (molecular monitoring): <code>CPT 81206</code> (major BCR-ABL, p210), <code>CPT 81207</code> (minor, p190), <code>CPT 81208</code> (other breakpoints)</li>
+      <li>Bone marrow biopsy and cytogenetics codes (diagnostic, baseline)</li>
+      <li>ABL kinase mutation testing codes (switch decision support)</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> identifies providers actively managing molecular monitoring. Cross-referenced with Part D TKI prescribing, isolates providers running the full CML longitudinal model — the targeting tier.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 · PPI / H2RA Co-Prescribing — The Niche Signal</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The heart of the commercial thesis. At patient level, claims overlap between dasatinib Rx and concurrent PPI or H2RA Rx isolates the addressable niche. At prescriber level, the fraction of dasatinib patients with PPI co-medication yields per-prescriber PPI-niche exposure.</p>
+    <ul>
+      <li>PPI NDCs — omeprazole, esomeprazole, pantoprazole, lansoprazole, rabeprazole, dexlansoprazole</li>
+      <li>H2RA NDCs — famotidine, cimetidine, nizatidine</li>
+      <li>Dasatinib concurrent-fill overlap — defines patient-level niche membership</li>
+      <li>Prescriber-level PPI-niche prevalence — fraction of dasatinib patients on acid suppression</li>
+      <li>Age-stratified PPI prevalence — 65+ has higher background PPI use</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> the PHYRAGO PPI-niche sizing answer. ~33% aggregate prevalence means roughly 6,600–9,900 US dasatinib patients have concurrent acid suppression — the addressable market ceiling.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 · Open Payments + NPI Facility Mapping — KOL and Institutional Targeting</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Historical dasatinib-related payments from Bristol Myers Squibb (Sprycel) identify already-warm physicians — speakers, advisors, investigators. NPI facility affiliation maps prescribers to treatment centers for institutional pull-through of PHYRAGO.</p>
+    <ul>
+      <li>CMS Open Payments — dasatinib-specific payments (speaker, consulting, research, travel)</li>
+      <li>Aggregate payments by institution — KOL density by academic medical center</li>
+      <li>NPI facility affiliation — map prescribers to treatment centers for institutional targeting</li>
+      <li>Top-100 CML treatment centers by dasatinib claim volume</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Expected yield:</strong> ranked KOL list for medical-affairs engagement; ranked institution list for access and formulary pull-through. Primary KOLs include Hagop Kantarjian (MD Anderson), Jorge Cortes (Georgia Cancer Center), Michael Mauro (MSKCC), Jerald Radich (Fred Hutchinson), Elias Jabbour (MD Anderson).</p>
+  </div>
+</div>
+
+<h2>Commercial Analytics Specific to This Product</h2>
+
+<table>
+  <tr><th>Analytic</th><th>What it answers</th><th>Priority</th></tr>
+  <tr>
+    <td><strong>Sprycel → PHYRAGO adoption funnel</strong></td>
+    <td>Of the ~1,500–2,500 dasatinib prescribers, how many have started any PHYRAGO Rx? Rank by PPI-niche exposure.</td>
+    <td><span class="tag hi">primary</span></td>
+  </tr>
+  <tr>
+    <td><strong>Niche sizing: dasatinib + PPI overlap</strong></td>
+    <td>Patient-level claims overlap → precise addressable niche by prescriber, territory, payer</td>
+    <td><span class="tag hi">primary</span></td>
+  </tr>
+  <tr>
+    <td><strong>Competitive threat: Scemblix uptake</strong></td>
+    <td>Asciminib institution-level adoption trajectory — where is 1L dasatinib being displaced fastest?</td>
+    <td><span class="tag hi">primary</span></td>
+  </tr>
+  <tr>
+    <td><strong>Competitive threat: Dasynoc PDUFA scenario</strong></td>
+    <td>Two-entrant pH-independent-dasatinib market; share sensitivity on price, formulary, institutional anchor</td>
+    <td><span class="tag hi">primary</span></td>
+  </tr>
+  <tr>
+    <td><strong>Institutional targeting: top-100 CML centers</strong></td>
+    <td>Claim volume + molecular-monitoring volume → ranked institution list for PHYRAGO access pull-through via Onco360</td>
+    <td><span class="tag hi">primary</span></td>
+  </tr>
+  <tr>
+    <td><strong>Formulary coverage tracking</strong></td>
+    <td>Preferred / non-preferred tier across major PBMs; step-therapy requirements; PA complexity</td>
+    <td><span class="tag md">ongoing</span></td>
+  </tr>
+  <tr>
+    <td><strong>340B spread analysis</strong></td>
+    <td>Which 340B-eligible hospitals have incentive to prefer branded PHYRAGO over generic dasatinib</td>
+    <td><span class="tag md">ongoing</span></td>
+  </tr>
+  <tr>
+    <td><strong>Community-vs-academic split of PPI-niche</strong></td>
+    <td>Does the elderly-skewed PPI user population concentrate in community oncology (higher PPI use 65+)?</td>
+    <td><span class="tag md">useful</span></td>
+  </tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Time-pressure callout</div>
+  <p style="margin:0">The competing pH-independent dasatinib (Dasynoc, Xspray Pharma) has a PDUFA date approximately six months from the publication of this page. A material delay or CRL extends the PHYRAGO incumbent-advantage window; an on-schedule approval creates a two-entrant pH-independent niche that splits share. All analytical work on PHYRAGO is time-pressured — analysis dated after the competitor decision is retrospective rather than strategic. Prioritize analyses that inform institutional and KOL landing decisions before mid-2026 over work that optimizes against a steady-state market.</p>
+</div>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>First 6 months launch trajectory.</strong> PHYRAGO new starts vs switches from Sprycel; PPI-niche capture; institutional vs community split.</li>
+  <li><strong>PHYRAGO formulary coverage.</strong> Preferred, non-preferred, step-edit behind generic dasatinib, or not covered. Major PBM and Part D plan coverage status.</li>
+  <li><strong>Institutional pull-through data.</strong> Which top-100 CML treatment centers have added PHYRAGO to formulary; which have declined in favor of generic; which are under P&amp;T review.</li>
+  <li><strong>PHYRAGO WAC pricing.</strong> Not publicly disclosed; essential for commercial modeling and payer access posture. Premium to generic, discount to Sprycel — exact position matters for payer negotiation.</li>
+  <li><strong>HCPCS / J-code status.</strong> Whether CMS has assigned a unique code for PHYRAGO — drives reimbursement pathway distinctness from the 505(b)(2) NDA.</li>
+  <li><strong>Positioning vs Scemblix in 1L.</strong> Is PHYRAGO positioned as 1L-preferred for the PPI-subset, or primarily 2L+? Drives share ceiling.</li>
+  <li><strong>Dasynoc PDUFA contingency plan.</strong> Pricing, access, and messaging moves if the competitor is approved on schedule.</li>
+  <li><strong>Low-dose dasatinib trend.</strong> PHYRAGO ASD formulation support for 70 mg dosing while preserving PPI compatibility — incremental differentiation potential.</li>
+</ol>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (PHYRAGO label, NDA 216099), FDA NDA 216099 approval letters (S-003, S-005), NCCN CML Guidelines v1.2026, SEER CML stat facts, ACS CML key statistics, Kantarjian H et al. CML 2025 update (AJH 2024), Larfors G et al. EJH 2023 (PPI + dasatinib co-medication, PMID 37503797), Lennernas H et al. CPDD 2024 (ASD dasatinib PK), Shah NP et al. Leukemia 2023 (DASFREE 5-year TFR), ASC4FIRST trial (NCT04971226), ASCO 2024 oncology workforce report, CMS Part D prescriber file, CMS Open Payments.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_phyrago_dasatinib_cml_2026-03-19.md</code>.</p>
+</footer>
+
+</div>
+</body>
+</html>

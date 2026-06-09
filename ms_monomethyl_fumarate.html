@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAFIERTAM (Monomethyl Fumarate) — MS Defense &amp; Targeting</title>
+<meta name="description" content="BAFIERTAM (monomethyl fumarate) from Cycle Pharmaceuticals — oral DMT for relapsing MS, active metabolite of dimethyl fumarate. Disease overview, patient journey, prescriber universe, class→brand funnel opportunities, and generic-DMF defense targeting. Part of the CYCL_2026_CE Commercial Excellence engagement.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  .crumb { font-size: 13px; color: var(--ink-faint); margin-bottom: 10px; }
+  .crumb a { color: var(--accent); text-decoration: none; margin-right: 10px; }
+  .crumb a:hover { text-decoration: underline; }
+  header.hero { padding: 24px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="crumb"><a href="portfolio_index.html">&larr; Portfolio Index</a> <a href="cluster_ms_oral_dmt.html">&larr; MS Cluster</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · MS Oral DMT · Fumarate Class</div>
+  <h1>BAFIERTAM (Monomethyl Fumarate) &mdash; MS Defense &amp; Targeting</h1>
+  <p class="sub">BAFIERTAM (monomethyl fumarate, MMF) is the active metabolite of dimethyl fumarate (DMF). As a 505(b)(2) oral DMT for relapsing forms of MS, it delivers the active moiety directly &mdash; bypassing the GI-tract conversion step that drives DMF&rsquo;s tolerability burden. BAFIERTAM was acquired by Cycle Pharmaceuticals from Banner Life Sciences. The commercial reality: the fumarate class is in secular decline, generic DMF is available at ~$49/month, and payer pathways position BAFIERTAM as a second-line option after documented generic failure. Commercial analytics here are primarily defensive.</p>
+  <div class="meta">
+    <span><strong>Drug:</strong> BAFIERTAM (monomethyl fumarate) 95 mg DR cap; 190 mg BID</span>
+    <span><strong>Indication:</strong> Relapsing MS (CIS, RRMS, active SPMS)</span>
+    <span><strong>Regulatory:</strong> 505(b)(2) NDA 210296, approved April 2020</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals (acquired from Banner Life Sciences) · Retail distribution · Patent: earliest generic ~Feb 2035</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US MS Prevalence</div><div class="v">~1M</div></div>
+  <div class="card"><div class="k">Relapsing MS Share</div><div class="v">~85%</div></div>
+  <div class="card"><div class="k">Fumarate Class Share of DMT Starts</div><div class="v">~7.9%</div></div>
+  <div class="card"><div class="k">Class Trend</div><div class="v" style="color:var(--warn)">17.6% &rarr; 7.9% (2018&ndash;2025)</div></div>
+  <div class="card"><div class="k">Generic DMF Price</div><div class="v sm">~$49 / month (GoodRx)</div></div>
+  <div class="card"><div class="k">Brand WAC</div><div class="v sm">~$5,790 / month</div></div>
+  <div class="card"><div class="k">Dosage Form</div><div class="v sm">95 mg delayed-release cap; 190 mg BID</div></div>
+  <div class="card"><div class="k">Differentiator</div><div class="v sm">GI tolerability vs DMF</div></div>
+</div>
+
+<div class="callout warn">
+  <div class="title">Commercial reality</div>
+  <p style="margin:0">BAFIERTAM sits in a pincer: generic dimethyl fumarate at ~1% of branded price on one side; higher-efficacy anti-CD20 infusions absorbing new DMT starts on the other side. Patents run to ~February 2035, but that matters only if the product maintains commercial viability through the defense years. Commercial analytics for BAFIERTAM is about <strong>defending a niche</strong> (DMF-intolerant patients with documented GI issues) rather than expanding share.</p>
+</div>
+
+<h2>Disease &amp; Epidemiology</h2>
+
+<p class="lead">Multiple sclerosis (MS) is a chronic, immune-mediated demyelinating disease of the central nervous system. The immune system attacks the myelin sheath surrounding nerve fibers, producing sclerotic plaques visible on MRI and generating the relapsing-remitting neurological symptoms characteristic of the disease. Approximately 1 million people in the United States live with MS; incidence is roughly 200&ndash;450 new diagnoses per week.</p>
+
+<div class="two">
+  <div>
+    <h3>Clinical course</h3>
+    <ul>
+      <li><strong>Relapsing-remitting MS (RRMS)</strong> &mdash; ~85% of patients at diagnosis; discrete relapses followed by partial or full recovery</li>
+      <li><strong>Clinically isolated syndrome (CIS)</strong> &mdash; first demyelinating event; many progress to RRMS</li>
+      <li><strong>Secondary progressive MS (SPMS)</strong> &mdash; RRMS that transitions to steady progression over time; active SPMS retains relapse activity</li>
+      <li><strong>Primary progressive MS (PPMS)</strong> &mdash; ~10&ndash;15%; progressive course from onset; fumarate class not indicated</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:10px;">BAFIERTAM is indicated for relapsing forms: CIS, RRMS, and active SPMS. PPMS sits outside the fumarate market.</p>
+  </div>
+  <div>
+    <h3>Epidemiology at a glance</h3>
+    <table class="tight">
+      <tr><th>Measure</th><th>Value</th></tr>
+      <tr><td>US prevalence</td><td>~1,000,000 patients</td></tr>
+      <tr><td>Relapsing MS (addressable)</td><td>~850,000</td></tr>
+      <tr><td>Annual new diagnoses (US)</td><td>~10,000&ndash;23,000</td></tr>
+      <tr><td>Peak diagnosis age</td><td>20&ndash;50</td></tr>
+      <tr><td>Female predominance</td><td>~74%</td></tr>
+      <tr><td>US MS DMT market (2025)</td><td>~$8.4B</td></tr>
+      <tr><td>MS DMT prescribers</td><td>~7,400 neurologists</td></tr>
+      <tr><td>Top decile prescribing share</td><td>41% of DMT Rx</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Diagnostic Criteria &amp; Testing</h2>
+
+<div class="two">
+  <div>
+    <h3>McDonald criteria</h3>
+    <p>MS diagnosis follows the <strong>McDonald criteria</strong> (2017 revision), which require evidence of CNS lesion activity disseminated in space (multiple anatomic locations) and in time (multiple time points or specific MRI signatures). The criteria combine clinical history, MRI findings, CSF analysis, and exclusion of alternative diagnoses.</p>
+    <ul>
+      <li><strong>MRI</strong> &mdash; T2-weighted and gadolinium-enhanced T1 imaging; demonstrates plaques in periventricular, juxtacortical, infratentorial, and spinal cord regions</li>
+      <li><strong>CSF analysis</strong> &mdash; oligoclonal bands specific to CSF (not paired in serum) support demyelinating disease</li>
+      <li><strong>Evoked potentials</strong> &mdash; historical supporting tests; less central today</li>
+      <li><strong>Exclusion workup</strong> &mdash; NMO-IgG, MOG-IgG, and other rule-outs for MS mimics</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Who diagnoses and prescribes</h3>
+    <ul>
+      <li><strong>Neurologists (MS-focused)</strong> &mdash; the ~7,400 DMT-prescribing universe; diagnose via McDonald criteria and initiate DMT</li>
+      <li><strong>Neuro-immunologists / MS specialists</strong> &mdash; concentrated in academic centers; manage complex cases and anti-CD20 infusions</li>
+      <li><strong>General neurologists</strong> &mdash; often initiate DMT in community settings; represent the long tail of the prescriber distribution</li>
+      <li><strong>Primary care</strong> &mdash; typically refers; does not diagnose or prescribe DMT</li>
+    </ul>
+    <p style="font-size:13px; color:var(--ink-faint); margin-top:8px;">78% of MS DMT prescribers receive industry payments; top decile of prescribers writes 41% of all DMT prescriptions.</p>
+  </div>
+</div>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this population. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">strong</span></td><td><code>G35</code> &ldquo;Multiple sclerosis&rdquo; is specific and universally coded. The largest well-identified rare-disease population in the portfolio.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag hi">strong</span></td><td>Large MS prescriber universe (~7,400 active DMT neurologists) &mdash; well above CMS suppression thresholds. Class-level prescriber counts are fully usable from the Public-Use File.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag lo">weak &mdash; critical weakness</span></td><td>Part D cannot reliably distinguish BAFIERTAM from <em>Tecfidera</em> (dimethyl fumarate, Biogen) or generic DMF at the prescriber level &mdash; the fumarate class is multi-NDC and Part D aggregation loses brand resolution. <strong>Xponent or TRx data is mandatory</strong> for brand-level BAFIERTAM analytics.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag hi">strong</span></td><td>Retail-visible. Commercial pharmacies dispense and report. No SP gate question blocking basic analytics.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag hi">strong</span></td><td>Retail + commercial insurance dominate; PAP volumes are de minimis for this product. Claims data represents the true market faithfully.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag md">moderate</span></td><td>Open Payments identifies KOLs cleanly. Xponent delivers brand-level precision when licensed. Class&rarr;brand funnel logic is standard. Without Xponent, analysis caps at class-level &mdash; brand questions are out of reach.</td></tr>
+</table>
+
+<div class="callout warn">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">MS has the <strong>best claims substrate</strong> in the portfolio at the class level &mdash; specific ICD, large prescriber universe, retail visibility, no PAP distortion. But brand-level BAFIERTAM analytics <strong>require Xponent</strong> because Part D cannot cleanly split BAFIERTAM from <em>Tecfidera</em> and generic DMF. Without Xponent, the honest deliverable is class-level (fumarate class + neurologist targeting + KOL mapping); brand-level BAFIERTAM defense against generic DMF is a license-gated workstream.</p>
+</div>
+
+<h2>Patient Journey</h2>
+
+<p>The MS patient journey is long and punctuated. From first symptom to confirmed diagnosis often takes months to years; from diagnosis to treatment start is typically rapid once a specialist is involved. DMT class switching is common &mdash; patients move between oral, injectable, and infusion classes based on efficacy, tolerability, and payer access.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="age">Symptom onset</div>
+    <div class="t">First neurological event</div>
+    <div class="d">Optic neuritis, limb numbness/weakness, vertigo, or cognitive change. Patient presents to primary care or emergency department; MRI ordered when demyelination is suspected.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Diagnostic workup</div>
+    <div class="t">MRI &rarr; neurology referral &rarr; CSF</div>
+    <div class="d">MRI reveals periventricular / juxtacortical / infratentorial lesions. Neurology referral for McDonald-criteria evaluation. CSF analysis for oligoclonal bands supports demyelinating disease.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Diagnosis</div>
+    <div class="t">MS confirmed; DMT discussion</div>
+    <div class="d">Neurologist confirms RRMS (most commonly). First DMT selected based on disease activity, patient preference, comorbidities, and payer access. Fumarate class historically a common first-line oral option; increasingly displaced by higher-efficacy therapies started first.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">DMT initiation</div>
+    <div class="t">First-line oral, injectable, or anti-CD20 infusion</div>
+    <div class="d">Initiation pattern has shifted markedly over 2018&ndash;2025: fumarates fell from 17.6% to 7.9% of DMT starts, while anti-CD20 therapies (ocrelizumab, ofatumumab, ublituximab) have absorbed a growing share of new patients.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Tolerability event</div>
+    <div class="t">GI side effects on dimethyl fumarate</div>
+    <div class="d">Flushing affects ~40% of DMF patients; GI events (nausea, abdominal pain, diarrhea) drive a meaningful subset to discontinue. This is the primary commercial entry point for BAFIERTAM: patients who benefit from fumarate-class efficacy but cannot tolerate DMF.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Class switch</div>
+    <div class="t">Switch to generic DMF, BAFIERTAM, or out of class</div>
+    <div class="d">Payer step-edits increasingly require generic DMF trial first; documented intolerance is the gate to BAFIERTAM (or VUMERITY). A portion of DMF-intolerant patients exit the fumarate class entirely (to S1P modulators or anti-CD20). The residual fumarate-loyal pool is BAFIERTAM's addressable market.</div>
+  </div>
+  <div class="tl-item">
+    <div class="age">Maintenance</div>
+    <div class="t">Ongoing therapy + monitoring</div>
+    <div class="d">Routine CBC monitoring for lymphopenia, baseline and periodic LFTs, PML surveillance. Copay assistance neutralizes out-of-pocket for commercially insured eligible patients. Retention analytics track refill gaps, discontinuation, and within-class switching.</div>
+  </div>
+</div>
+
+<h2>Clinical Profile &amp; Differentiation</h2>
+
+<div class="two">
+  <div>
+    <h3>Efficacy basis</h3>
+    <p>BAFIERTAM relies on bioequivalence to dimethyl fumarate (Tecfidera); there are no independent BAFIERTAM pivotal efficacy trials. DMF&rsquo;s DEFINE and CONFIRM Phase III trials established ~44&ndash;53% annualized relapse rate reduction vs. placebo and significant MRI lesion reduction. ENDORSE extension data show sustained effect over multi-year follow-up.</p>
+    <p>This is efficacy parity with Tecfidera at a lower absolute dose (BAFIERTAM 190 mg BID vs. DMF 240 mg BID), since MMF is the active pharmacologic metabolite.</p>
+  </div>
+  <div>
+    <h3>GI tolerability differentiation</h3>
+    <p>BAFIERTAM's primary commercial claim is improved GI tolerability vs. dimethyl fumarate. A 5-week Phase 1 head-to-head study in healthy volunteers showed directionally improved GI events, but the <strong>primary endpoint (abdominal pain AUC on MOGISS) did not reach statistical significance</strong>. Subsequent analyses were exploratory.</p>
+    <p>Translation: GI tolerability is a marketing differentiator supported by study design, not a BAFIERTAM labeling claim. Payers recognize this nuance and generally require documented intolerance on generic DMF before approving BAFIERTAM or other branded fumarate alternatives.</p>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="title">What makes this product commercially different</div>
+  <p style="margin:0"><strong>Small defended niche, well-defined prescriber universe.</strong> The fumarate class writes are concentrated among MS-focused neurologists. BAFIERTAM's addressable patient pool &mdash; DMF-tolerability failures &mdash; is small but identifiable in claims through DMF initiation followed by discontinuation within 6 months. This is a targetable sub-segment, not a mass market. No food restrictions (unlike VUMERITY, Biogen's competing fumarate prodrug) is a secondary operational advantage for patient experience.</p>
+</div>
+
+<h2>Commercial Analytics Opportunities</h2>
+
+<p class="lead">Analytical value is constrained by TRx volume but amplified by a well-defined prescriber universe and strong retail-channel data visibility. Five analyses carry the highest decision-value per analytical dollar.</p>
+
+<div class="signals">
+
+  <div class="sig">
+    <h4>1 &middot; Class&rarr;Brand Adoption Funnel (Primary)</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Of the ~7,400 MS DMT prescribers, identify the subset writing any fumarate (Tecfidera DMF, generic DMF, VUMERITY, BAFIERTAM). Among those, determine who has written BAFIERTAM vs. who has not.</p>
+    <ul>
+      <li>Class denominator: fumarate-class prescribers (trailing 12 months)</li>
+      <li>Brand numerator: prescribers with &ge;1 BAFIERTAM script</li>
+      <li>Non-adopter list ranked by total fumarate volume &rarr; BAFIERTAM conversion target universe</li>
+      <li>Adopter list ranked by BAFIERTAM share &rarr; retention priority universe</li>
+      <li>Overlay payer mix to filter out prescribers in hostile formulary geographies</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> ranked targeting list &mdash; the first deliverable on engagement start.</p>
+  </div>
+
+  <div class="sig">
+    <h4>2 &middot; Prescriber Segmentation by DMT + Fumarate Share</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Classical decile analysis, but two-dimensional: total MS DMT volume AND fumarate-share-of-DMT. High-volume / high-fumarate-share prescribers are the cluster&rsquo;s economic core.</p>
+    <ul>
+      <li>Decile 1&ndash;10 on total DMT Rx volume</li>
+      <li>Sub-split on fumarate share of the prescriber&rsquo;s DMT panel</li>
+      <li>Quadrant: high-volume + high-fumarate-share (primary targets) vs. other quadrants (de-prioritized)</li>
+      <li>Cross-reference NPI geography and payer concentration</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> call-plan input and territory alignment basis.</p>
+  </div>
+
+  <div class="sig">
+    <h4>3 &middot; Generic DMF Defense Targeting</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Detect prescribers whose BAFIERTAM Rx volume is declining while generic DMF volume within the same prescriber is rising &mdash; the switching-to-generic pattern in real time.</p>
+    <ul>
+      <li>Longitudinal Rx analysis on BAFIERTAM vs. generic DMF at the prescriber level</li>
+      <li>Trailing 6-month slope of within-prescriber BAFIERTAM share</li>
+      <li>Cross with payer step-edit territory &mdash; some switching is forced, some is volitional</li>
+      <li>Rank-order for retention intervention: peer-reviewed tolerability data, sampling, Cycle Vita hub support offers</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> monthly retention priority list &mdash; the core defensive deliverable.</p>
+  </div>
+
+  <div class="sig">
+    <h4>4 &middot; Patient Retention Analysis</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Patient-level Rx persistence: time on therapy, refill gap patterns, discontinuation markers, within-class switches to generic DMF or across-class switches out of fumarate.</p>
+    <ul>
+      <li>PDC (proportion of days covered) distribution vs. benchmark</li>
+      <li>Time-to-first-gap (months) and gap recovery rate</li>
+      <li>Discontinuation cohorts: GI-tolerability discontinuation signals in concurrent claims</li>
+      <li>Hub-program correlation: do hub-enrolled patients show higher PDC? Quantify the lift</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> hub-effectiveness evidence + patient-cohort retention benchmarks.</p>
+  </div>
+
+  <div class="sig">
+    <h4>5 &middot; Territory Alignment &amp; Workload Modeling</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Geography-weighted workload for Cycle Pharmaceuticals' MS cluster (BAFIERTAM + TASCENSO ODT). Call capacity against prioritized target list with access-feasibility overlay.</p>
+    <ul>
+      <li>Target universe &times; geography (HCP location, dispensing pharmacy footprint)</li>
+      <li>Call capacity per territory vs. prioritized target count</li>
+      <li>Identify under-served and over-served territories; balance workload</li>
+      <li>Model co-detail efficiency: BAFIERTAM + TASCENSO ODT combined call vs. two single-product calls</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> territory map + call capacity plan + sizing recommendation.</p>
+  </div>
+
+  <div class="sig">
+    <h4>6 &middot; Payer Access Heatmap</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Formulary position + step-edit policy by regional payer, mapped onto prescriber geography. PA win-rate becomes a targeting filter, not just an outcome metric.</p>
+    <ul>
+      <li>Step-edit policies: generic DMF required first? Documented intolerance needed?</li>
+      <li>Prior authorization turnaround time by payer</li>
+      <li>Formulary exclusion regions (some plans exclude branded fumarate entirely)</li>
+      <li>Overlay onto target list: deprioritize prescribers in blocked geographies</li>
+    </ul>
+    <p style="margin:8px 0 0; font-size:13px; color:var(--ink-faint)"><strong>Output:</strong> access-aware target list; shifts call emphasis toward winnable regions.</p>
+  </div>
+</div>
+
+<h2>Data Substrate</h2>
+
+<table>
+  <tr><th>Source</th><th>Coverage</th><th>Use</th><th>Confidence</th></tr>
+  <tr><td>IQVIA Xponent</td><td>Retail pharmacy, national</td><td>Brand-level TRx at prescriber level &mdash; required to distinguish BAFIERTAM from generic DMF and from Tecfidera</td><td><span class="tag hi">high</span></td></tr>
+  <tr><td>CMS Medicare Part D Prescriber PUF</td><td>Medicare Part D beneficiaries, published annually</td><td>Class-level prescriber counts above suppression threshold; freely available foundation</td><td><span class="tag hi">high</span></td></tr>
+  <tr><td>Commercial pharmacy claims (Symphony / IQVIA / Truveta)</td><td>Longitudinal Rx history with patient-level continuity</td><td>Switching patterns; generic-defense signal; PDC retention metrics</td><td><span class="tag hi">high</span></td></tr>
+  <tr><td>CMS Open Payments</td><td>All manufacturer &rarr; HCP payments</td><td>KOL / speaker network mapping; existing engagement visibility</td><td><span class="tag hi">high</span></td></tr>
+  <tr><td>Medical claims (MS Dx + comorbidities)</td><td>Diagnosis + procedure detail</td><td>Patient-journey reconstruction; sub-segment sizing</td><td><span class="tag md">medium</span></td></tr>
+  <tr><td>Formulary / payer-policy databases</td><td>Commercial + Medicare Part D formularies</td><td>Access heatmap; PA winnability by region</td><td><span class="tag md">medium</span></td></tr>
+  <tr><td>Patient-support hub CRM</td><td>Enrollment, BV, PA, bridge utilization</td><td>Abandonment diagnosis; hub-ROI quantification; internal-only data</td><td><span class="tag md">medium</span></td></tr>
+</table>
+
+<h2>Open Questions &amp; Data Gaps</h2>
+
+<ul>
+  <li><strong>Absolute BAFIERTAM TRx volume</strong> &mdash; not publicly disclosed; dictates whether statistical S&amp;T is viable or whether a named-account / flywheel approach is more appropriate. First-priority ask of Cycle Pharmaceuticals.</li>
+  <li><strong>Net-of-rebate realized price per prescription</strong> &mdash; WAC is ~$69K annualized; actual realized revenue is materially lower after rebates, copay assistance draw, and bridge/free-drug programs. Required for PA-win-rate ROI math.</li>
+  <li><strong>Field force structure</strong> &mdash; is the Cycle Pharmaceuticals MS rep dedicated to BAFIERTAM or shared with TASCENSO ODT? Drives call-capacity modeling.</li>
+  <li><strong>Conference / KOL activity</strong> &mdash; no AAN / ECTRIMS / ACTRIMS presentations specific to BAFIERTAM identified in public search; may reflect limited independent academic engagement.</li>
+  <li><strong>Prescriber-level volume concentration</strong> &mdash; with step-edit gating and small absolute volume, BAFIERTAM may concentrate in a very small sub-universe; full Xponent pull confirms.</li>
+  <li><strong>Real-world evidence</strong> &mdash; no BAFIERTAM-specific RWE identified; all efficacy data borrowed from the Tecfidera program. A modest RWE investment could strengthen payer-access arguments.</li>
+</ul>
+
+<div class="callout warn">
+  <div class="title">What would unlock full analytical value</div>
+  <p style="margin:0">Access to BAFIERTAM-level TRx (Xponent license or disclosed volume from Cycle Pharmaceuticals) is the single gate between directional class-level analytics and actionable brand-level targeting. Secondary unlock: net-pricing transparency to measure true ROI on PA pull-through work.</p>
+</div>
+
+<footer>
+  <p><strong>Primary public sources:</strong> DailyMed (BAFIERTAM NDA 210296, setid a161f9d4-70f1-4097-957a-eafb35d3274f); FDA Summary Review (210296Orig1s000SumR.pdf); Sheikh et al. (PMC 8162564); Wynn et al. (PubMed 32629403); Lategan et al. (PMC 8144082, PMID 36645997); PMC 11070887 (evolving role of MMF in RRMS); PMC 12406943 (industry payments to MS neurologists); DrugPatentWatch; Truveta Research (DMT initiation trends); National MS Society; GoodRx; Precedence Research (US MS DMT market sizing); Cycle Pharmaceuticals BAFIERTAM materials (acquired from Banner Life Sciences).</p>
+  <p><strong>Methodology references:</strong> Class&rarr;brand adoption funnel; prescriber-concentration deciling; generic-defense switch detection; payer-access heatmap; Cycle Vita hub-effectiveness retention analytics.</p>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Based on internal research brief <code>knowledge/research/domain/briefs/RB_RC_bafiertam_mmf_ms_2026-03-19.md</code>. Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026). Competitor products from unaffiliated manufacturers (Tecfidera, VUMERITY, Gilenya, Mayzent, Zeposia, Ponvory, Aubagio, Mavenclad, Ocrevus, Kesimpta, Briumvi) are market-context references.</p>
+</footer>
+
+</div>
+</body>
+</html>

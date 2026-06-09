@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Periodic Paralysis — Named-Account Cluster Analytics</title>
+<meta name="description" content="Cluster analytics playbook for periodic paralysis — a named-account ultra-rare neuromuscular market where analytical approach depends entirely on specialty-pharmacy data visibility.">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2028;
+    --surface-2: #232b36;
+    --border: #2d3744;
+    --ink: #e8ecf0;
+    --ink-dim: #9ba3ad;
+    --ink-faint: #6a7380;
+    --accent: #5eb3b7;
+    --accent-2: #c8a96a;
+    --warn: #d67c5c;
+    --good: #7fb881;
+    --crit: #c96565;
+    --mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf9f6;
+      --surface: #ffffff;
+      --surface-2: #f3f1eb;
+      --border: #d8d3c5;
+      --ink: #1d2430;
+      --ink-dim: #4a5462;
+      --ink-faint: #8a94a3;
+      --accent: #2d8689;
+      --accent-2: #9a7d3e;
+      --warn: #b85a36;
+      --good: #4e7d51;
+      --crit: #a64343;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+  header.hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sub { font-size: 17px; color: var(--ink-dim); max-width: 760px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 13px; color: var(--ink-faint); }
+  .meta span strong { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.005em; margin: 48px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 16px 0 6px; }
+  p { margin: 10px 0; }
+  .lead { font-size: 16px; color: var(--ink); }
+  a { color: var(--accent); }
+  .nav { font-size: 13px; margin-bottom: 20px; }
+  .nav a { color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .card .v { font-size: 17px; font-weight: 600; color: var(--ink); }
+  .card .v.sm { font-size: 14px; font-weight: 500; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+  @media (max-width: 780px) { .two { grid-template-columns: 1fr; } }
+
+  .callout { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; margin: 18px 0; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--crit); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .title { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .callout.warn .title { color: var(--warn); }
+  .callout.crit .title { color: var(--crit); }
+  .callout.good .title { color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  td.num { font-family: var(--mono); text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  table.tight td, table.tight th { padding: 7px 10px; }
+
+  .timeline { position: relative; margin: 24px 0 12px; padding-left: 28px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item::before { content: ''; position: absolute; left: -35px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-item .age { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+  .tl-item .t { font-weight: 600; font-size: 15px; margin: 2px 0 4px; }
+  .tl-item .d { font-size: 14px; color: var(--ink-dim); }
+
+  .signals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 780px) { .signals { grid-template-columns: 1fr; } }
+  .sig { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .sig h4 { margin-top: 0; color: var(--accent-2); }
+  .sig ul { margin: 6px 0 0; padding-left: 20px; }
+  .sig li { margin: 4px 0; font-size: 14px; color: var(--ink); }
+  .sig li code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink-dim); }
+
+  .product-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin: 18px 0; display: block; text-decoration: none; color: var(--ink); transition: border-color 0.15s, transform 0.15s; }
+  .product-card:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .product-card .pct-title { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  .product-card .pct-sub { font-size: 14px; color: var(--ink-dim); margin-bottom: 8px; }
+  .product-card .pct-meta { font-size: 12px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.04em; }
+
+  .tag { display: inline-block; font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; padding: 2px 7px; border-radius: 3px; background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border); margin-right: 4px; margin-bottom: 2px; }
+  .tag.hi { background: rgba(94,179,183,0.12); color: var(--accent); border-color: rgba(94,179,183,0.35); }
+  .tag.md { background: rgba(200,169,106,0.12); color: var(--accent-2); border-color: rgba(200,169,106,0.35); }
+  .tag.lo { background: rgba(214,124,92,0.1); color: var(--warn); border-color: rgba(214,124,92,0.35); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-faint); }
+  footer p { margin: 4px 0; }
+
+  @media print {
+    body { background: white; color: black; }
+    .wrap { max-width: none; padding: 20px; }
+    h2 { page-break-after: avoid; }
+    .card, .sig, .callout, .product-card { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">← <a href="portfolio_index.html">Portfolio Index</a></div>
+
+<header class="hero">
+  <div class="eyebrow">CYCL_2026_CE · Neuromuscular · Named-Account</div>
+  <h1>Periodic Paralysis Cluster — ORMALVI (Dichlorphenamide)</h1>
+  <p class="sub">An ultra-rare neuromuscular channelopathy cluster (~5,000 US patients) with a ~100–250-prescriber universe, exclusive specialty-pharmacy distribution, and a single FDA-approved molecule (dichlorphenamide). Cycle Pharmaceuticals' ORMALVI competes as branded generic against the brand originator Keveyis (Xeris). The analytical approach hinges entirely on one data-gate question.</p>
+  <div class="meta">
+    <span><strong>Cluster:</strong> Periodic paralysis · ORMALVI (Cycle Pharmaceuticals)</span>
+    <span><strong>Molecule:</strong> Dichlorphenamide (carbonic anhydrase inhibitor)</span>
+    <span><strong>Marketer:</strong> Cycle Pharmaceuticals · <strong>SP:</strong> LeMed (exclusive) · <strong>Hub:</strong> Cycle Vita</span>
+    <span><strong>Competitive posture:</strong> ORMALVI vs. brand originator (Keveyis / Xeris)</span>
+  </div>
+</header>
+
+<h2>At a Glance</h2>
+<div class="glance">
+  <div class="card"><div class="k">US PP Prevalence</div><div class="v">~5,000</div></div>
+  <div class="card"><div class="k">Diagnosed Patients</div><div class="v sm">&lt;3,000 (est)</div></div>
+  <div class="card"><div class="k">Treated Patients</div><div class="v sm">~1,500–2,500</div></div>
+  <div class="card"><div class="k">Active Prescribers</div><div class="v">~100–250</div></div>
+  <div class="card"><div class="k">Keveyis FY2025 Revenue</div><div class="v">$47.6M</div></div>
+  <div class="card"><div class="k">Keveyis YoY</div><div class="v" style="color:var(--warn)">-4%</div></div>
+  <div class="card"><div class="k">FDA-Approved Therapies</div><div class="v">1 molecule</div></div>
+  <div class="card"><div class="k">Orphan Exclusivity</div><div class="v sm">Expired Aug 2022</div></div>
+  <div class="card"><div class="k">Time to Diagnosis</div><div class="v sm">Years to decades</div></div>
+  <div class="card"><div class="k">Distribution</div><div class="v sm">Exclusive SP</div></div>
+</div>
+
+<div class="callout crit">
+  <div class="title">Core Insight — World 1 or World 2</div>
+  <p style="margin:0">The commercial analytics approach for Cycle's ORMALVI cluster depends <strong>entirely</strong> on a single data-visibility question: does LeMed (ORMALVI's exclusive SP) report dispensing data to commercial Rx panels (IQVIA Xponent, DDD)? If <strong>yes</strong>, this is a classic named-account competitive grid with retail-style analytics. If <strong>no</strong>, Cycle Vita hub data becomes the only usable signal and the entire playbook changes. The answer is binary. The cost of designing analytics without knowing the answer is building for the wrong world.</p>
+</div>
+
+<h2>Strategic Framing</h2>
+
+<p class="lead">Periodic paralysis is a textbook named-account rare-disease market. The universe is small enough for Cycle's ~29-rep US sales force to enumerate every prescriber, every Center of Excellence, and every patient-advocacy node. A single FDA-approved molecule (dichlorphenamide) is marketed in two commercial forms — the brand originator Keveyis (Xeris) and Cycle's ORMALVI branded generic built on the same ANDA. Both sit on exclusive-SP rails, both carry $0-copay programs, and neither competes on price. The competitive surface is <strong>hub services (Cycle Vita vs. Xeris hub) and specialty-pharmacy integration (LeMed vs. Xeris SP)</strong>, not formulary.</p>
+
+<p>That makes the cluster a Tier-2 candidate in Cycle's portfolio ROI framework — high analytical value <em>if</em> LeMed reporting resolves favorably, low value if it does not. Both outcomes are knowable with a single phone call to IQVIA. Everything downstream is gated on that answer.</p>
+
+<h3>What changes with the answer</h3>
+<table>
+  <tr><th>Data-gate outcome</th><th>World</th><th>Primary substrate</th><th>Analytical shape</th></tr>
+  <tr>
+    <td><strong>LeMed reports to Xponent / DDD</strong></td>
+    <td>World 1 (retail-style)</td>
+    <td>IQVIA Xponent + CMS Part D + Open Payments</td>
+    <td>Named-account competitive grid, prescriber-level Rx share, Keveyis vs. ORMALVI switching patterns, Xeris call-pattern inference</td>
+  </tr>
+  <tr>
+    <td><strong>LeMed does NOT report</strong></td>
+    <td>World 2 (hub-driven)</td>
+    <td>Cycle Vita hub CRM + LeMed dispense feed + BV/PA logs</td>
+    <td>Patient journey flywheel (FIND/ACCESS/START/MAINTAIN/MEASURE), Cycle-hub-attributed retention, Cycle-direct patient analytics</td>
+  </tr>
+</table>
+
+<h2>Data Gate — The Single Most Important Question</h2>
+
+<div class="callout warn">
+  <div class="title">Critical Question</div>
+  <p style="margin:0 0 8px"><strong>Does LeMed (Cycle's exclusive ORMALVI SP) report dispense data to IQVIA Xponent or Symphony DDD?</strong></p>
+  <p style="margin:0">LeMed is an independent rare-disease specialty pharmacy. Independent SPs have historically had lower IQVIA reporting compliance than national chains. Xeris's SP for Keveyis is a larger independent rare-disease pharmacy and is more likely to report. If LeMed does not report, ORMALVI's prescriptions are <strong>invisible</strong> in syndicated commercial data — and all inferences about the competitive grid must come from Cycle Vita hub data alone.</p>
+</div>
+
+<h3>Why the answer can't be assumed</h3>
+<ul>
+  <li><strong>Xponent retail coverage is ~93%</strong>, but specialty-pharmacy coverage varies by agreement. Exclusive-SP distribution is a known blind spot.</li>
+  <li><strong>Xeris's Keveyis SP is a large independent rare-disease pharmacy</strong> — likely reports, but Cycle should confirm.</li>
+  <li><strong>LeMed (Cycle's ORMALVI SP)</strong> — reporting status is not publicly disclosed in LeMed's materials.</li>
+  <li><strong>Aggregator coverage varies by contract.</strong> IQVIA and Symphony can confirm status directly for a nominal fee; no amount of secondary research answers it.</li>
+</ul>
+
+<h2>Claims Data Validity</h2>
+<p class="lead">What commercial and claims data can &mdash; and cannot &mdash; identify for this cluster. The honest picture before the analytical plan.</p>
+
+<table>
+  <tr><th>Signal</th><th>Quality</th><th>Why</th></tr>
+  <tr><td>ICD-10 specificity</td><td><span class="tag hi">specific but under-coded</span></td><td><code>G72.3</code> &ldquo;Periodic paralysis&rdquo; is specific but routinely under-used &mdash; attacks often coded as <code>E87.*</code> hypokalemia/hyperkalemia during ED encounters.</td></tr>
+  <tr><td>Part D visibility</td><td><span class="tag lo">weak</span></td><td>Ultra-rare (~5,000 US). Prescriber-level CMS suppression is significant; universe falls below minimum-cell thresholds in most geographies.</td></tr>
+  <tr><td>NDC-level brand resolution</td><td><span class="tag md">moderate</span></td><td>ORMALVI and <em>Keveyis</em> carry distinct NDCs &mdash; share resolution is feasible where Part D captures dispensing.</td></tr>
+  <tr><td>Specialty-pharmacy reporting</td><td><span class="tag lo">THE GATE QUESTION</span></td><td>LeMed exclusive distribution for ORMALVI. Panel reporting status determines whether analytics can see dispensing at all. Every downstream workstream depends on this answer.</td></tr>
+  <tr><td>PAP / bridge / free-drug invisibility</td><td><span class="tag md">moderate</span></td><td>Competitive defensive PAP plausible given two-product market structure. Volumes PDE-invisible; moderate impact on share calculations.</td></tr>
+  <tr><td>Complementary data sources</td><td><span class="tag md">moderate</span></td><td>EMG exercise-provocation test claims. Neuromuscular channelopathy genetic-panel orders. Specialty cascade (neurology + EMG + genetic) offers secondary identification. Patient-advocacy nodes enumerable.</td></tr>
+</table>
+
+<div class="callout crit">
+  <div class="title">Bottom line</div>
+  <p style="margin:0">Claims visibility is <strong>gate-dependent</strong> &mdash; everything hinges on whether LeMed reports to commercial Rx panels. With &ldquo;yes,&rdquo; a Tier-1 named-account analytical program becomes executable for Cycle. With &ldquo;no,&rdquo; the cluster analytics is speculative until Cycle Vita hub or direct LeMed data is licensed. The first analytical deliverable should be the gate answer itself &mdash; not a market assessment.</p>
+</div>
+
+<h2>Cluster Member</h2>
+
+<a class="product-card" href="periodic_paralysis_dichlorphenamide.html">
+  <div class="pct-title">ORMALVI (Dichlorphenamide) · Periodic Paralysis</div>
+  <div class="pct-sub">Cycle Pharmaceuticals' branded-ANDA-generic dichlorphenamide. Carbonic anhydrase inhibitor; oral tablet; approved for hypokalemic PP, hyperkalemic PP, and Andersen-Tawil syndrome. Competes with brand originator Keveyis (Xeris). Orphan exclusivity expired August 2022; ANDA approved 2023; ORMALVI launched 2024 via LeMed + Cycle Vita hub.</div>
+  <div class="pct-meta">World 1 or 2 (LeMed-dependent) · ~100–250 prescribers · open to further generic entry</div>
+</a>
+
+<h2>Analytical Playbook A — If SP Reports</h2>
+
+<p>In this world, the ORMALVI cluster becomes a named-account flywheel with full retail-style competitive visibility. The ~100–250 active prescribers are individually enumerable, and every competitive Rx (ORMALVI vs. Keveyis) is visible at prescriber level.</p>
+
+<div class="signals">
+  <div class="sig">
+    <h4>1 · Named-Account Competitive Grid</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Prescriber-level head-to-head Rx share (ORMALVI vs. Keveyis) across all enumerable PP prescribers.</p>
+    <ul>
+      <li>Every dichlorphenamide-prescribing physician, by volume and Rx share</li>
+      <li>Switching patterns — who is defending vs. who is converting</li>
+      <li>Geographic concentration vs. field-force coverage</li>
+      <li>Academic vs. community prescriber segmentation</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>2 · Competitor Underinvestment Detection</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Xeris Biopharma is publicly focused on a different growth asset (Recorlev for Cushing's). Keveyis is described as "flattening." If Xeris call patterns drop and Keveyis Rx share decays in parallel, that is a named-account opportunity map for ORMALVI.</p>
+    <ul>
+      <li>Open Payments time-series — rep interaction frequency by prescriber</li>
+      <li>Rx trajectory by prescriber vs. interaction trend</li>
+      <li>Territory-level field-force coverage gaps</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>3 · DAW / Substitution Defense</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">ORMALVI is priced at or above brand. Without DAW (Dispense As Written), PBMs may substitute to unbranded generic dichlorphenamide at a fraction of the price. DAW compliance is existential for ORMALVI economics.</p>
+    <ul>
+      <li>DAW-flag rate by prescriber and territory</li>
+      <li>Substitution frequency at pharmacy level</li>
+      <li>Prescriber education ROI — DAW rate delta pre/post intervention</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>4 · Referral Network Topology</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The patient journey runs PCP → general neurology → neuromuscular subspecialty. Referral patterns across this chain are visible in claims and drive Centers of Excellence analytics.</p>
+    <ul>
+      <li>Referral-chain maps from general neurology to neuromuscular academics</li>
+      <li>Center-of-Excellence dominance by geography</li>
+      <li>Diagnostic-odyssey length by referral path</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Analytical Playbook B — If SP Does Not Report</h2>
+
+<p>In this world, commercial Rx panels are blind to ORMALVI. Cycle Vita hub data becomes the sole source of prescribing intelligence — and, as it happens, a richer one for named-account rare disease than syndicated data ever is. The analytical frame shifts from "competitive market share" to "Cycle-direct patient journey."</p>
+
+<div class="signals">
+  <div class="sig">
+    <h4>1 · Cycle Vita Flywheel KPIs</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">The Cycle Vita hub sees every enrolled ORMALVI patient end-to-end. For a &lt;3,000-patient population, patient-level analytics are the only analytics that matter.</p>
+    <ul>
+      <li><strong>FIND:</strong> enrollment volume by referral source, diagnostic odyssey length</li>
+      <li><strong>ACCESS:</strong> BV → PA → dispense funnel; payer-level approval/denial</li>
+      <li><strong>START:</strong> time-to-first-fill (TTFF), bridge-to-commercial conversion</li>
+      <li><strong>MAINTAIN:</strong> patient-level refill gaps, discontinuation reasons</li>
+      <li><strong>MEASURE:</strong> funnel-stage conversion trending; cost-per-patient-started</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>2 · Patient Journey Analytics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Cycle Vita enrollment forms carry referral source, diagnosis date, referring specialty, and geography. The Cycle Vita CRM is the only place where diagnostic odyssey length for ORMALVI patients is directly measurable.</p>
+    <ul>
+      <li>Attack history → first neurology visit → genetic testing → diagnosis timeline</li>
+      <li>Referral-source mix (rheumatology, cardiology, urology — the "finding" paths)</li>
+      <li>Diagnostic-delay segmentation by geography and patient demographics</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>3 · Payer Access Analytics</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Every ORMALVI PA submission, approval, denial, and appeal flows through Cycle Vita. For rare disease, payer-by-payer PA dynamics drive commercial outcomes more than prescriber targeting.</p>
+    <ul>
+      <li>PA approval rate by payer</li>
+      <li>Appeal outcome timelines</li>
+      <li>Bridge-program utilization as a leading indicator of access friction</li>
+    </ul>
+  </div>
+  <div class="sig">
+    <h4>4 · Nurse-Touchpoint / Service-Tier ROI</h4>
+    <p style="margin:4px 0 8px; font-size:14px; color:var(--ink-dim)">Cycle Vita hub services (nutrition, adherence, clinical support) are the only differentiator for ORMALVI against Keveyis and unbranded generic. Attributing retention to specific service tiers is the closest analog to ROI measurement in this world.</p>
+    <ul>
+      <li>Retention delta between high-touch and low-touch enrolled patients</li>
+      <li>Correlation of nutrition-program participation with persistence</li>
+      <li>Service-tier cost vs. retention value</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Competitive Landscape (Directionally Stable Across Both Worlds)</h2>
+
+<table>
+  <tr><th>Player</th><th>Form</th><th>Distribution</th><th>Recent Signal</th></tr>
+  <tr>
+    <td>Keveyis (Xeris Biopharma)</td>
+    <td>Brand — original NDA (supplemental to 1958 Daranide)</td>
+    <td>Single large independent rare-disease SP (national)</td>
+    <td>FY2025 revenue $47.6M, -4% YoY; Xeris explicitly pivoting growth investment to Recorlev (Cushing's). "Flattening."</td>
+  </tr>
+  <tr>
+    <td><strong>ORMALVI (Cycle Pharmaceuticals)</strong></td>
+    <td>ANDA — same molecule, same dose, same label</td>
+    <td>LeMed Specialty Pharmacy (exclusive)</td>
+    <td>Launched 2024. Priced at or above Keveyis. Cycle Vita hub + nutrition program as differentiation.</td>
+  </tr>
+  <tr>
+    <td>Unbranded authorized generic</td>
+    <td>ANDA (same ANDA as branded generic, unbranded)</td>
+    <td>Broader pharmacy network</td>
+    <td>~$67/tablet vs. ~$388/tablet for ORMALVI. Substitution risk without DAW.</td>
+  </tr>
+  <tr>
+    <td>Acetazolamide (off-label)</td>
+    <td>Generic CAI</td>
+    <td>Retail</td>
+    <td>Widely available, cheap. ~50% response rate overall; lower response in SCN4A mutations. No head-to-head vs. dichlorphenamide exists.</td>
+  </tr>
+</table>
+
+<h2>Open Questions</h2>
+
+<ol>
+  <li><strong>Does LeMed report ORMALVI dispensing to IQVIA Xponent and/or Symphony DDD?</strong> (Binary data gate.)</li>
+  <li><strong>Does Xeris's Keveyis SP report, and with what latency?</strong> Determines whether competitive Rx intelligence is visible.</li>
+  <li><strong>Is Xeris actually underinvesting in Keveyis?</strong> Xeris commentary suggests yes; Rx-level data would confirm, informing Cycle's ORMALVI growth case.</li>
+  <li><strong>How concentrated is the prescriber universe?</strong> If &lt;50 physicians account for &gt;70% of volume, named-account analytics dominate Cycle's territory alignment for its ~29-rep force.</li>
+  <li><strong>What is the DAW compliance rate at LeMed?</strong> Substitution to unbranded generic dichlorphenamide destroys ORMALVI economics silently.</li>
+  <li><strong>Can Cycle Vita negotiate direct data feeds from LeMed into a Databricks analytics layer?</strong> If LeMed reporting is a no, this becomes the only path.</li>
+</ol>
+
+<footer>
+  <p>Internal CAP analytics framework for Cycle Pharmaceuticals (CYCL_2026_CE engagement). Combines public-domain clinical information with CAP research briefs (RB_RC_* series, March–April 2026), including <code>knowledge/research/domain/briefs/RB_RC_ormalvi_dichlorphenamide_pp_2026-03-19.md</code>. Reporting status of LeMed is treated as an unknown data-gate question rather than an assumption.</p>
+  <p><strong>Primary public sources:</strong> DailyMed (dichlorphenamide tablet label); FDA approval letter NDA 011366 (Keveyis); Sansone et al. <em>Neurology</em> 2016 (pivotal trials); Statland et al. <em>Muscle Nerve</em> 2018/2022; Xeris Biopharma FY2025 financial reports; IQVIA Xponent coverage disclosures; Periodic Paralysis Association; MedlinePlus Genetics.</p>
+</footer>
+
+</div>
+</body>
+</html>
