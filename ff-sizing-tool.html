@@ -1,77 +1,1340 @@
 <!doctype html>
-<!-- ui/app/index.html — the WIRED sizing surface (UI-D-008).
-     The browser imports the real engine (../../engine/index.js, ESM), runs a fixture
-     canonical through load().run(), and renders ONLY from the wire.mjs view-model.
-     No number on this page is computed in the UI. Serve over HTTP (ESM needs it):
-       python -m http.server 8765   (from products/ff_sizing)  →  /ui/app/index.html -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>FF Sizing — wired surface (engine-rendered)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Force Sizing — sample product, Q3 plan (click-through prototype v1)</title>
 <style>
   :root{
-    --navy:#0f2a43; --navy2:#163a5c; --teal:#0d9488; --green:#15803d; --amber:#b45309;
-    --red:#b91c1c; --bg:#f5f7fa; --card:#ffffff; --border:#dde4ec; --text:#1c2b3a;
-    --text2:#46586c; --text3:#7b8a9b; --soft:#fff7ed; --sky:#0369a1;
+    --ink:#19222b; --muted:#67727e; --faint:#9aa5b1; --line:#d7dce2; --line2:#bcc4ce;
+    --fill:#f5f7f9; --fill2:#eef2f5; --paper:#ffffff; --bg:#e8ebef;
+    --accent:#0e7c6b; --accent-bg:#e9f7f3;
+    --green:#16895a; --green-bg:#e8f6ee;
+    --warn:#b45309; --warn-bg:#fdf3e7;
+    --amber:#b45309; --amber-bg:#fdf3e7;
+    --red:#b3261e; --red-bg:#fcefee;
+    --blue:#3f6f9e; --blue-bg:#eef3f8;
+    --serif:'Georgia','Times New Roman',serif;
+    --sans:'Segoe UI',system-ui,sans-serif;
+    --mono:'Consolas',ui-monospace,monospace;
   }
-  *{box-sizing:border-box} body{margin:0;font:14px/1.5 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text)}
-  .top{background:var(--navy);color:#e8eef5;padding:10px 22px;display:flex;align-items:center;gap:14px}
-  .top .t{font-weight:700;letter-spacing:.2px}
-  .top .sub{font-size:11.5px;color:#9fb3c8}
-  .toggle{margin-left:auto;display:flex;gap:6px}
-  .toggle button{border:1px solid #3d5a7a;background:transparent;color:#cfdcea;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer}
-  .toggle button.on{background:#e8eef5;color:var(--navy);font-weight:700}
-  .banner{background:var(--soft);border-bottom:1px solid #f1d9b8;color:#7c4a12;padding:7px 22px;font-size:12.5px}
-  .wrap{max-width:1080px;margin:18px auto;padding:0 18px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px}
-  h1{font-size:21px;margin:0 0 4px} h2{font-size:15px;margin:0 0 10px;color:var(--navy2)}
-  .hwords{font-size:12px;color:var(--text3)}
-  .hero-range{font-size:19px;font-weight:700;margin:6px 0 2px}
-  .hero-range .lo,.hero-range .hi{color:var(--teal)} .hero-range .star{color:var(--navy2)}
-  .hero-sub{font-size:13px;color:var(--text2)}
-  .chip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:10px;padding:2px 9px;margin-left:8px;vertical-align:2px}
-  .chip.red{background:#fde8e8;color:var(--red)} .chip.amber{background:#fdf0dd;color:var(--amber)} .chip.green{background:#e3f5e9;color:var(--green)}
-  .tiles{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-  .tile{flex:1 1 150px;border:1px solid var(--border);border-radius:8px;padding:10px 12px;min-width:150px}
-  .tile .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
-  .tile .v{font-size:18px;font-weight:800;color:var(--navy2);margin-top:2px}
-  .tile.hero-tile{border-color:var(--teal);background:#f0fbf9}
-  .tile.missing{background:#fafbfc;border-style:dashed}
-  .tile.missing .v{font-size:11.5px;font-weight:600;color:var(--text3);line-height:1.35}
-  svg{display:block;width:100%}
-  .axis{stroke:#c6d0db;stroke-width:1} .axlab{font-size:10px;fill:var(--text3)}
-  .flagrow{font-size:11.5px;color:var(--text3);margin-top:6px}
-  .verdict{font-size:16px;font-weight:700;margin-bottom:6px}
-  .verdict.FEASIBLE{color:var(--green)} .verdict.FEASIBLE_WITH_FLAGS{color:var(--amber)} .verdict.INFEASIBLE{color:var(--red)}
-  table{border-collapse:collapse;width:100%;font-size:12px}
-  th,td{padding:4px 8px;text-align:right;border-bottom:1px solid var(--border)} th:first-child,td:first-child{text-align:left}
-  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
-  .blocked{border-left:5px solid var(--red);background:#fdf6f6}
-  .blocked h2{color:var(--red)}
-  .route{border:1px solid var(--border);border-radius:8px;background:#fff;padding:9px 12px;margin-top:8px;font-size:12.5px}
-  .fitness{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .fit{font-size:11px;border-radius:6px;padding:3px 9px;border:1px solid var(--border)}
-  .fit.green{background:#e3f5e9;color:var(--green)} .fit.yellow{background:#fdf0dd;color:var(--amber)} .fit.red{background:#fde8e8;color:var(--red)}
-  .seg{display:flex;gap:14px;flex-wrap:wrap}
-  .seg .one{flex:1 1 300px}
-  .footer{font-size:11px;color:var(--text3);padding:6px 22px 24px;max-width:1080px;margin:0 auto}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:var(--sans);color:var(--ink);padding:22px 22px 56px}
+
+  /* ===== App chrome ===== */
+  .frame{max-width:1200px;margin:0 auto;background:var(--paper);border:1px solid var(--line2);border-radius:9px;overflow:hidden;box-shadow:0 8px 26px rgba(20,30,50,.10);position:relative}
+  .chrome{display:flex;align-items:center;gap:7px;background:var(--fill2);border-bottom:1px solid var(--line);padding:8px 13px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#cfd5dd}
+  .chrome .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px 12px}
+  .chrome .proto{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+  .ribbon{display:flex;align-items:center;gap:8px;padding:9px 16px;background:var(--accent-bg);border-bottom:1px solid var(--line);font-size:11.5px;color:var(--accent);font-weight:600;flex-wrap:wrap}
+  .ribbon .arc{font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:400}
+  .ribbon .arc b{color:var(--accent)}
+  .ribbon .legend{font-size:10px;color:var(--muted);font-weight:400}
+  .ribbon .legend .ld{font-weight:700}
+
+  /* view toggle */
+  .viewbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#fbfcfd;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}
+  .viewbar .who{font-weight:700;color:var(--ink)}
+  .viewbar .tabs{margin-left:auto;display:flex;gap:4px}
+  .viewbar .vt{font-size:11px;padding:4px 11px;border-radius:5px;color:var(--muted);cursor:pointer;border:1px solid transparent;user-select:none}
+  .viewbar .vt:hover{background:var(--fill2)}
+  .viewbar .vt.on{background:var(--ink);color:#fff;font-weight:600}
+
+  /* ===== Analyst grid ===== */
+  .grid{display:grid;grid-template-columns:230px 1fr}
+  .rail{border-right:1px solid var(--line);background:#fafbfc;padding:14px 11px}
+  .rail .railhead{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 6px 9px;font-weight:700}
+  .chap{font-size:12.5px;padding:9px 10px;border-radius:7px;color:var(--muted);margin-bottom:2px;line-height:1.25;cursor:pointer}
+  .chap:hover{background:var(--fill2)}
+  .chap .q{display:block;font-size:10px;color:var(--faint);margin-top:2px}
+  .chap.done{color:var(--ink)} .chap.done::before{content:"✓ ";color:var(--accent);font-weight:700}
+  .chap.on{background:var(--accent);color:#fff;font-weight:700}
+  .chap.on:hover{background:var(--accent)}
+  .chap.on .q{color:rgba(255,255,255,.82)}
+  .chap.on .badge{background:#fff;color:var(--warn)}
+  .chap.off{color:var(--faint)}
+  .badge{font-size:9px;background:var(--warn-bg);color:var(--warn);border-radius:9px;padding:1px 6px;margin-left:5px;font-weight:700}
+
+  .stage{padding:20px 26px}
+  .stage h1{font-family:var(--serif);font-size:23px;margin:0;font-weight:600}
+  .stage .ask{color:var(--muted);font-size:13px;margin:5px 0 0;font-style:italic}
+  .readonly{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:var(--fill);border:1px solid var(--line);border-radius:20px;padding:4px 12px;margin-top:12px}
+
+  /* seam badge (per-chapter provenance) */
+  .seam{display:inline-flex;align-items:center;gap:7px;font-size:11px;border-radius:20px;padding:4px 12px;margin-top:12px;font-weight:600}
+  .seam .sd{width:9px;height:9px;border-radius:50%}
+  .seam.g{background:var(--green-bg);color:var(--green);border:1px solid #aedcc3} .seam.g .sd{background:var(--green)}
+  .seam.n{background:var(--blue-bg);color:var(--blue);border:1px solid #c4d6e8} .seam.n .sd{background:var(--blue)}
+  .seam.a{background:var(--amber-bg);color:var(--amber);border:1px solid #e7c79a} .seam.a .sd{background:var(--amber)}
+  .seam.mod{background:var(--amber-bg);color:var(--amber);border:1px solid #e7c79a} .seam.mod .sd{background:var(--amber)}
+
+  .sofar{display:flex;gap:0;margin:16px 0 6px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--fill)}
+  .sofar .s{flex:1;padding:8px 11px;border-right:1px solid var(--line);min-width:0}
+  .sofar .s:last-child{border-right:0}
+  .sofar .s .k{font-size:9.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+  .sofar .s .v{font-size:13px;font-weight:700;margin-top:2px}
+  .sofar .s.cur{background:var(--accent-bg)} .sofar .s.cur .v{color:var(--accent)}
+  .sofar .s.curw{background:var(--warn-bg)} .sofar .s.curw .v{color:var(--warn)}
+  .sofar-cap{font-size:10.5px;color:var(--faint);margin:0 0 16px;font-family:var(--mono)}
+
+  .twocol{display:grid;grid-template-columns:1.55fr 1fr;gap:18px}
+  .twocol.realitycols{grid-template-columns:1.5fr 1fr}
+  .panel{border:1px solid var(--line);border-radius:8px;background:#fff;padding:14px 16px}
+  .panel .ph{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 4px}
+  .panel .psub{font-size:11px;color:var(--muted);margin:0 0 10px}
+
+  /* chart */
+  .chart{position:relative;height:230px}
+  .chart svg{width:100%;height:100%;overflow:visible}
+  .axlab{font-family:var(--sans);font-size:10px;fill:var(--muted)}
+  .clab{font-family:var(--sans);font-size:9.5px}
+  .leg{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+  .leg .li{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted)}
+  .leg .sw{width:16px;height:0;border-top:2px dashed #888}
+  .conf{font-size:9px;color:var(--faint);margin-left:3px}
+
+  /* assumptions */
+  .assume .arow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--fill2)}
+  .assume .arow:last-child{border-bottom:0}
+  .assume .lbl{font-size:12px}
+  .assume .lbl small{display:block;color:var(--faint);font-size:10px;margin-top:1px}
+  .assume .val{font-size:13px;font-weight:700;white-space:nowrap}
+  .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .cdot.meas{background:#16895a} .cdot.mod{background:#d08a1a} .cdot.est{background:#bcc4ce;border:1px solid #9aa5b1}
+  .editlink{font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:2px 8px;margin-left:8px}
+
+  /* banners */
+  .banner{display:flex;gap:11px;align-items:flex-start;background:var(--warn-bg);border:1px solid var(--warn);border-left:4px solid var(--warn);border-radius:8px;padding:13px 16px;margin:18px 0 6px}
+  .banner.green{background:var(--green-bg);border-color:#aedcc3;border-left-color:var(--green)}
+  .banner.green .t{color:#155b3c}
+  .banner.green .t b{color:var(--green)}
+  .banner .ic{font-size:16px;line-height:1.2}
+  .banner .t{font-size:12.5px;color:#7c3b06;line-height:1.5}
+  .banner .t b{color:var(--warn)}
+  .confnote{font-size:10.5px;color:var(--muted);margin-top:6px}
+  .confnote .half{color:#d08a1a;font-weight:700}
+  .fixrow{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap}
+  .fix{font-size:11px;background:#fff;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:4px 10px;font-weight:600}
+  .fix2{font-size:11px;background:#fff;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:5px 11px;font-weight:600}
+
+  .showmath{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--accent);border:1px dashed var(--accent);border-radius:6px;padding:7px 12px;background:var(--accent-bg);margin-top:14px;cursor:pointer}
+  .showmath:hover{background:#daf0ea}
+  .detailslink{font-size:10.5px;color:var(--accent);cursor:pointer;font-weight:600}
+  .detailslink:hover{text-decoration:underline}
+
+  .foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:12px 26px;background:#fafbfc}
+  .btn{font-size:12px;border:1px solid var(--line2);border-radius:6px;padding:7px 14px;background:#fff;color:var(--ink);cursor:pointer}
+  .btn:hover{background:var(--fill2)}
+  .btn.acc{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+  .btn.acc:hover{background:#0c6a5b}
+  .btn.ghost{visibility:hidden}
+  .progress{font-size:11px;color:var(--muted)}
+
+  /* archetype chapter helpers */
+  .h3{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:20px 0 10px}
+  .lead-claim{font-size:14px;line-height:1.55;color:var(--ink);margin:14px 0 4px;border-left:3px solid var(--accent);padding-left:12px}
+  .lead-claim b{color:var(--accent)}
+  .reason-line{margin-top:9px;font-size:11.5px;border-radius:6px;padding:8px 11px;line-height:1.45;background:var(--amber-bg);color:#7c3b06}
+  .reason-line .log{font-family:var(--mono);font-size:9.5px;color:var(--faint);display:block;margin-top:3px}
+
+  /* ===== Recommendation screen ===== */
+  .rangehero{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;padding:16px 20px;margin:6px 0 14px;background:#fff}
+  .rangehero .rh-top{display:flex;gap:22px;align-items:flex-start}
+  .rangehero .rh-head{flex:1}
+  .rangehero h2{font-family:var(--serif);font-size:21px;font-weight:600;margin:0;line-height:1.3}
+  .rangehero h2 b{color:var(--accent)}
+  .rangehero .plateaunote{font-size:12px;color:#7c3b06;background:var(--amber-bg);border:1px solid #e7c79a;border-radius:7px;padding:8px 12px;margin-top:11px;line-height:1.5}
+  .rangehero .plateaunote b{color:var(--warn)}
+  .rangehero .capchip{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;background:var(--amber-bg);color:var(--amber);border:1px solid #e7c79a;border-radius:10px;padding:3px 9px;margin-top:11px}
+  .pointnote{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+  .pointnote .pn{font-size:11.5px;color:var(--muted);line-height:1.4}
+  .pointnote .pn b{color:var(--ink)}
+  .pointnote .pn .star{color:var(--accent);font-weight:800}
+
+  .curvebox{flex:0 0 290px;max-width:300px}
+  .curve{height:150px;background:#fff;border:1px solid var(--line);border-radius:7px;position:relative;overflow:hidden}
+  .curve svg{position:absolute;inset:0;width:100%;height:100%}
+  .curve .ann{position:absolute;font-family:var(--mono);font-size:9px;color:var(--accent);line-height:1.2}
+  .curve .annw{color:var(--warn)}
+  .curvecap{font-size:10px;color:var(--muted);margin-top:6px;text-align:center;line-height:1.4}
+
+  .mh{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:18px 0 9px}
+  .metrics5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:8px}
+  .met{border:1px solid var(--line);border-radius:7px;padding:11px 12px;background:#fff}
+  .met.hero{border-color:var(--accent);background:var(--accent-bg)}
+  .met .name{font-size:11.5px;font-weight:700}
+  .met .num{font-size:18px;font-weight:800;margin:5px 0 2px}
+  .met.hero .num{color:var(--accent)}
+  .met .num .tx{color:var(--warn);font-size:13px;font-weight:700}
+  .met .gloss{font-size:10.5px;color:var(--muted);line-height:1.35}
+  .met .qual{font-size:9.5px;color:var(--faint);font-family:var(--mono);margin-top:4px;display:block}
+
+  /* ===== Reality Check ===== */
+  .verdict{display:flex;gap:16px;align-items:flex-start;border-radius:9px;padding:15px 18px;margin:6px 0 16px}
+  .verdict.g{border:1px solid #aedcc3;border-left:5px solid var(--green);background:var(--green-bg)}
+  .verdict.a{border:1px solid var(--warn);border-left:5px solid var(--warn);background:var(--warn-bg)}
+  .verdict.r{border:1px solid #e3a8a3;border-left:5px solid var(--red);background:var(--red-bg)}
+  .verdict .vic{font-size:24px;line-height:1.1}
+  .verdict .vt{font-size:13.5px;line-height:1.55}
+  .verdict.g .vt{color:#155b3c} .verdict.g .vt b{color:var(--green);font-size:15px}
+  .verdict.a .vt{color:#5d3a10} .verdict.a .vt b{color:var(--warn);font-size:15px}
+  .verdict.r .vt{color:#6e1c17} .verdict.r .vt b{color:var(--red);font-size:15px}
+  .verdict .routes{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap}
+  .verdict .routes .rt{font-size:11px;background:#fff;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 11px;font-weight:600}
+  .vstates{margin-left:auto;min-width:222px;border-left:1px dashed var(--line2);padding-left:14px}
+  .vstates .sh{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:6px}
+  .vchip{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);padding:4px 6px;cursor:pointer;border-radius:6px}
+  .vchip:hover{background:rgba(255,255,255,.6)}
+  .vchip .m{width:13px;text-align:center;font-weight:800}
+  .vchip.gc .m{color:#16895a} .vchip.ac .m{color:var(--warn)} .vchip.rc .m{color:var(--red)}
+  .vchip.live{font-weight:700;color:var(--ink);background:rgba(255,255,255,.75);box-shadow:0 0 0 1px var(--line2) inset}
+
+  .mapwrap{position:relative}
+  .map svg{width:100%;height:auto;display:block}
+  .tile{stroke:#fff;stroke-width:2}
+  .t-ok{fill:#cfe8df} .t-ok2{fill:#bcdfd2} .t-ok3{fill:#a8d5c6}
+  .t-flag{fill:#f3cf9b;stroke:#d08a1a;stroke-width:1.5}
+  .t-sel{fill:#e9b86b;stroke:var(--warn);stroke-width:2.5}
+  .t-bad{fill:#f1b3ad;stroke:var(--red);stroke-width:1.5}
+  .maplab{font-family:var(--sans);font-size:9px;fill:#3f5a52}
+  .mapnote{font-size:10px;color:var(--faint);margin-top:8px;font-family:var(--mono)}
+  .hover{position:absolute;right:-8px;top:18px;width:252px;background:#fff;border:1px solid var(--warn);border-radius:8px;box-shadow:0 10px 24px rgba(20,30,50,.18);padding:12px 14px;font-size:11px;z-index:5}
+  .hover .ht{font-weight:700;font-size:12px;margin-bottom:7px}
+  .hover .hr{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--fill2)}
+  .hover .hr:last-of-type{border-bottom:0}
+  .hover .hk{color:var(--muted)}
+  .hover .hv{font-weight:700;white-space:nowrap}
+  .hover .fixc{margin-top:8px;font-size:10.5px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:6px;padding:6px 8px;color:#7c3b06}
+  .okv{color:#16895a}.warnv{color:var(--warn)}
+
+  .checks .crow{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--fill2)}
+  .checks .crow:last-child{border-bottom:0}
+  .chk{flex:none;width:9px;height:9px;border-radius:50%;margin-top:4px}
+  .chk.g{background:#16895a} .chk.a{background:#d08a1a} .chk.r{background:var(--red)} .chk.gr{background:#bcc4ce}
+  .checks .lbl{font-size:12px;font-weight:650}
+  .checks .lbl small{display:block;color:var(--muted);font-size:10.5px;font-weight:400;margin-top:1px;line-height:1.45}
+  .ruletag{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line2);border-radius:8px;color:var(--faint);padding:1px 6px;margin-left:6px;vertical-align:1px}
+  .guardnote{margin-top:11px;font-size:10.5px;color:var(--muted);background:var(--fill);border-radius:7px;padding:8px 10px;line-height:1.5}
+  .guardnote b{color:var(--ink)}
+  .minirow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+  .mini{border:1px solid var(--line);border-radius:8px;background:var(--fill);padding:11px 14px;font-size:11.5px;color:var(--muted);line-height:1.55}
+  .mini b{color:var(--ink)}
+  .mini .mh2{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:4px}
+
+  /* ===== Leadership read-view ===== */
+  #leadership{display:none}
+  .lv-hero{padding:22px 30px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#fbfdfc)}
+  .lv-hero .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .lv-hero h1{font-family:var(--serif);font-size:26px;margin:6px 0 0;font-weight:600;line-height:1.25}
+  .lv-hero .row{display:flex;align-items:flex-start;gap:30px;margin-top:16px;flex-wrap:wrap}
+  .lv-hero .big{font-size:42px;font-weight:800;color:var(--accent);line-height:1}
+  .lv-hero .big small{font-size:14px;color:var(--muted);font-weight:600}
+  .lv-hero .biglab{font-size:12px;color:var(--muted);margin-top:5px;max-width:170px;line-height:1.4}
+  .lv-hero .metrics{display:flex;gap:24px;flex-wrap:wrap}
+  .lv-hero .met .n{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .lv-hero .met .v{font-size:19px;font-weight:800;margin-top:2px}
+  .lv-hero .met .v.hero2{color:var(--accent)}
+  .lv-hero .met .q{font-size:9.5px;color:var(--faint);font-family:var(--mono)}
+  .lv-caution{display:inline-flex;gap:8px;align-items:center;margin-top:16px;background:var(--amber-bg);border:1px solid var(--warn);border-radius:7px;padding:8px 13px;font-size:12px;color:#7c3b06}
+  .lv-caution b{color:var(--warn)}
+  .lv-capchip{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;background:var(--amber-bg);color:var(--amber);border:1px solid #e7c79a;border-radius:10px;padding:3px 9px;margin-left:10px}
+
+  .lv-body{display:grid;grid-template-columns:1.45fr 1fr;gap:0}
+  .lv-col{padding:20px 24px}
+  .lv-col.left{border-right:1px solid var(--line)}
+  .lv-h3{font-family:var(--serif);font-size:16px;margin:0 0 4px;font-weight:600}
+  .lv-h3sub{font-size:11.5px;color:var(--muted);margin:0 0 14px}
+  .chain .cstep{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--fill2)}
+  .chain .cstep:last-child{border-bottom:0}
+  .chain .mark{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .chain .txt{flex:1;font-size:12.5px;line-height:1.4}
+  .chain .txt .clead{font-weight:700}
+  .chain .txt .cdet{color:var(--muted)}
+  .chain .cnum{font-weight:800;white-space:nowrap;font-size:13px}
+  .box{border:1px solid var(--line);border-radius:8px;padding:13px 15px;margin-bottom:14px}
+  .box.warn{background:var(--amber-bg);border-color:#e7c79a}
+  .box .bh{font-size:12px;font-weight:700;margin:0 0 8px;display:flex;align-items:center;gap:7px}
+  .box ul{margin:0;padding-left:16px}
+  .box li{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:5px}
+  .box li b{color:var(--ink)}
+  .land{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--fill2);font-size:11.5px}
+  .land:last-child{border-bottom:0}
+  .pos{flex:0 0 auto;font-size:9.5px;font-weight:700;border-radius:9px;padding:2px 8px}
+  .pos.ag{background:var(--green-bg);color:var(--green)}
+  .pos.adj{background:#eef3f8;color:#3f6f9e}
+  .pos.flag{background:var(--amber-bg);color:var(--warn)}
+  .land .fn{font-weight:700;width:100px;flex:0 0 auto}
+  .land .said{color:var(--muted)}
+
+  /* ===== Drawer ===== */
+  #scrim{position:fixed;inset:0;background:rgba(20,28,40,.34);z-index:40;display:none}
+  #drawer{position:fixed;top:0;right:0;height:100%;width:462px;max-width:94vw;background:#fff;border-left:1px solid var(--line2);box-shadow:-12px 0 30px rgba(20,30,50,.16);z-index:50;display:none;flex-direction:column}
+  #drawer.open{display:flex}
+  .dh{padding:15px 18px 13px;border-bottom:1px solid var(--line)}
+  .dh .kick{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .dh .drow{display:flex;align-items:center;gap:10px;margin-top:4px}
+  .dh h3{font-family:var(--serif);font-size:18px;margin:0;font-weight:600}
+  .chip{font-size:9.5px;font-weight:700;border-radius:9px;padding:2px 8px;background:var(--amber-bg);color:var(--warn)}
+  .chip.g{background:var(--green-bg);color:var(--green)}
+  .chip.n{background:var(--blue-bg);color:var(--blue)}
+  .x{margin-left:auto;font-size:16px;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:1px 8px;cursor:pointer}
+  .x:hover{background:var(--fill2)}
+  .dh p{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.45}
+  .dbody{padding:14px 18px;overflow:auto;flex:1}
+  .sect{margin-bottom:16px}
+  .sect .st{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 8px;display:flex;align-items:center;gap:6px}
+  .sect .st .pulled{font-size:8.5px;background:var(--accent-bg);color:var(--accent);border-radius:8px;padding:1px 6px;letter-spacing:.02em}
+  .dchart{height:160px;border:1px solid var(--line);border-radius:7px;background:#fff;position:relative;padding:4px}
+  .dchart svg{width:100%;height:100%;overflow:visible}
+  .calc{border:1px solid var(--line);border-radius:7px;background:var(--fill);padding:12px 13px;font-size:12px}
+  .calc .line{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #d7dce2}
+  .calc .line:last-of-type{border-bottom:0}
+  .calc .op{color:var(--faint);font-family:var(--mono);font-size:11px}
+  .calc .lbl small{display:block;color:var(--faint);font-size:9.5px}
+  .calc .num{font-weight:700;white-space:nowrap}
+  .calc .total{margin-top:7px;padding-top:9px;border-top:2px solid var(--line2);display:flex;justify-content:space-between;align-items:center}
+  .calc .total .num{color:var(--warn);font-size:14px}
+  .calc .read{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5;font-style:italic}
+  .dassume .da{display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0;border-bottom:1px solid var(--fill2)}
+  .dassume .da:last-child{border-bottom:0}
+  .dassume .da small{color:var(--faint);display:block;font-size:9.5px}
+  .dassume .da .v{font-weight:700;white-space:nowrap}
+  .dfit .fitrow{display:flex;align-items:flex-start;gap:9px;font-size:11.5px;padding:7px 0;border-bottom:1px solid var(--fill2)}
+  .dfit .fitrow:last-child{border-bottom:0}
+  .dfit .fitrow .fdot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:4px}
+  .dfit .fdot.g{background:var(--green)} .dfit .fdot.a{background:var(--amber)} .dfit .fdot.r{background:var(--red)}
+  .dfit .fitrow .fl small{display:block;color:var(--faint);font-size:9.5px}
+  .dconf{font-size:11px;color:#7c3b06;background:var(--amber-bg);border:1px solid #e7c79a;border-radius:7px;padding:9px 11px;line-height:1.45}
+  .dmap svg{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:7px}
+  .dfoot{border-top:1px solid var(--line);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;background:#fafbfc;gap:8px}
+  .dfoot .btn{font-size:11.5px}
+
+  .hidden{display:none}
 </style>
 </head>
 <body>
-<div class="top">
-  <span class="t">FF Sizing — wired surface</span>
-  <span class="sub">demonstration build · SYNTHETIC fixture data · the deterministic sizing engine runs live in this page — every computed number is engine output</span>
-  <span class="toggle">
-    <button id="btnHealthy" class="on">Healthy fixture</button>
-    <button id="btnBlocked">Blocked fixture</button>
-  </span>
-</div>
-<div class="banner" id="modeBanner" style="display:none"></div>
-<div class="wrap" id="root"><div class="card">Running the engine in your browser…</div></div>
-<div class="footer" id="foot"></div>
+<div class="frame">
 
-<script>/* engine + seam bundle (esbuild) — the deterministic sizing engine runs in this page */
-var WIRE = (() => {
+  <!-- ===== Top chrome ===== -->
+  <div class="chrome">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="url">Field Force Sizing — sample product, Q3 plan</span>
+    <span class="proto">wired product v1 · synthetic demo fixture</span>
+  </div>
+
+  <div class="ribbon">
+    Building the number, step by step
+    <span class="arc">&nbsp;·&nbsp; the org's path: Research → <b>Working it out</b> → Aligning → Commit → Carry forward</span>
+    <span class="legend">confidence: <span class="ld">●</span> measured · <span class="ld">◐</span> modeled · <span class="ld">○</span> estimated</span>
+  </div>
+
+  <div class="viewbar">
+    Viewing as <span class="who" id="whoLabel">Analyst (walk-through)</span> &nbsp;·&nbsp; everyone sees the same story
+    <span class="tabs">
+      <span class="vt on" id="tabAnalyst" onclick="setView('analyst')">Analyst (walk-through)</span>
+      <span class="vt" id="tabLeadership" onclick="setView('leadership')">Leadership (read-view)</span>
+    </span>
+  </div>
+
+  <!-- ===== ANALYST VIEW ===== -->
+  <div id="analyst">
+    <div class="grid">
+      <!-- rail -->
+      <div class="rail">
+        <p class="railhead">The story of the number</p>
+        <div class="chap on"  id="rail-setup"   onclick="showChapter('setup')">Setup &amp; Data Check<span class="q">what are we sizing?</span></div>
+        <div class="chap off" id="rail-market"  onclick="showChapter('market')">The Market<span class="q">how many prescribers?</span></div>
+        <div class="chap off" id="rail-targets" onclick="showChapter('targets')">Targets &amp; Call Plan<span class="q">who do we call, how often?</span></div>
+        <div class="chap off" id="rail-capacity" onclick="showChapter('capacity')">Rep Capacity<span class="q">what can one rep cover?</span></div>
+        <div class="chap off" id="rail-response" onclick="showChapter('response')">Sales Response <span class="badge">low confidence</span><span class="q">how much do calls lift sales?</span></div>
+        <div class="chap off" id="rail-economics" onclick="showChapter('economics')">The Economics<span class="q">what's an Rx worth?</span></div>
+        <div class="chap off" id="rail-recommendation" onclick="showChapter('recommendation')">The Recommendation<span class="q">the right size — and why there</span></div>
+        <div class="chap off" id="rail-reality" onclick="showChapter('reality')">Reality Check<span class="q">can we actually staff it?</span></div>
+      </div>
+
+      <!-- stage host -->
+      <div id="stageHost">
+
+        <!-- ===================== SETUP & DATA CHECK ===================== -->
+        <div class="chapter" id="chap-setup">
+          <div class="stage">
+            <h1>Setup &amp; Data Check</h1>
+            <p class="ask">What are we sizing — how was each piece estimated, and was the data good enough?</p>
+            <div>
+              <span class="readonly">🔒 Committed setup for this run. To change it, start a new run.</span>
+              <span class="seam g" style="margin-left:8px"><span class="sd"></span>governed run · every input traceable</span>
+            </div>
+
+            <p class="h3">What we're sizing</p>
+            <div class="setup" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+              <div class="panel" style="border-color:var(--accent);background:var(--accent-bg)"><div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em">Goal</div><div style="font-size:15px;font-weight:700;margin-top:4px;color:var(--accent)">Most profit</div><div style="font-size:10.5px;color:var(--muted);margin-top:3px">size that maximizes profit</div></div>
+              <div class="panel"><div style="font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em">Product &amp; market</div><div style="font-size:15px;font-weight:700;margin-top:4px">Sample product</div><div style="font-size:10.5px;color:var(--muted);margin-top:3px">a marketed therapy, US</div></div>
+              <div class="panel"><div style="font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em">Planning cycle</div><div style="font-size:15px;font-weight:700;margin-top:4px">Q3 annual plan</div><div style="font-size:10.5px;color:var(--muted);margin-top:3px">commercial field force</div></div>
+              <div class="panel"><div style="font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em">Money view</div><div style="font-size:15px;font-weight:700;margin-top:4px">3-year</div><div style="font-size:10.5px;color:var(--muted);margin-top:3px">new-patient basis</div></div>
+            </div>
+
+            <p class="h3">How each piece was estimated — and was the data good enough?</p>
+
+            <div class="panel" style="margin-bottom:10px">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">The Market<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">eligible prescribers</small></div>
+                <div style="flex:1;font-size:12px;line-height:1.45">Counted directly from <b>prescription claims</b>. <span style="color:var(--muted)">No estimation needed — this is measured.</span></div>
+                <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;background:var(--green-bg);color:var(--green)">All checks met</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;align-items:center">
+                <span class="dim"><span class="cdot meas"></span>covers about 95% of the class</span>
+                <span class="dim"><span class="cdot meas"></span>prescriber-level detail</span>
+                <span class="dim"><span class="cdot meas"></span>fresh (May 2026)</span>
+                <span class="detailslink" style="margin-left:auto" onclick="openDrawer('setup')">data-fitness detail ›</span>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-bottom:10px">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">Targets &amp; Call Plan<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">segments, frequency</small></div>
+                <div style="flex:1;font-size:12px;line-height:1.45"><b>Provided by the Product team</b> — segments and call frequency, used as given. <span style="color:var(--muted)">Not re-derived here.</span></div>
+                <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;background:var(--blue-bg);color:var(--blue)">Provided input</span>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-bottom:10px;border-left:3px solid var(--amber)">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">Rep Capacity<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">calls a rep can make</small></div>
+                <div style="flex:1;font-size:12px;line-height:1.45"><b>Workload model</b> from field data. <span style="color:var(--muted)">Preferred method kept despite a data gap — see note.</span></div>
+                <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;background:var(--amber-bg);color:var(--amber)">Override — logged</span>
+              </div>
+              <div class="reason-line"><b>Override:</b> we used the preferred capacity model even though we only have <b>team-level</b> activity data, not rep-level. Reason: the rep-level feed was delayed; it will refresh next cycle.<span class="log">logged by the analyst · May 2026</span></div>
+            </div>
+
+            <div class="panel" style="margin-bottom:10px;border-left:3px solid var(--red);background:#fffaf4">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">Sales Response<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">lift per call</small></div>
+                <div style="flex:1;font-size:12px;line-height:1.45"><b>Borrowed from comparable products.</b> <span style="color:var(--muted)">We wanted to model this product's own call-and-response history — but that data was too thin, so we fell back to comparable products.</span></div>
+                <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;background:var(--red-bg);color:var(--red)">Borrowed — low confidence</span>
+              </div>
+              <div class="reason-line" style="background:var(--red-bg);color:#7a1f1a"><b>Fell back:</b> no usable own-response history yet (need at least 2 cycles; have none). The market is also highly concentrated, which makes a borrowed curve less reliable. <b>Confidence is capped until this is grounded.</b></div>
+            </div>
+
+            <div class="panel" style="margin-bottom:10px;border-left:3px solid var(--amber)">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">The Economics<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">$ per Rx, cost per rep</small></div>
+                <div style="flex:1;font-size:12px;line-height:1.45"><b>Standard unit-economics build.</b> <span style="color:var(--muted)">Cost is actuals; revenue and profit per prescription use forecast assumptions.</span></div>
+                <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;background:var(--amber-bg);color:var(--amber)">Modeled — forecast</span>
+              </div>
+            </div>
+
+            <p class="h3">What we know that the numbers don't capture</p>
+            <div class="panel" style="background:#fbfcfd">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;margin-bottom:4px">Market context <span style="font-family:var(--mono);font-size:9.5px;color:var(--faint);font-weight:400">— sourced read-only from the research brief</span></div>
+              <ul style="margin:8px 0 0;padding-left:17px">
+                <li style="font-size:11.5px;line-height:1.5;margin-bottom:6px">Prescribing is concentrated in a small number of large accounts — a geography-based territory carve may be the wrong model here. <span style="color:var(--faint);font-size:10px">(research brief, May 2026)</span></li>
+                <li style="font-size:11.5px;line-height:1.5;margin-bottom:6px">A competitor is expected to expand in the second half — <b>not</b> reflected in this run. <span style="color:var(--faint);font-size:10px">(research brief, May 2026)</span></li>
+                <li style="font-size:11.5px;line-height:1.5;margin-bottom:6px">The field team reorganized last quarter, so capacity assumptions may lag reality. <span style="color:var(--faint);font-size:10px">(research brief, May 2026)</span></li>
+              </ul>
+              <p style="font-size:10px;color:var(--faint);font-style:italic;margin-top:9px">Read-only echo of the research brief — provenanced there, not edited here.</p>
+            </div>
+
+            <div class="banner" style="background:var(--red-bg);border-color:#e3a8a3;border-left-color:var(--red)">
+              <span class="ic">⚠</span>
+              <span class="t" style="color:#7a1f1a"><b style="color:var(--red)">One input needs attention: Sales Response is borrowed, not measured.</b> The size is still usable, but its confidence is capped — and this flag follows through to every screen it touches.</span>
+            </div>
+          </div>
+          <div class="foot">
+            <span class="btn ghost">←</span>
+            <span class="progress">step 1 of 8 · setup is locked — next, the market</span>
+            <span class="btn acc" onclick="showChapter('market')">The Market →</span>
+          </div>
+        </div>
+
+        <!-- ===================== THE MARKET ===================== -->
+        <div class="chapter hidden" id="chap-market">
+          <div class="stage">
+            <h1>The Market</h1>
+            <p class="ask">How many prescribers are there, and how many are worth calling on?</p>
+            <span class="seam g"><span class="sd"></span>counted from prescription claims · all checks met</span>
+
+            <div class="sofar">
+              <div class="s cur"><div class="k">→ This chapter</div><div class="v">how many prescribers</div></div>
+              <div class="s"><div class="k">The market</div><div class="v">~12,400</div></div>
+              <div class="s"><div class="k">Worth calling on</div><div class="v">8,900 (72%)</div></div>
+            </div>
+            <p class="sofar-cap">this is where the chain begins — every later number builds on the size of the market</p>
+
+            <p class="lead-claim"><b>About 12,400 prescribers</b> write in this class. Of those, <b>8,900 (72%)</b> are worth calling on — they account for the great majority of prescribing.</p>
+
+            <div class="twocol">
+              <div class="panel">
+                <p class="ph">Who's in the market <span style="font-weight:400;color:var(--faint)">● measured</span></p>
+                <p class="psub">Counted directly from prescription claims — not estimated.</p>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Writes in this class</span><b>~12,400</b></div>
+                    <div style="height:14px;background:var(--fill2);border-radius:7px;overflow:hidden"><div style="height:100%;width:100%;background:#cfe1ee"></div></div>
+                  </div>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Worth calling on</span><b style="color:var(--accent)">8,900 (72%)</b></div>
+                    <div style="height:14px;background:var(--fill2);border-radius:7px;overflow:hidden"><div style="height:100%;width:72%;background:var(--accent)"></div></div>
+                  </div>
+                </div>
+                <p style="font-size:10.5px;color:var(--muted);margin-top:12px;line-height:1.5">The other 28% write so little that a call is unlikely to pay for itself. They stay on the map but off the call plan.</p>
+              </div>
+              <div class="panel assume">
+                <p class="ph">The assumptions behind this count</p>
+                <p class="psub">Every value shows where it came from.</p>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Class coverage of the claims feed<small>share of class prescribing we can see</small></div><div class="val">~95%</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Granularity<small>resolves to individual prescribers</small></div><div class="val">prescriber-level</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Recency<small>most recent full month</small></div><div class="val">May 2026</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>"Worth calling on" cut-off<small>minimum prescribing to make the list</small></div><div class="val">modeled</div></div>
+              </div>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('generic-market')">🔍 Details — the source, the coverage check, and the cut-off rule behind the 8,900</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('setup')">← Setup &amp; Data Check</span>
+            <span class="progress">step 2 of 8 · the market is set — next, who we call and how often</span>
+            <span class="btn acc" onclick="showChapter('targets')">Targets &amp; Call Plan →</span>
+          </div>
+        </div>
+
+        <!-- ===================== TARGETS & CALL PLAN ===================== -->
+        <div class="chapter hidden" id="chap-targets">
+          <div class="stage">
+            <h1>Targets &amp; Call Plan</h1>
+            <p class="ask">Who do we call, and how often?</p>
+            <span class="seam n"><span class="sd"></span>provided by the Product team · used as given</span>
+
+            <div class="sofar">
+              <div class="s"><div class="k">The market</div><div class="v">~12,400</div></div>
+              <div class="s"><div class="k">We'll call on</div><div class="v">8,900</div></div>
+              <div class="s cur"><div class="k">→ This chapter</div><div class="v">about 8 calls / yr</div></div>
+            </div>
+            <p class="sofar-cap">how the call plan turns "who to call" into "how much effort each one needs"</p>
+
+            <p class="lead-claim">Targets get <b>about 8 calls a year</b> on average, weighted toward higher-value prescribers. This plan came <b>from the Product team</b> and is used as given — we did not re-derive it.</p>
+
+            <div class="twocol">
+              <div class="panel">
+                <p class="ph">Call frequency by segment <span style="font-weight:400;color:var(--faint)">provided input</span></p>
+                <p class="psub">Higher-value prescribers earn more visits. These tiers were set by the Product team.</p>
+                <div style="display:flex;flex-direction:column;gap:9px;margin-top:8px">
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Tier 1 — highest value</span><b>~12 calls / yr</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:100%;background:var(--accent)"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Tier 2 — mid value</span><b>~8 calls / yr</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:67%;background:#5b9bd5"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Tier 3 — lower value</span><b>~4 calls / yr</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:33%;background:#9aa5b1"></div></div></div>
+                </div>
+              </div>
+              <div class="panel assume">
+                <p class="ph">The assumptions behind this plan</p>
+                <p class="psub">Provided as given; shown here for traceability.</p>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Target list completeness<small>all targets accounted for</small></div><div class="val">complete</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Frequency by segment<small>set by the Product team</small></div><div class="val">3 tiers</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>Blended average frequency<small>across all targets</small></div><div class="val">~8 / yr</div></div>
+              </div>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('generic-targets')">🔍 Details — the segment definitions, frequencies, and the source the Product team provided</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('market')">← The Market</span>
+            <span class="progress">step 3 of 8 · the plan is set — next, what one rep can actually cover</span>
+            <span class="btn acc" onclick="showChapter('capacity')">Rep Capacity →</span>
+          </div>
+        </div>
+
+        <!-- ===================== REP CAPACITY ===================== -->
+        <div class="chapter hidden" id="chap-capacity">
+          <div class="stage">
+            <h1>Rep Capacity</h1>
+            <p class="ask">What can one rep actually cover in a year?</p>
+            <span class="seam a"><span class="sd"></span>workload model from field data · override logged</span>
+
+            <div class="sofar">
+              <div class="s"><div class="k">The market</div><div class="v">~12,400</div></div>
+              <div class="s"><div class="k">We'll call on</div><div class="v">8,900</div></div>
+              <div class="s"><div class="k">Calls / yr each target</div><div class="v">~8</div></div>
+              <div class="s cur"><div class="k">→ This chapter</div><div class="v">~620 calls / rep / yr</div></div>
+            </div>
+            <p class="sofar-cap">how many quality calls one rep makes a year, after travel and admin — this divides into the workload to give the size</p>
+
+            <p class="lead-claim">After travel, admin, and no-shows, one rep makes <b>about 620 quality calls a year</b>. We kept the preferred workload model even though one input had a gap — <b>the override is on the record</b>.</p>
+
+            <div class="twocol">
+              <div class="panel">
+                <p class="ph">From a full year down to selling time <span style="font-weight:400;color:var(--faint)">◐ modeled</span></p>
+                <p class="psub">Each step strips out time a rep can't spend in front of a prescriber.</p>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Working days a year</span><b>~230</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:100%;background:#cfe1ee"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Selling days (less admin, travel)</span><b>~190</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:83%;background:#5b9bd5"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>Quality calls a year</span><b style="color:var(--warn)">~620</b></div><div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:65%;background:var(--warn)"></div></div></div>
+                </div>
+              </div>
+              <div class="panel assume">
+                <p class="ph">The assumptions behind capacity</p>
+                <p class="psub">One input was overridden — flagged below.</p>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Calls per selling day<small>average across the team</small></div><div class="val">~3.3</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>Selling days a year<small>after admin and travel</small></div><div class="val">~190</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot est"></span>Activity granularity<small>team-level, not rep-level <i>(overridden)</i></small></div><div class="val">team-level</div></div>
+              </div>
+            </div>
+
+            <div class="reason-line" style="margin-top:16px"><b>Override on the record:</b> the preferred workload model was kept even though activity data is only <b>team-level</b>, not rep-level. Reason: the rep-level feed was delayed; it refreshes next cycle.<span class="log">logged by the analyst · May 2026</span></div>
+
+            <span class="showmath" onclick="openDrawer('generic-capacity')">🔍 Details — the workload steps, the override reason, and how it shifts the size</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('targets')">← Targets &amp; Call Plan</span>
+            <span class="progress">step 4 of 8 · capacity is set — next, the engine: how calls lift sales</span>
+            <span class="btn acc" onclick="showChapter('response')">Sales Response →</span>
+          </div>
+        </div>
+
+        <!-- ===================== SALES RESPONSE ===================== -->
+        <div class="chapter hidden" id="chap-response">
+          <div class="stage">
+            <h1>Sales Response</h1>
+            <p class="ask">How much does an extra sales call actually lift prescribing?</p>
+            <span class="seam a"><span class="sd"></span>borrowed from comparable products · low confidence, flag follows through</span>
+
+            <div class="sofar">
+              <div class="s"><div class="k">The market</div><div class="v">~12,400</div></div>
+              <div class="s"><div class="k">We'll call on</div><div class="v">8,900</div></div>
+              <div class="s"><div class="k">Calls / rep / yr</div><div class="v">~620</div></div>
+              <div class="s curw"><div class="k">→ This chapter</div><div class="v">lift per call</div></div>
+            </div>
+            <p class="sofar-cap">this is the engine of the whole size — it turns "more calls" into "more prescriptions"</p>
+
+            <div class="twocol">
+              <div class="panel">
+                <p class="ph">How prescribing responds to calls</p>
+                <p class="psub">Each line is a group of prescribers. We show the whole curve — never a single number — because the lift flattens out.</p>
+                <div class="chart">
+                  <svg viewBox="0 0 460 230" preserveAspectRatio="xMidYMid meet">
+                    <line x1="48" y1="14" x2="48" y2="190" stroke="#c9ced6"/>
+                    <line x1="48" y1="190" x2="440" y2="190" stroke="#c9ced6"/>
+                    <line x1="48" y1="40" x2="440" y2="40" stroke="#0e7c6b" stroke-dasharray="2 3" opacity="0.6"/>
+                    <text class="clab" x="350" y="34" fill="#0e7c6b">ceiling — most calls can ever drive</text>
+                    <line x1="150" y1="40" x2="150" y2="190" stroke="#9aa5b1" stroke-dasharray="2 3"/>
+                    <circle cx="150" cy="115" r="3.5" fill="#0e7c6b"/>
+                    <text class="clab" x="156" y="135" fill="#67727e">half the lift by</text>
+                    <text class="clab" x="156" y="147" fill="#67727e">about 6 calls/yr</text>
+                    <path d="M48,190 C95,140 130,70 200,52 C270,42 360,41 440,40" fill="none" stroke="#0e7c6b" stroke-width="2.4" stroke-dasharray="6 4"/>
+                    <text class="clab" x="392" y="55" fill="#0e7c6b">High</text>
+                    <path d="M48,190 C100,160 150,118 230,104 C310,94 380,92 440,91" fill="none" stroke="#5b9bd5" stroke-width="2.2" stroke-dasharray="6 4"/>
+                    <text class="clab" x="392" y="92" fill="#3f6f9e">Mid</text>
+                    <path d="M48,190 C110,178 170,156 250,150 C330,145 390,144 440,143" fill="none" stroke="#9aa5b1" stroke-width="2" stroke-dasharray="6 4"/>
+                    <text class="clab" x="392" y="143" fill="#67727e">Low</text>
+                    <text class="clab" x="250" y="178" fill="#b45309">each extra call adds less than the one before</text>
+                    <text class="axlab" x="200" y="214">calls per prescriber per year →</text>
+                    <text class="axlab" x="-150" y="14" transform="rotate(-90 12 120)">added prescriptions per prescriber →</text>
+                  </svg>
+                </div>
+                <div class="leg">
+                  <span class="li"><span class="sw" style="border-color:#0e7c6b"></span>High responders<span class="conf">◐ modeled</span></span>
+                  <span class="li"><span class="sw" style="border-color:#5b9bd5"></span>Mid<span class="conf">○ estimated</span></span>
+                  <span class="li"><span class="sw" style="border-color:#9aa5b1"></span>Low<span class="conf">○ estimated</span></span>
+                </div>
+              </div>
+              <div class="panel assume">
+                <p class="ph">The assumptions behind this curve</p>
+                <p class="psub">Every value is editable — and shows where it came from.</p>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Prescribing today, no calls<small>what they write without any detailing</small></div><div class="val">3.1 / mo</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot est"></span>Ceiling — most calls can drive<small>the lift flattens out here</small></div><div class="val">+2.4 / mo</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>Calls to reach half the lift<small>where you get the easy wins</small></div><div class="val">~6 / yr</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot est"></span>How long a call keeps working<small>effect carrying into later months</small></div><div class="val">~4 mo</div></div>
+                <div style="margin-top:11px"><span class="editlink">✎ Adjust assumptions</span></div>
+              </div>
+            </div>
+
+            <div class="banner">
+              <span class="ic">⚠</span>
+              <span class="t">
+                <b>Treat this curve as a starting estimate, not a measured fact.</b> Prescribing in this market is concentrated in a small number of large accounts, and we don't yet have this product's own call-and-response history — so the shape is borrowed from <b>comparable products</b>, not measured here. The size it produces is usable, but its confidence is capped until we ground it.
+                <span class="fixrow">
+                  <span class="fix">→ Ground it: vacant-territory comparison</span>
+                  <span class="fix">→ Use this cycle's actual results next time</span>
+                  <span class="fix">→ Or proceed, with this caveat on the record</span>
+                </span>
+              </span>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('response')">🔍 Show me the math — the curve, the formula, and every input behind it</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('capacity')">← Rep Capacity</span>
+            <span class="progress">step 5 of 8 · response is the engine of the size — next, what an Rx is worth</span>
+            <span class="btn acc" onclick="showChapter('economics')">The Economics →</span>
+          </div>
+        </div>
+
+        <!-- ===================== THE ECONOMICS ===================== -->
+        <div class="chapter hidden" id="chap-economics">
+          <div class="stage">
+            <h1>The Economics</h1>
+            <p class="ask">What's a prescription worth, and what does a rep cost?</p>
+            <span class="seam mod"><span class="sd"></span>standard unit-economics build · uses forecast assumptions</span>
+
+            <div class="sofar">
+              <div class="s"><div class="k">Calls / rep / yr</div><div class="v">~620</div></div>
+              <div class="s"><div class="k">Lift per call</div><div class="v">from the curve</div></div>
+              <div class="s cur"><div class="k">→ This chapter</div><div class="v">~$1,150 / Rx · ~$310k / rep</div></div>
+            </div>
+            <p class="sofar-cap">this turns added prescriptions into dollars — and dollars into the profit-max size</p>
+
+            <p class="lead-claim">Each new-patient prescription is worth <b>about $1,150 in profit</b> over a 3-year view; a fully-loaded rep costs <b>about $310k a year</b>. Cost is actuals; the per-Rx value uses forecast assumptions.</p>
+
+            <div class="twocol">
+              <div class="panel">
+                <p class="ph">What a prescription is worth <span style="font-weight:400;color:var(--faint)">◐ modeled</span></p>
+                <p class="psub">Built up from price, persistence, and a 3-year, new-patient view.</p>
+                <div class="calc" style="border:1px solid var(--line);border-radius:7px;background:var(--fill);padding:12px 13px;font-size:12px">
+                  <div class="line"><span class="lbl">Net revenue per filled prescription<small>after discounts and rebates</small></span><span class="num">~$1,950</span></div>
+                  <div class="line"><span class="op">×</span><span class="lbl">Months a new patient stays on therapy<small>3-year, new-patient view</small></span><span class="num">persistence</span></div>
+                  <div class="line"><span class="op">−</span><span class="lbl">Cost of goods and to-serve<small>per prescription</small></span><span class="num">~$800</span></div>
+                  <div class="total"><span class="lbl">= Profit per prescription</span><span class="num">~$1,150</span></div>
+                  <p class="read">A profit figure, never labeled revenue. Carries a 3-year, new-patient basis everywhere it appears.</p>
+                </div>
+              </div>
+              <div class="panel assume">
+                <p class="ph">What a rep costs</p>
+                <p class="psub">Cost is actuals — the firmest input on this screen.</p>
+                <div class="arow"><div class="lbl"><span class="cdot meas"></span>Salary, benefits, car, samples<small>fully loaded, per year</small></div><div class="val">~$310k</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>Net revenue per Rx<small>after discounts/rebates · forecast</small></div><div class="val">~$1,950</div></div>
+                <div class="arow"><div class="lbl"><span class="cdot mod"></span>Profit per Rx<small>3-year, new-patient view · forecast</small></div><div class="val">~$1,150</div></div>
+              </div>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('economics')">🔍 Show me the math — the full unit-economics stack behind $1,150 per Rx</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('response')">← Sales Response</span>
+            <span class="progress">step 6 of 8 · the economics are set — next, the recommended size and why</span>
+            <span class="btn acc" onclick="showChapter('recommendation')">The Recommendation →</span>
+          </div>
+        </div>
+
+        <!-- ===================== THE RECOMMENDATION (UI-D-006) ===================== -->
+        <div class="chapter hidden" id="chap-recommendation">
+          <div class="stage">
+            <h1>The Recommendation</h1>
+            <p class="ask">What's the right field size — and why there?</p>
+
+            <div class="sofar">
+              <div class="s"><div class="k">The market</div><div class="v">~12,400</div></div>
+              <div class="s"><div class="k">We'll call on</div><div class="v">8,900</div></div>
+              <div class="s"><div class="k">Calls / rep / yr</div><div class="v">~620</div></div>
+              <div class="s"><div class="k">Profit / Rx</div><div class="v">~$1,150</div></div>
+              <div class="s cur"><div class="k">→ Right size</div><div class="v">132–171 (148 best)</div></div>
+            </div>
+            <p class="sofar-cap">the chain so far — every number above is clickable to see how it was built</p>
+
+            <!-- RANGE HERO -->
+            <div class="rangehero">
+              <div class="rh-top">
+                <div class="rh-head">
+                  <h2>Any size from roughly <b>132 to 171 reps</b> earns about the same profit.</h2>
+                  <div class="plateaunote">
+                    <b>The flat zone is wide</b> — so the size itself is <b>not the sensitive choice here. The response estimate is.</b>
+                    Because the sales-response curve is borrowed from comparable products, the edges of this range are soft (read them as "roughly 130–170," not exact).
+                  </div>
+                  <div class="capchip">◐ capped confidence — profit inherits the borrowed sales-response curve</div>
+                  <div class="pointnote">
+                    <div class="pn"><span class="star">★ 148</span> — <b>the profit-max point.</b> The single size that earns the most, before the last rep stops paying their way.</div>
+                    <div class="pn"><b>132</b> — <b>same profit, lowest cost.</b> The low end of the flat zone; the tool's tie-break default when profit is flat.</div>
+                  </div>
+                </div>
+                <div class="curvebox">
+                  <div class="curve">
+                    <svg viewBox="0 0 290 150" preserveAspectRatio="none">
+                      <!-- plateau shading 132..171 -->
+                      <rect x="118" y="8" width="96" height="118" fill="#0e7c6b" opacity="0.10"/>
+                      <!-- curve: rises then flattens -->
+                      <path d="M8,142 C60,128 100,46 140,33 C190,24 250,26 282,28" fill="none" stroke="#0e7c6b" stroke-width="2.6"/>
+                      <!-- N* marker at 148 (inside plateau) -->
+                      <line x1="150" y1="8" x2="150" y2="126" stroke="#0e7c6b" stroke-dasharray="3 3" stroke-width="1.4"/>
+                      <circle cx="150" cy="31" r="3.6" fill="#0e7c6b"/>
+                      <!-- low end marker -->
+                      <line x1="118" y1="34" x2="118" y2="126" stroke="#b45309" stroke-dasharray="2 3" stroke-width="1.2"/>
+                    </svg>
+                    <span class="ann" style="left:6px;bottom:5px">fewer reps</span>
+                    <span class="ann" style="right:6px;bottom:5px">more reps</span>
+                    <span class="ann annw" style="left:120px;bottom:5px">132</span>
+                    <span class="ann" style="left:140px;top:5px">★148</span>
+                    <span class="ann" style="left:96px;top:38px;color:var(--muted)">flat zone</span>
+                  </div>
+                  <p class="curvecap">profit rises, then flattens across the shaded zone — <b>the curve, not a single point</b></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- over-sizing banner that AGREES with the headline -->
+            <div class="banner">
+              <span class="ic">⚠</span>
+              <span class="t">
+                <b>Why the answer is a range, not a point.</b> Past about 132 reps, each additional rep adds almost no profit — that's the wide flat top of the curve. So <b>132 to 171 all land near the same profit;</b> 148 is the precise peak, and the lower end of the range trades a little profit for meaningfully lower cost. The honest uncertainty here is the borrowed response curve, not the choice of size within the range.
+              </span>
+            </div>
+
+            <p class="mh">What this size delivers <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint)">(figures shown at the 148 profit-max point)</span></p>
+            <div class="metrics5">
+              <div class="met"><div class="name">Reach</div><div class="num">8,900<span style="font-size:12px;color:var(--muted)"> of 12,400</span></div><div class="gloss">prescribers we'll call on (72%)</div></div>
+              <div class="met"><div class="name">Revenue</div><div class="num">~$214M</div><div class="gloss">net sales captured</div><span class="qual">3-year, new-patient view</span></div>
+              <div class="met hero"><div class="name">Profit</div><div class="num">~$92M</div><div class="gloss">after paying for the field force</div><span class="qual">3-year, new-patient view · ◐ capped</span></div>
+              <div class="met"><div class="name">Last-rep payback</div><div class="num"><span class="tx">about break-even</span></div><div class="gloss">what the final rep adds vs. their cost</div></div>
+              <div class="met"><div class="name">Expansion return</div><div class="num">~1.4×</div><div class="gloss">profit per $ on the reps we're adding</div></div>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('response')">🔍 Show me how this number was built — open the math behind the curve and the size</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('economics')">← The Economics</span>
+            <span class="progress">step 7 of 8 · the size is set — next, can we actually staff it?</span>
+            <span class="btn acc" onclick="showChapter('reality')">Reality Check →</span>
+          </div>
+        </div>
+
+        <!-- ===================== REALITY CHECK (3-state) ===================== -->
+        <div class="chapter hidden" id="chap-reality">
+          <div class="stage">
+            <h1>Reality Check</h1>
+            <p class="ask">Can we actually staff it? — the size only works if it splits into territories a real person can cover.</p>
+
+            <div class="sofar">
+              <div class="s"><div class="k">the market</div><div class="v">12,400</div></div>
+              <div class="s"><div class="k">we'll call on</div><div class="v">8,900</div></div>
+              <div class="s"><div class="k">calls / rep / yr</div><div class="v">620</div></div>
+              <div class="s"><div class="k">the size <span style="font-weight:400">(flat zone roughly 132–171)</span></div><div class="v">148 reps</div></div>
+              <div class="s curw" id="sofarVerdict"><div class="k">staffable?</div><div class="v">workable · 3 to watch</div></div>
+            </div>
+            <p class="sofar-cap">the chain so far — every number above is clickable to see how it was built</p>
+
+            <!-- VERDICT BAND (3-state) -->
+            <div id="verdictHost"></div>
+
+            <div class="twocol realitycols">
+              <div class="panel mapwrap">
+                <p class="ph">The map of the plan</p>
+                <p class="psub" id="mapSub">Each shape is one rep's territory, drawn so workloads come out even. Amber = a watch-item.</p>
+                <div class="map" id="mapHost"></div>
+                <p class="mapnote" id="mapNote">showing one region — 24 of 148 territories · color = territory health · click any shape for its checks</p>
+
+                <div class="hover" id="mapHover">
+                  <div class="ht">Territory 47 — Upper Plains</div>
+                  <div class="hr"><span class="hk">prescribers worth calling on</span><span class="hv">61</span></div>
+                  <div class="hr"><span class="hk">a fair week's work</span><span class="hv okv">1.18× the average — within range</span></div>
+                  <div class="hr"><span class="hk">driving share of the week</span><span class="hv warnv">about 38% — heavy</span></div>
+                  <div class="hr"><span class="hk">one connected patch</span><span class="hv okv">yes</span></div>
+                  <div class="fixc"><b>The fix:</b> shift two counties to the neighboring territory — or accept lighter coverage here, on the record.</div>
+                </div>
+              </div>
+
+              <div class="panel checks">
+                <p class="ph">What "workable" means</p>
+                <p class="psub">Five checks, in plain words. Two are rules; three we watch.</p>
+                <div id="checksHost"></div>
+                <div class="guardnote"><b>Checked first:</b> is a map-based split even right for this market? <b>Yes</b> — prescribing here is spread across thousands of clinicians, not concentrated in a few centers. (If it were concentrated, we'd flag account-based coverage instead.)</div>
+              </div>
+            </div>
+
+            <!-- COST STORY -->
+            <div class="banner" id="costStory">
+              <span class="ic">⚠</span>
+              <div class="t">
+                <b>What the spread-out territories cost.</b> In the 3 flagged territories, driving eats about a quarter of planned selling time → roughly <b>310 prescribers would rarely be seen</b> → about <b>$4.2M of the expected profit wouldn't materialize</b>. The size still works; this is the honest price of the map as drawn.
+                <div class="confnote"><span class="half">◐</span> the dollar figure inherits the borrowed sales-response curve — its confidence is capped, like every number that curve touches.</div>
+                <div class="fixrow">
+                  <span class="fix2">Re-run at a smaller size</span>
+                  <span class="fix2">Relax the fair-week rule — logged</span>
+                  <span class="fix2">Accept, with this on the record</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="minirow">
+              <div class="mini">
+                <div class="mh2">compared to today's territories</div>
+                About <b>34% of prescribers would change hands</b> vs. the current map. Shown for change-planning — it does not affect the verdict, and conversations with affected reps are for managers, not this tool.
+              </div>
+              <div class="mini">
+                <div class="mh2">what this adds to the leadership view</div>
+                <span id="leadLine">The story gains its final line: <b>"…and it splits into 148 workable territories (3 to watch)."</b> The verdict travels with the recommendation everywhere it goes.</span>
+              </div>
+            </div>
+
+            <span class="showmath" onclick="openDrawer('reality')">🔍 Show me how the map was drawn — the splitting method, the seed, and every check's math</span>
+          </div>
+          <div class="foot">
+            <span class="btn" onclick="showChapter('recommendation')">← The Recommendation</span>
+            <span class="progress">step 8 of 8 — the story is complete</span>
+            <span class="btn acc" onclick="setView('leadership')">Finish: the leadership view →</span>
+          </div>
+        </div>
+
+      </div><!-- /stageHost -->
+    </div><!-- /grid -->
+  </div><!-- /analyst -->
+
+  <!-- ===== LEADERSHIP READ-VIEW ===== -->
+  <div id="leadership">
+    <div class="lv-hero">
+      <div class="eyebrow">The recommended field size</div>
+      <h1>132–171 reps works — we recommend 148, and here's why we stand behind it</h1>
+      <div class="row">
+        <div>
+          <div class="big">148<small> reps</small></div>
+          <div class="biglab">recommended &amp; aligned · the profit-max point inside a 132–171 flat zone</div>
+        </div>
+        <div class="metrics">
+          <div class="met"><div class="n">Reach</div><div class="v">8,900<span style="font-size:12px;color:var(--muted);font-weight:600"> / 12,400</span></div><div class="q">prescribers we'll call on (72%)</div></div>
+          <div class="met"><div class="n">Revenue</div><div class="v">~$214M</div><div class="q">3-year, new-patient view</div></div>
+          <div class="met"><div class="n">Profit</div><div class="v hero2">~$92M</div><div class="q">after field-force cost · 3-year, new-patient</div></div>
+          <div class="met"><div class="n">Expansion return</div><div class="v">~1.4×</div><div class="q">profit per $ on added reps</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="lv-caution">⚠ <span><b>Note:</b> profit is flat from 132 to 171 reps — 148 is the precise peak; the lower end of the range delivers nearly the same profit for less cost. The size is not the sensitive choice here; the response estimate is.</span></div>
+        <span class="lv-capchip">◐ capped confidence — profit inherits a borrowed sales-response curve</span>
+      </div>
+    </div>
+
+    <div class="lv-body">
+      <div class="lv-col left">
+        <p class="lv-h3">How we got to 148</p>
+        <p class="lv-h3sub">The full logic, in one line each — open any step to see the math behind it.</p>
+        <div class="chain">
+          <div class="cstep"><div class="mark">1</div><div class="txt"><span class="clead">The market:</span> <span class="cdet">about 12,400 prescribers write in this class; 8,900 are worth calling on.</span><span class="cdot meas"></span><span class="drill detailslink" onclick="openDrawer('generic-market')">details ›</span></div><div class="cnum">12.4k</div></div>
+          <div class="cstep"><div class="mark">2</div><div class="txt"><span class="clead">The call plan:</span> <span class="cdet">targets get about 8 calls a year, weighted to higher-value prescribers.</span><span class="cdot meas"></span><span class="drill detailslink" onclick="openDrawer('generic-targets')">details ›</span></div><div class="cnum">8/yr</div></div>
+          <div class="cstep"><div class="mark">3</div><div class="txt"><span class="clead">Rep capacity:</span> <span class="cdet">a rep makes about 620 quality calls a year after travel and admin.</span><span class="cdot mod"></span><span class="drill detailslink" onclick="openDrawer('generic-capacity')">details ›</span></div><div class="cnum">620</div></div>
+          <div class="cstep"><div class="mark">4</div><div class="txt"><span class="clead">Sales response:</span> <span class="cdet">each call lifts prescribing, but flattens — estimated from comparable products.</span><span class="cdot est"></span><span class="drill detailslink" onclick="openDrawer('response')">details ›</span></div><div class="cnum">curve</div></div>
+          <div class="cstep"><div class="mark">5</div><div class="txt"><span class="clead">The economics:</span> <span class="cdet">about $1,150 profit per prescription; about $310k fully-loaded per rep.</span><span class="cdot mod"></span><span class="drill detailslink" onclick="openDrawer('economics')">details ›</span></div><div class="cnum">$1.15k</div></div>
+          <div class="cstep"><div class="mark">★</div><div class="txt"><span class="clead">The size:</span> <span class="cdet">profit is flat from 132–171; 148 is the peak, where the last rep added still pays its way.</span><span class="cdot mod"></span><span class="drill detailslink" onclick="openDrawer('response')">details ›</span></div><div class="cnum" style="color:var(--accent)">148</div></div>
+          <div class="cstep"><div class="mark">✓</div><div class="txt"><span class="clead">Reality check:</span> <span class="cdet">…and it splits into 148 workable territories (3 to watch).</span><span class="cdot mod"></span><span class="drill detailslink" onclick="openDrawer('reality')">details ›</span></div><div class="cnum" style="color:var(--warn)">3 to watch</div></div>
+        </div>
+      </div>
+
+      <div class="lv-col">
+        <div class="box warn">
+          <p class="bh">⚠ What we're least sure about</p>
+          <ul>
+            <li><b>Sales response is an estimate</b>, borrowed from comparable products — not this product's own data. Confidence is capped until grounded next cycle.</li>
+            <li><b>The market is concentrated</b> in a few large accounts — a territory-by-geography deployment may need a second look.</li>
+            <li>All dollar figures are a <b>3-year, new-patient view</b>.</li>
+          </ul>
+        </div>
+        <p class="lv-h3" style="font-size:15px">Where each function landed</p>
+        <p class="lv-h3sub">Alignment means positions are on the record — not that everyone agreed.</p>
+        <div class="land"><span class="pos ag">agreed</span><span class="fn">Finance</span><span class="said">affordable within the plan budget.</span></div>
+        <div class="land"><span class="pos ag">agreed</span><span class="fn">Market Access</span><span class="said">eligible universe confirmed.</span></div>
+        <div class="land"><span class="pos adj">adjusted</span><span class="fn">Sales</span><span class="said">raised rep capacity to 620/yr from field data.</span></div>
+        <div class="land"><span class="pos ag">agreed</span><span class="fn">Product</span><span class="said">target list &amp; tiers confirmed.</span></div>
+        <div class="land"><span class="pos flag">flagged</span><span class="fn">Marketing</span><span class="said">low confidence on response — recommends grounding next cycle. <i>Recorded.</i></span></div>
+        <div class="land"><span class="pos ag">agreed</span><span class="fn">Sales ops</span><span class="said">territories workable, 3 watch-items logged.</span></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="rec" style="font-style:italic;font-size:11px;color:var(--muted)">Recorded rationale carries forward to next cycle · last updated by the analyst, 2 hrs ago</span>
+      <span><span class="btn">Download one-pager</span> <span class="btn acc">Endorse &amp; fund →</span></span>
+    </div>
+  </div><!-- /leadership -->
+
+</div><!-- /frame -->
+
+<!-- ===== DRAWER + SCRIM ===== -->
+<div id="scrim" onclick="closeDrawer()"></div>
+<div id="drawer">
+  <div class="dh">
+    <div class="kick" id="dKick">Detail</div>
+    <div class="drow"><h3 id="dTitle">Detail</h3><span class="chip" id="dChip">low confidence</span><span class="x" onclick="closeDrawer()">✕</span></div>
+    <p id="dLede"></p>
+  </div>
+  <div class="dbody" id="dBody"></div>
+  <div class="dfoot">
+    <span class="btn" onclick="closeDrawer()">✕ Close</span>
+    <span class="btn acc" id="dCta" onclick="closeDrawer()">Close</span>
+  </div>
+</div>
+
+<script>
+/* ============ View + chapter switching ============ */
+var CHAPTERS = ['setup','market','targets','capacity','response','economics','recommendation','reality'];
+
+function setView(v){
+  document.getElementById('analyst').style.display    = (v==='analyst')    ? 'block' : 'none';
+  document.getElementById('leadership').style.display = (v==='leadership') ? 'block' : 'none';
+  document.getElementById('tabAnalyst').classList.toggle('on', v==='analyst');
+  document.getElementById('tabLeadership').classList.toggle('on', v==='leadership');
+  document.getElementById('whoLabel').textContent = (v==='analyst') ? 'Analyst (walk-through)' : 'Leadership (read-view)';
+  closeDrawer();
+  window.scrollTo(0,0);
+}
+
+function showChapter(id){
+  CHAPTERS.forEach(function(c){
+    var el = document.getElementById('chap-'+c);
+    if(el) el.classList.toggle('hidden', c!==id);
+    var rail = document.getElementById('rail-'+c);
+    if(rail){
+      rail.classList.toggle('on', c===id);
+      // mark prior chapters done, later off (keeps the running-tally feel)
+      var idx = CHAPTERS.indexOf(id), ci = CHAPTERS.indexOf(c);
+      if(c!==id){
+        rail.classList.toggle('done', ci<idx);
+        rail.classList.toggle('off',  ci>idx);
+      } else { rail.classList.remove('done'); rail.classList.remove('off'); }
+    }
+  });
+  if(id==='reality') renderReality(realityState);
+  closeDrawer();
+  document.getElementById('analyst').scrollIntoView({block:'start'});
+  window.scrollTo(0,0);
+}
+
+/* ============ Reality Check 3-state ============ */
+var realityState = 'amber'; // green | amber | red
+
+function tilesFor(state){
+  // returns SVG inner for the territory map; red shows a failing (red) tile
+  var rows = ''
+   + '<rect class="tile t-ok"  x="6"   y="6"  width="74" height="56"/>'
+   + '<rect class="tile t-ok2" x="84"  y="6"  width="60" height="56"/>'
+   + (state==='green' ? '<rect class="tile t-ok3" x="148" y="6" width="96" height="56"/>'
+                      : '<rect class="tile t-flag" x="148" y="6" width="96" height="56"/>')
+   + '<rect class="tile t-ok"  x="248" y="6"  width="58" height="56"/>'
+   + '<rect class="tile t-ok3" x="310" y="6"  width="70" height="56"/>'
+   + '<rect class="tile t-ok2" x="384" y="6"  width="80" height="56"/>'
+   + '<rect class="tile t-ok"  x="468" y="6"  width="86" height="56"/>'
+   + '<rect class="tile t-ok2" x="6"   y="66" width="58" height="64"/>'
+   + '<rect class="tile t-ok3" x="68"  y="66" width="76" height="64"/>'
+   + (state==='red' ? '<rect class="tile t-bad" x="148" y="66" width="150" height="64"/>'
+        : (state==='green' ? '<rect class="tile t-ok3" x="148" y="66" width="110" height="64"/>'
+                           : '<rect class="tile t-sel" x="148" y="66" width="110" height="64"/>'))
+   + '<text class="maplab" x="166" y="102" style="font-weight:700">Territory 47</text>'
+   + (state==='red' ? '' : '<rect class="tile t-ok"  x="262" y="66" width="56" height="64"/>')
+   + '<rect class="tile t-ok2" x="322" y="66" width="58" height="64"/>'
+   + '<rect class="tile t-ok"  x="384" y="66" width="64" height="64"/>'
+   + '<rect class="tile t-ok3" x="452" y="66" width="102" height="64"/>'
+   + '<rect class="tile t-ok"  x="6"   y="134" width="84" height="60"/>'
+   + '<rect class="tile t-ok3" x="94"  y="134" width="50" height="60"/>'
+   + '<rect class="tile t-ok2" x="148" y="134" width="62" height="60"/>'
+   + '<rect class="tile t-ok"  x="214" y="134" width="72" height="60"/>'
+   + (state==='green' ? '<rect class="tile t-ok2" x="290" y="134" width="92" height="60"/>'
+       : (state==='red' ? '<rect class="tile t-bad" x="290" y="134" width="92" height="60"/>'
+                        : '<rect class="tile t-flag" x="290" y="134" width="92" height="60"/>'))
+   + '<rect class="tile t-ok2" x="386" y="134" width="62" height="60"/>'
+   + '<rect class="tile t-ok"  x="452" y="134" width="102" height="60"/>'
+   + '<rect class="tile t-ok3" x="6"   y="198" width="64" height="62"/>'
+   + '<rect class="tile t-ok"  x="74"  y="198" width="70" height="62"/>'
+   + '<rect class="tile t-ok2" x="148" y="198" width="84" height="62"/>'
+   + '<rect class="tile t-ok"  x="236" y="198" width="58" height="62"/>'
+   + (state==='green' ? '<rect class="tile t-ok3" x="298" y="198" width="84" height="62"/>'
+                      : '<rect class="tile t-flag" x="298" y="198" width="84" height="62"/>')
+   + '<rect class="tile t-ok2" x="386" y="198" width="76" height="62"/>'
+   + '<rect class="tile t-ok"  x="466" y="198" width="88" height="62"/>';
+  return '<svg viewBox="0 0 560 268">'+rows+'</svg>';
+}
+
+var REALITY = {
+  green: {
+    cls:'g', vic:'✅',
+    sofar:'<div class="k">staffable?</div><div class="v">yes, staffable</div>',
+    sofarCls:'cur',
+    title:'Yes — staffable as drawn.',
+    body:'148 reps splits this market into 148 connected, fair-sized territories, and every one clears all five checks. There is no binding constraint — the size and the map agree.',
+    mapSub:'Each shape is one rep\'s territory, drawn so workloads come out even. All green — every territory clears the checks.',
+    mapNote:'showing one region — 24 of 148 territories · all clear · click any shape for its checks',
+    checks:[
+      ['g','A fair week\'s work','rule','no territory more than 20% above or below the average rep\'s workload — all 148 pass'],
+      ['g','Reachable by car','rule','no territory spends more than a third of the week driving — all 148 pass'],
+      ['g','One connected patch','rule','no territory is split into islands'],
+      ['g','Enough prescribers to fill a week','','smallest territory still has 44 worth calling on'],
+      ['g','A fair share of opportunity','','no rep gets a gold mine while another gets a desert']
+    ],
+    cost:'<span class="ic">✅</span><div class="t" style="color:#155b3c">'
+       + '<b style="color:var(--green)">No staffing penalty.</b> The map carries the planned coverage with no spread-out territories — the full expected profit is reachable as drawn. The verdict travels clean with the recommendation.</div>',
+    lead:'The story gains its final line: <b>"…and it splits into 148 workable territories — all clear."</b> The verdict travels with the recommendation everywhere it goes.'
+  },
+  amber: {
+    cls:'a', vic:'⚠️',
+    sofar:'<div class="k">staffable?</div><div class="v">workable · 3 to watch</div>',
+    sofarCls:'curw',
+    title:'Workable — with 3 territories to watch.',
+    body:'148 reps splits this market into 148 connected, fair-sized territories. In the 3 most spread-out, driving would eat more than a third of the selling week — that is the one thing standing between this size and a clean yes.',
+    mapSub:'Each shape is one rep\'s territory, drawn so workloads come out even. Amber = a watch-item.',
+    mapNote:'showing one region — 24 of 148 territories · color = territory health · click any shape for its checks',
+    checks:[
+      ['g','A fair week\'s work','rule','no territory more than 20% above or below the average rep\'s workload — all 148 pass'],
+      ['a','Reachable by car','rule','3 territories would spend over a third of the week driving — flagged, not failing'],
+      ['g','One connected patch','rule','no territory is split into islands'],
+      ['g','Enough prescribers to fill a week','','smallest territory still has 41 worth calling on'],
+      ['g','A fair share of opportunity','','no rep gets a gold mine while another gets a desert']
+    ],
+    cost:'<span class="ic">⚠️</span><div class="t">'
+       + '<b>What the spread-out territories cost.</b> In the 3 flagged territories, driving eats about a quarter of planned selling time → roughly <b>310 prescribers would rarely be seen</b> → about <b>$4.2M of the expected profit wouldn\'t materialize</b>. The size still works; this is the honest price of the map as drawn.'
+       + '<div class="confnote"><span class="half">◐</span> the dollar figure inherits the borrowed sales-response curve — its confidence is capped, like every number that curve touches.</div>'
+       + '<div class="fixrow"><span class="fix2">Re-run at a smaller size</span><span class="fix2">Relax the fair-week rule — logged</span><span class="fix2">Accept, with this on the record</span></div></div>',
+    lead:'The story gains its final line: <b>"…and it splits into 148 workable territories (3 to watch)."</b> The verdict travels with the recommendation everywhere it goes.'
+  },
+  red: {
+    cls:'r', vic:'⛔',
+    sofar:'<div class="k">staffable?</div><div class="v">not as drawn</div>',
+    sofarCls:'curw',
+    title:'Not as drawn — change something. Binding constraint: reachable by car.',
+    bindingFirst:true,
+    body:'At 148 reps, two territories cannot be driven inside a working week and one breaks into disconnected islands — the map fails the rules, not just the watch-list. The fastest routes out are below; pick one before this size can be staffed.',
+    mapSub:'Each shape is one rep\'s territory. Red = a territory that fails a rule and cannot be staffed as drawn.',
+    mapNote:'showing one region — 24 of 148 territories · red = fails a rule · click any shape for its checks',
+    checks:[
+      ['g','A fair week\'s work','rule','no territory more than 20% above or below the average rep\'s workload — all pass'],
+      ['r','Reachable by car','rule','2 territories spend over half the week driving — fails the rule (binding constraint)'],
+      ['r','One connected patch','rule','1 territory breaks into two islands — fails the rule'],
+      ['a','Enough prescribers to fill a week','','smallest territory has 33 worth calling on — thin, watch'],
+      ['g','A fair share of opportunity','','no rep gets a gold mine while another gets a desert']
+    ],
+    cost:'<span class="ic">⛔</span><div class="t" style="color:#6e1c17">'
+       + '<b style="color:var(--red)">The map cannot be staffed at this size — the routes come first.</b> Two territories fail "reachable by car" and one fails "one connected patch." Until one of the routes below is taken, the recommendation is not staffable as drawn. Estimated profit not reachable as drawn: about <b>$11M</b>.'
+       + '<div class="confnote"><span class="half">◐</span> the dollar figure inherits the borrowed sales-response curve — its confidence is capped, like every number that curve touches.</div>'
+       + '<div class="routes" style="margin-top:9px;display:flex;gap:8px;flex-wrap:wrap">'
+       + '<span class="rt" style="font-size:11px;background:#fff;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 11px;font-weight:600">Re-run at a smaller size (≈132)</span>'
+       + '<span class="rt" style="font-size:11px;background:#fff;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 11px;font-weight:600">Relax the drive-time rule for 2 territories — logged</span>'
+       + '<span class="rt" style="font-size:11px;background:#fff;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 11px;font-weight:600">Merge the split territory by hand</span>'
+       + '</div></div>',
+    lead:'The story <b>cannot close yet</b> — the leadership view reads <b>"staffing: not as drawn — change pending"</b> until one of the routes is taken. A red verdict never travels quietly with the recommendation.'
+  }
+};
+
+function renderReality(state){
+  realityState = state;
+  var d = REALITY[state];
+  // verdict band
+  var vstates = '<div class="vstates"><div class="sh">the three possible answers</div>'
+    + '<div class="vchip gc '+(state==='green'?'live':'')+'" onclick="renderReality(\'green\')"><span class="m">✓</span> Yes, staffable</div>'
+    + '<div class="vchip ac '+(state==='amber'?'live':'')+'" onclick="renderReality(\'amber\')"><span class="m">⚠</span> Workable, with watch-items</div>'
+    + '<div class="vchip rc '+(state==='red'?'live':'')+'" onclick="renderReality(\'red\')"><span class="m">✕</span> Not as drawn — change something</div>'
+    + '</div>';
+  document.getElementById('verdictHost').innerHTML =
+      '<div class="verdict '+d.cls+'"><span class="vic">'+d.vic+'</span>'
+    + '<div class="vt"><b>'+d.title+'</b><br>'+d.body+'</div>'
+    + vstates + '</div>';
+  // sofar tile
+  var sf = document.getElementById('sofarVerdict');
+  sf.className = 's '+d.sofarCls; sf.innerHTML = d.sofar;
+  // map
+  document.getElementById('mapHost').innerHTML = tilesFor(state);
+  document.getElementById('mapSub').textContent = d.mapSub;
+  document.getElementById('mapNote').textContent = d.mapNote;
+  document.getElementById('mapHover').style.display = (state==='amber') ? '' : 'none';
+  // checks
+  document.getElementById('checksHost').innerHTML = d.checks.map(function(c){
+    var tag = c[2] ? '<span class="ruletag">'+c[2]+'</span>' : '';
+    return '<div class="crow"><span class="chk '+c[0]+'"></span><div class="lbl">'+c[1]+' '+tag+'<small>'+c[3]+'</small></div></div>';
+  }).join('');
+  // cost story
+  var cs = document.getElementById('costStory');
+  cs.className = 'banner' + (state==='green' ? ' green' : '');
+  cs.innerHTML = d.cost;
+  // leadership-line mini card follows the verdict (a red verdict can't hand leadership a workable line)
+  document.getElementById('leadLine').innerHTML = d.lead;
+}
+
+/* ============ Drawer content ============ */
+var responseChartSVG =
+   '<svg viewBox="0 0 410 150" preserveAspectRatio="xMidYMid meet">'
+ + '<line x1="40" y1="10" x2="40" y2="124" stroke="#c9ced6"/>'
+ + '<line x1="40" y1="124" x2="398" y2="124" stroke="#c9ced6"/>'
+ + '<line x1="40" y1="34" x2="398" y2="34" stroke="#0e7c6b" stroke-dasharray="2 3" opacity=".6"/>'
+ + '<text class="clab" x="300" y="29" fill="#0e7c6b">ceiling</text>'
+ + '<line x1="135" y1="34" x2="135" y2="124" stroke="#9aa5b1" stroke-dasharray="2 3"/>'
+ + '<text class="clab" x="139" y="100">half the lift by about 6 calls</text>'
+ + '<path d="M40,124 C90,86 120,46 185,38 C250,32 330,33 398,34" fill="none" stroke="#0e7c6b" stroke-width="2.4" stroke-dasharray="6 4"/>'
+ + '<path d="M40,124 C95,104 145,76 220,70 C300,64 360,63 398,62" fill="none" stroke="#5b9bd5" stroke-width="2" stroke-dasharray="6 4"/>'
+ + '<text class="clab" x="170" y="118" fill="#b45309">each extra call adds less than the last</text>'
+ + '<text class="clab" x="150" y="142">calls per prescriber / year →</text>'
+ + '</svg>';
+
+var DRAWERS = {
+  /* REAL: Sales Response = curve chart + calculation (UI-D-004) */
+  response: {
+    kick:'Detail · the engine of the size', title:'Sales response', chip:'low confidence', chipCls:'',
+    lede:'How much an extra call lifts prescribing — and how that produces the recommended size.',
+    cta:'Open the full "Sales Response" chapter →',
+    body:
+      '<div class="sect"><p class="st">The chart <span class="pulled">pulled from this module</span></p><div class="dchart">'+responseChartSVG+'</div></div>'
+    + '<div class="sect"><p class="st">The calculation <span class="pulled">why this sets the size</span></p><div class="calc">'
+    + '<div class="line"><span class="lbl">Lift from the last rep\'s calls<small>read off the curve at current effort</small></span><span class="num">~270 Rx/yr</span></div>'
+    + '<div class="line"><span class="op">×</span><span class="lbl">Profit per prescription<small>3-year, new-patient view</small></span><span class="num">~$1,150</span></div>'
+    + '<div class="line"><span class="op">−</span><span class="lbl">Cost of that rep<small>fully loaded, per year</small></span><span class="num">~$310k</span></div>'
+    + '<div class="total"><span class="lbl">= Last rep\'s payback</span><span class="num">about break-even</span></div>'
+    + '<p class="read">Reps are added while each new one still pays its way. That turns to zero around 148 — which is why the size lands there, and why profit is flat (the 132–171 zone) just past it.</p></div></div>'
+    + '<div class="sect dassume"><p class="st">The assumptions behind the curve</p>'
+    + '<div class="da"><span class="lbl"><span class="cdot meas"></span>Prescribing today, no calls</span><span class="v">3.1 / mo</span></div>'
+    + '<div class="da"><span class="lbl"><span class="cdot est"></span>Ceiling — most calls can drive</span><span class="v">+2.4 / mo</span></div>'
+    + '<div class="da"><span class="lbl"><span class="cdot mod"></span>Calls to reach half the lift</span><span class="v">~6 / yr</span></div>'
+    + '<div class="da"><span class="lbl"><span class="cdot est"></span>How long a call keeps working</span><span class="v">~4 mo</span></div></div>'
+    + '<div class="sect"><p class="st">Why confidence is capped</p><div class="dconf">This curve is borrowed from comparable products, not measured for this product, in a concentrated market — treat the shape as directional. Ground it with a vacant-territory comparison, or with this cycle\'s actual results next time.</div></div>'
+  },
+
+  /* REAL: The Economics = calculation stack (UI-D-004) */
+  economics: {
+    kick:'Detail · what an Rx is worth', title:'The economics', chip:'modeled — forecast', chipCls:'',
+    lede:'How net revenue becomes profit per prescription, on a 3-year, new-patient view.',
+    cta:'Open the full "The Economics" chapter →',
+    body:
+      '<div class="sect"><p class="st">The calculation <span class="pulled">the unit-economics stack</span></p><div class="calc">'
+    + '<div class="line"><span class="lbl">Net revenue per filled prescription<small>after discounts and rebates</small></span><span class="num">~$1,950</span></div>'
+    + '<div class="line"><span class="op">×</span><span class="lbl">New patients started per prescription<small>3-year, new-patient view</small></span><span class="num">persistence</span></div>'
+    + '<div class="line"><span class="op">−</span><span class="lbl">Cost of goods and cost to serve<small>per prescription</small></span><span class="num">~$800</span></div>'
+    + '<div class="total"><span class="lbl">= Profit per prescription</span><span class="num">~$1,150</span></div>'
+    + '<p class="read">A profit figure, never labeled revenue. It carries a 3-year, new-patient basis everywhere it appears — including the ~$92M profit headline.</p></div></div>'
+    + '<div class="sect"><p class="st">And the cost side <span class="pulled">actuals, the firmest input</span></p><div class="calc">'
+    + '<div class="line"><span class="lbl">Salary &amp; benefits<small>per rep, per year</small></span><span class="num">~$190k</span></div>'
+    + '<div class="line"><span class="op">+</span><span class="lbl">Car, samples, support<small>per rep, per year</small></span><span class="num">~$120k</span></div>'
+    + '<div class="total"><span class="lbl">= Fully-loaded cost per rep</span><span class="num">~$310k / yr</span></div>'
+    + '<p class="read">These are actuals, not forecast — which is why cost carries higher confidence than the per-Rx value.</p></div></div>'
+    + '<div class="sect dassume"><p class="st">Confidence by input</p>'
+    + '<div class="da"><span class="lbl"><span class="cdot meas"></span>Fully-loaded cost per rep</span><span class="v">measured</span></div>'
+    + '<div class="da"><span class="lbl"><span class="cdot mod"></span>Net revenue per Rx</span><span class="v">forecast</span></div>'
+    + '<div class="da"><span class="lbl"><span class="cdot mod"></span>Profit per Rx</span><span class="v">forecast</span></div></div>'
+  },
+
+  /* REAL: Reality Check = the map + how it was drawn (UI-D-004) */
+  reality: {
+    kick:'Detail · the territory map', title:'How the map was drawn', chip:'see verdict', chipCls:'n',
+    lede:'The splitting method, the seed, and how every check is computed.',
+    cta:'Open the full "Reality Check" chapter →',
+    body:
+      '<div class="sect"><p class="st">The map <span class="pulled">pulled from this module</span></p><div class="dmap"><svg viewBox="0 0 380 200">'
+    + '<rect class="tile t-ok"  x="6"   y="6"   width="70" height="56"/>'
+    + '<rect class="tile t-ok2" x="80"  y="6"   width="60" height="56"/>'
+    + '<rect class="tile t-flag" x="144" y="6"  width="86" height="56"/>'
+    + '<rect class="tile t-ok"  x="234" y="6"   width="64" height="56"/>'
+    + '<rect class="tile t-ok3" x="302" y="6"   width="72" height="56"/>'
+    + '<rect class="tile t-ok2" x="6"   y="66"  width="56" height="60"/>'
+    + '<rect class="tile t-sel" x="66"  y="66"  width="100" height="60"/>'
+    + '<text class="maplab" x="82" y="100" style="font-weight:700">Terr. 47</text>'
+    + '<rect class="tile t-ok"  x="170" y="66"  width="60" height="60"/>'
+    + '<rect class="tile t-ok3" x="234" y="66"  width="64" height="60"/>'
+    + '<rect class="tile t-ok2" x="302" y="66"  width="72" height="60"/>'
+    + '<rect class="tile t-ok3" x="6"   y="130" width="64" height="64"/>'
+    + '<rect class="tile t-ok"  x="74"  y="130" width="70" height="64"/>'
+    + '<rect class="tile t-flag" x="148" y="130" width="80" height="64"/>'
+    + '<rect class="tile t-ok2" x="232" y="130" width="66" height="64"/>'
+    + '<rect class="tile t-ok"  x="302" y="130" width="72" height="64"/>'
+    + '</svg></div></div>'
+    + '<div class="sect"><p class="st">How it was drawn <span class="pulled">the splitting method</span></p><div class="calc">'
+    + '<div class="line"><span class="lbl">Start from prescriber locations<small>each clinician on the call plan, placed on the map</small></span><span class="num">8,900</span></div>'
+    + '<div class="line"><span class="lbl">Group into balanced clusters<small>so each rep gets a fair week\'s work</small></span><span class="num">148</span></div>'
+    + '<div class="line"><span class="lbl">Keep each cluster one connected patch<small>no islands</small></span><span class="num">enforced</span></div>'
+    + '<div class="total"><span class="lbl">= Territories that pass the rules</span><span class="num">145 of 148</span></div>'
+    + '<p class="read">The split is deterministic — same seed, same map. The 3 watch-items are the territories where driving runs heavy; they pass the rules but earn a flag.</p></div></div>'
+    + '<div class="sect dfit"><p class="st">The five checks, computed</p>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">A fair week\'s work<small>workload within ±20% of average — all 148 pass</small></div></div>'
+    + '<div class="fitrow"><span class="fdot a"></span><div class="fl">Reachable by car<small>3 territories over one-third of the week driving — flagged</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">One connected patch<small>no territory split into islands</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">Enough prescribers to fill a week<small>smallest has 41 worth calling on</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">A fair share of opportunity<small>no gold-mine-vs-desert imbalance</small></div></div></div>'
+    + '<div class="sect"><p class="st">Why the dollar figure is capped</p><div class="dconf">The "$4.2M wouldn\'t materialize" figure inherits the borrowed sales-response curve — its confidence is capped, like every number that curve touches.</div></div>'
+  },
+
+  /* REAL: Setup & Data Check = data-fitness detail (UI-D-004) */
+  setup: {
+    kick:'Detail · is the data good enough?', title:'Data-fitness — The Market', chip:'all checks met', chipCls:'g',
+    lede:'The checks that decide whether "counted from claims" is good enough to build on.',
+    cta:'Open the full "Setup & Data Check" chapter →',
+    body:
+      '<div class="sect dfit"><p class="st">Data-fitness checks <span class="pulled">pulled from this module</span></p>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">Class coverage<small>the claims feed sees about 95% of class prescribing — well above the bar</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">Granularity<small>resolves to individual prescribers, not just territories — meets the requirement</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">Recency<small>most recent full month is May 2026 — fresh</small></div></div>'
+    + '<div class="fitrow"><span class="fdot g"></span><div class="fl">Completeness<small>no large gaps in the prescriber universe</small></div></div></div>'
+    + '<div class="sect"><p class="st">The thresholds it was checked against</p><div class="calc">'
+    + '<div class="line"><span class="lbl">Coverage required<small>minimum share of class prescribing</small></span><span class="num">≥ 90%</span></div>'
+    + '<div class="line"><span class="lbl">Coverage observed</span><span class="num">~95% ✓</span></div>'
+    + '<div class="line"><span class="lbl">Recency required<small>data no older than</small></span><span class="num">≤ 3 months</span></div>'
+    + '<div class="line"><span class="lbl">Recency observed</span><span class="num">1 month ✓</span></div>'
+    + '<div class="total"><span class="lbl">= Verdict</span><span class="num" style="color:var(--green)">all checks met</span></div>'
+    + '<p class="read">This is the one fully-measured input in the run — no estimation, no override. It is the firm ground the rest of the chain builds on.</p></div></div>'
+    + '<div class="sect"><p class="st">How this compares to the other inputs</p><div class="dconf" style="background:var(--blue-bg);border-color:#c4d6e8;color:#2c4f70">Setup is green; the input that needs attention is Sales Response (borrowed, low confidence). That flag follows through to every screen the curve touches — including the Profit headline.</div></div>'
+  },
+
+  /* GENERIC drawers for Market / Targets / Capacity (assumptions + confidence) */
+  'generic-market': {
+    kick:'Detail · The Market', title:'The Market', chip:'● measured', chipCls:'g',
+    lede:'Assumptions and confidence behind the prescriber counts.',
+    cta:'Open the full "The Market" chapter →',
+    body: genericBody([
+      ['meas','Class coverage of the claims feed','share of class prescribing we can see','~95%'],
+      ['meas','Granularity','resolves to individual prescribers','prescriber-level'],
+      ['meas','Recency','most recent full month','May 2026'],
+      ['mod','"Worth calling on" cut-off','minimum prescribing to make the call list','modeled']
+    ], 'Counted directly from prescription claims — the firmest input in the run. The only modeled piece is where to draw the "worth calling on" line.')
+  },
+  'generic-targets': {
+    kick:'Detail · Targets & Call Plan', title:'Targets & Call Plan', chip:'provided input', chipCls:'n',
+    lede:'Assumptions and source behind the call plan.',
+    cta:'Open the full "Targets & Call Plan" chapter →',
+    body: genericBody([
+      ['meas','Target list completeness','all targets accounted for','complete'],
+      ['meas','Frequency by segment','set by the Product team (3 tiers)','12 / 8 / 4 per yr'],
+      ['mod','Blended average frequency','across all targets','~8 / yr']
+    ], 'Provided by the Product team and used as given — not re-derived here. Shown for traceability so the call plan can be inspected like any other input.')
+  },
+  'generic-capacity': {
+    kick:'Detail · Rep Capacity', title:'Rep Capacity', chip:'override — logged', chipCls:'',
+    lede:'Assumptions, the override, and how capacity shifts the size.',
+    cta:'Open the full "Rep Capacity" chapter →',
+    body: genericBody([
+      ['meas','Calls per selling day','average across the team','~3.3'],
+      ['mod','Selling days a year','after admin and travel','~190'],
+      ['est','Activity granularity','team-level, not rep-level (overridden)','team-level']
+    ], 'The preferred workload model was kept despite team-level (not rep-level) activity data — the override is on the record. Capacity divides into the total workload, so a small change here moves the size by a few reps.')
+  }
+};
+
+function genericBody(rows, conf){
+  var assume = rows.map(function(r){
+    return '<div class="da"><span class="lbl"><span class="cdot '+r[0]+'"></span>'+r[1]+'<small>'+r[2]+'</small></span><span class="v">'+r[3]+'</span></div>';
+  }).join('');
+  return '<div class="sect dassume"><p class="st">The assumptions behind this step</p>'+assume+'</div>'
+       + '<div class="sect"><p class="st">Confidence &amp; provenance</p><div class="dconf" style="background:var(--blue-bg);border-color:#c4d6e8;color:#2c4f70">'+conf+'</div></div>';
+}
+
+function openDrawer(key){
+  var d = DRAWERS[key];
+  if(!d) return;
+  document.getElementById('dKick').textContent = d.kick;
+  document.getElementById('dTitle').textContent = d.title;
+  var chip = document.getElementById('dChip');
+  chip.textContent = d.chip;
+  chip.className = 'chip ' + (d.chipCls||'');
+  document.getElementById('dLede').textContent = d.lede;
+  document.getElementById('dBody').innerHTML = d.body;
+  document.getElementById('dCta').textContent = d.cta;
+  document.getElementById('scrim').style.display = 'block';
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('scrim').style.display = 'none';
+  document.getElementById('drawer').classList.remove('open');
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+
+/* ============ Init (supports ?view= and ?chapter= and ?reality=) ============ */
+(function init(){
+  renderReality('amber');
+  var p = new URLSearchParams(location.search);
+  var ch = p.get('chapter'); if(ch && CHAPTERS.indexOf(ch)>=0) showChapter(ch);
+  var rs = p.get('reality'); if(rs && REALITY[rs]) renderReality(rs);
+  var vw = p.get('view'); if(vw==='leadership') setView('leadership');
+})();
+</script>
+
+<div id="engineLoading" style="position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:99;display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif">
+  <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:#0e7c6b">Running the sizing engine in your browser…</div>
+  <div style="font-size:11.5px;color:#67727e;margin-top:6px">deterministic run on the demo fixture — every number you are about to see is engine output</div></div></div>
+<script>/* engine + seam + binder bundle (esbuild) — the deterministic sizing engine runs in this page */
+var PRODUCT = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -90,10 +1353,10 @@ var WIRE = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // wire.mjs
-  var wire_exports = {};
-  __export(wire_exports, {
-    basisInWords: () => basisInWords,
+  // _product_entry.mjs
+  var product_entry_exports = {};
+  __export(product_entry_exports, {
+    bindAll: () => bindAll,
     fmtMoney: () => fmtMoney,
     mapResultToView: () => mapResultToView,
     runCanonical: () => runCanonical
@@ -1724,6 +2987,10 @@ var WIRE = (() => {
         verdict: result.verdict?.status ?? null,
         // FEASIBLE | FEASIBLE_WITH_FLAGS | INFEASIBLE
         verdictWords: result.verdict?.status === "FEASIBLE" ? "Yes \u2014 staffable as drawn." : result.verdict?.status === "FEASIBLE_WITH_FLAGS" ? "Workable \u2014 with territories to watch." : result.verdict?.status === "INFEASIBLE" ? "Not as drawn \u2014 change something." : "\u2014",
+        drivers: result.verdict?.drivers ?? [],
+        bindingConstraint: result.verdict?.remediation?.binding_constraint ?? null,
+        realismRoutes: result.verdict?.remediation?.routes ?? [],
+        byTerritory: result.realism?.by_territory ?? null,
         nTerritories: result.territory?.n_territories ?? null,
         territories,
         coverageEconomics: ce ? {
@@ -1735,10 +3002,505 @@ var WIRE = (() => {
           unrealizedWords: fmtMoney(ce.unrealized_gp)
         } : null
       },
-      ramp: result.ramp ?? null
+      ramp: result.ramp ?? null,
+      // ---- chapter-level values (UI_SPEC.md §2 T5–T14/T19/T22) — all envelope/canonical
+      // passthroughs or engine verbs; zero UI-side business math. -----------------------
+      chapters: buildChapters(result, canonical, engine)
     };
   }
-  return __toCommonJS(wire_exports);
+  function buildChapters(result, canonical, engine) {
+    const hcps = canonical.M1.universe.hcps;
+    const hcos = canonical.M1.universe.hcos;
+    const targets = canonical.M2.target_list;
+    const segDefs = canonical.M2.segment_definitions;
+    const segCounts = {};
+    for (const t of targets) segCounts[t.segment_id] = (segCounts[t.segment_id] ?? 0) + 1;
+    const totalMarketNrx = hcps.reduce((s, h) => s + (h.market_rx?.nrx ?? 0), 0);
+    const cap = canonical.M3.capacity;
+    const capacityPerRep = engine.m3.capacity();
+    const selection = Object.keys(segCounts).sort().map((segment_id) => ({
+      segment_id,
+      target_count: segCounts[segment_id]
+    }));
+    const workload = engine.m3.workload(selection);
+    const blendedFreq = targets.length ? workload / targets.length : null;
+    const gpPerRx = engine.m4.gp_per_rx ? engine.m4.gp_per_rx(1) : null;
+    const flc = canonical.M4.flc?.flc_per_rep_per_year?.__default__ ?? null;
+    const conv = canonical.M4.conversion ?? {};
+    const segments = Object.keys(segDefs).sort().map((id) => ({
+      id,
+      frequency: segDefs[id].baseline_frequency,
+      count: segCounts[id] ?? 0,
+      curve: canonical.M5?.response_by_segment?.[id] ?? null
+    }));
+    const promo = result.promotable;
+    const chain = {
+      marketTotal: hcps.length,
+      hcoTotal: hcos.length,
+      targetsTotal: targets.length,
+      targetsPct: hcps.length ? Math.round(targets.length / hcps.length * 100) : null,
+      marketNrx: totalMarketNrx,
+      blendedFreq,
+      blendedFreqWords: blendedFreq != null ? `~${Math.round(blendedFreq)} calls / yr` : "\u2014",
+      capacityPerRep,
+      capacityWords: `~${Math.round(capacityPerRep).toLocaleString()} calls / rep / yr`,
+      gpPerRx,
+      gpPerRxWords: gpPerRx != null ? fmtMoney(gpPerRx) : "\u2014",
+      flc,
+      flcWords: flc != null ? fmtMoney(flc) + " / yr" : "\u2014",
+      N_star: promo ? result.N_star : null,
+      N_lo: promo ? result.optimizer.plateau.N_lo : null,
+      N_hi: promo ? result.optimizer.plateau.N_hi : null
+    };
+    return {
+      chain,
+      segments,
+      capacity: {
+        callsPerDay: cap.calls_per_day,
+        sellingDays: cap.selling_days_per_year,
+        adminPct: cap.admin_pct,
+        noSeePct: cap.no_see_pct,
+        perRepYear: capacityPerRep,
+        rawCallsYear: cap.calls_per_day * cap.selling_days_per_year
+        // declared-inputs product, echoed as the waterfall top (display of inputs, not a new business quantity)
+      },
+      economics: {
+        gpPerRx,
+        flc,
+        rxToFill: conv.rx_to_fill_rate?.__default__ ?? null,
+        netPrice: conv.net_price_per_unit?.__default__ ?? null,
+        marginPct: conv.gross_margin_pct?.__default__ ?? null,
+        persistence: conv.persistence_rate?.__default__ ?? null,
+        discount: conv.discount_rate?.__default__ ?? null,
+        horizonYears: canonical.M4.horizon_years,
+        basis: canonical.M4.basis
+      },
+      grounding: canonical.M5?.grounding ?? null
+    };
+  }
+
+  // binder.mjs
+  var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  var q = (sel, root = document) => root.querySelector(sel);
+  var qa = (sel, root = document) => [...root.querySelectorAll(sel)];
+  var num = (x) => Math.round(x).toLocaleString();
+  var SUBMETHOD_WORDS = {
+    file_supplied_universe: "Loaded from the supplied market file",
+    claims_universe: "Counted directly from prescription claims",
+    workload_buildup: "Workload model from declared capacity inputs",
+    stock_flow_npv: "Standard unit-economics build (new-patient NPV)",
+    analog_curves: "Borrowed from comparable products",
+    vacant_brick_analysis: "Grounded by vacant-territory comparison"
+  };
+  var FIT_CHIP = {
+    green: ["All checks met", "g"],
+    yellow: ["Caveats \u2014 see note", "a"],
+    red: ["Low confidence", "r"]
+  };
+  var CHECK_WORDS = {
+    workload_balance: ["A fair week's work", "rule", (d) => `no territory far above or below the average rep's workload`],
+    geographic_selling_time: ["Reachable by car", "rule", (d) => `selling time must survive the driving the map implies`],
+    contiguity: ["One connected patch", "rule", (d) => `no territory split into islands`],
+    min_viable_scale: ["Enough prescribers to fill a week", "", (d) => `the smallest territory still earns its rep`],
+    opportunity_balance: ["A fair share of opportunity", "", (d) => `no rep gets a gold mine while another gets a desert`]
+  };
+  var checkWordsFor = (dim) => CHECK_WORDS[dim] ?? [dim.replace(/_/g, " "), "", () => "engine realism dimension"];
+  function chainCells(view, current) {
+    const ch = view.chapters.chain;
+    const cells = [
+      ["market", "The market", `~${num(ch.marketTotal)}`],
+      ["targets", "We'll call on", `${num(ch.targetsTotal)} (${ch.targetsPct}%)`],
+      ["capacity", "Calls / rep / yr", `~${num(ch.capacityPerRep)}`],
+      ["economics", "Value / new start", ch.gpPerRxWords],
+      ["size", view.kind === "promotable" ? "Right size" : "Right size", view.kind === "promotable" ? `${ch.N_lo}\u2013${ch.N_hi} (${ch.N_star} best)` : "blocked"]
+    ];
+    return { ch, cells };
+  }
+  function renderSofar(el, view, keys, currentKey, currentLabel) {
+    const { cells } = chainCells(view);
+    const byKey = Object.fromEntries(cells.map((c) => [c[0], c]));
+    el.innerHTML = keys.map((k) => {
+      if (k === currentKey) {
+        return `<div class="s cur"><div class="k">\u2192 This chapter</div><div class="v">${esc(currentLabel)}</div></div>`;
+      }
+      const c = byKey[k];
+      return c ? `<div class="s"><div class="k">${esc(c[1])}</div><div class="v">${esc(c[2])}</div></div>` : "";
+    }).join("");
+  }
+  function responseChartSvg(view, { w = 460, h = 230, padL = 48, padB = 40, padT = 14 } = {}) {
+    const curves = view.curves;
+    const maxR = Math.max(...curves.flatMap((c) => c.points.map((p) => p.response)));
+    const maxE = Math.max(...curves.map((c) => c.points[c.points.length - 1].effort));
+    const X = (e) => padL + e / maxE * (w - padL - 20);
+    const Y = (r) => padT + (1 - r / maxR) * (h - padT - padB);
+    const colors = ["#0e7c6b", "#5b9bd5", "#9aa5b1"];
+    let body = `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h - padB}" stroke="#c9ced6"/><line x1="${padL}" y1="${h - padB}" x2="${w - 20}" y2="${h - padB}" stroke="#c9ced6"/>`;
+    curves.forEach((c, i) => {
+      const path = c.points.map((p, j) => `${j ? "L" : "M"}${X(p.effort).toFixed(1)},${Y(p.response).toFixed(1)}`).join(" ");
+      body += `<path d="${path}" fill="none" stroke="${colors[i % 3]}" stroke-width="2.3" stroke-dasharray="6 4"/>`;
+      const sat = c.points[c.points.length - 1];
+      body += `<text class="clab" x="${w - 64}" y="${Y(sat.response) - 5}" fill="${colors[i % 3]}">${esc(c.segment)}</text>`;
+      if (c.allocated != null) {
+        body += `<line x1="${X(c.allocated)}" y1="${Y(sat.response)}" x2="${X(c.allocated)}" y2="${h - padB}" stroke="${colors[i % 3]}" stroke-dasharray="2 3" opacity=".7"/><text class="clab" x="${X(c.allocated) + 3}" y="${h - padB - 6}" fill="${colors[i % 3]}">${c.allocated.toFixed(1)}/yr allocated</text>`;
+      }
+    });
+    body += `<text class="clab" x="${w / 2 - 60}" y="${h - 10}">calls per prescriber per year \u2192</text><text class="clab" x="${padL + 6}" y="${padT + 2}" fill="#b45309">each extra call adds less than the one before</text>`;
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">${body}</svg>`;
+  }
+  function profitCurveSvg(view, { w = 290, h = 150 } = {}) {
+    const pts = view.profitCurve;
+    const hero = view.hero;
+    const maxP = Math.max(...pts.map((p) => p.profit));
+    const minP = Math.min(0, ...pts.map((p) => p.profit));
+    const maxN = pts[pts.length - 1].N;
+    const X = (n) => 8 + n / maxN * (w - 16);
+    const Y = (p) => 8 + (1 - (p - minP) / (maxP - minP || 1)) * (h - 28);
+    const path = pts.map((p, i) => `${i ? "L" : "M"}${X(p.N).toFixed(1)},${Y(p.profit).toFixed(1)}`).join(" ");
+    return {
+      svg: `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <rect x="${X(hero.N_lo)}" y="8" width="${Math.max(2, X(hero.N_hi) - X(hero.N_lo))}" height="${h - 32}" fill="#0e7c6b" opacity="0.10"/>
+      <path d="${path}" fill="none" stroke="#0e7c6b" stroke-width="2.6"/>
+      <line x1="${X(hero.N_star)}" y1="8" x2="${X(hero.N_star)}" y2="${h - 24}" stroke="#0e7c6b" stroke-dasharray="3 3" stroke-width="1.4"/>
+      <circle cx="${X(hero.N_star)}" cy="${Y(view.hero.profitAtStar)}" r="3.6" fill="#0e7c6b"/>
+      <line x1="${X(hero.N_lo)}" y1="${Y(pts[hero.N_lo]?.profit ?? 0)}" x2="${X(hero.N_lo)}" y2="${h - 24}" stroke="#b45309" stroke-dasharray="2 3" stroke-width="1.2"/>
+    </svg>`,
+      anns: { loLeft: X(hero.N_lo), starLeft: X(hero.N_star) }
+    };
+  }
+  var barRow = (label, valHtml, pct, color) => `
+  <div><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span>${label}</span><b>${valHtml}</b></div>
+  <div style="height:12px;background:var(--fill2);border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color}"></div></div></div>`;
+  function bindAll(view) {
+    document.title = `Field Force Sizing \u2014 ${view.project.product}, ${view.project.cycle}`;
+    q(".chrome .url").textContent = `Field Force Sizing \u2014 ${view.project.product}, ${view.project.cycle}`;
+    q(".chrome .proto").textContent = "wired product v1 \xB7 engine runs in this page";
+    if (view.modeBanner) {
+      const rb = q(".ribbon");
+      rb.insertAdjacentHTML(
+        "beforeend",
+        `<span style="margin-left:auto;background:var(--warn-bg);border:1px solid var(--warn);color:#7c3b06;border-radius:10px;padding:2px 10px;font-size:10px">PROVISIONAL \xB7 ${esc(view.modeBanner)}</span>`
+      );
+    }
+    if (view.kind === "blocked") return bindBlocked(view);
+    const ch = view.chapters;
+    const chain = ch.chain;
+    const moneyWords = view.headlineWords;
+    q("#chap-setup .setup").innerHTML = [
+      ["Goal", view.project ? "Most profit" : "", "size that maximizes profit", true],
+      ["Product & market", view.project.product, view.project.indication + " market", false],
+      ["Planning cycle", view.project.cycle, "commercial field force", false],
+      ["Money view", `${ch.economics.horizonYears}-year`, moneyWords, false]
+    ].map(([k, v, sub, hero2]) => `
+    <div class="panel"${hero2 ? ' style="border-color:var(--accent);background:var(--accent-bg)"' : ""}>
+      <div style="font-size:10px;color:${hero2 ? "var(--accent)" : "var(--faint)"};text-transform:uppercase;letter-spacing:.05em">${esc(k)}</div>
+      <div style="font-size:15px;font-weight:700;margin-top:4px${hero2 ? ";color:var(--accent)" : ""}">${esc(v)}</div>
+      <div style="font-size:10.5px;color:var(--muted);margin-top:3px">${esc(sub)}</div></div>`).join("");
+    const seam = q("#chap-setup .seam");
+    if (view.mode === "provisional") {
+      seam.className = "seam a";
+      seam.innerHTML = '<span class="sd"></span>provisional run \xB7 inputs assumed where gaps exist \u2014 every assumption on the record';
+    }
+    const fitnessOrder = [
+      ["m1_universe", "The Market", "eligible prescribers", "M1"],
+      ["m2_segments", "Targets & Call Plan", "segments, frequency", "M2"],
+      ["m3_capacity_inputs", "Rep Capacity", "calls a rep can make", "M3"],
+      ["m5_response", "Sales Response", "lift per call", "M5"],
+      ["m4_economics", "The Economics", "$ per Rx, cost per rep", "M4"]
+    ];
+    const methodPanels = qa("#chap-setup .stage > .panel");
+    fitnessOrder.forEach(([fitKey, label, sub, mod], i) => {
+      const p = methodPanels[i];
+      if (!p) return;
+      const fit = view.fitness[fitKey] ?? { status: "yellow", available: "", source: "" };
+      const pick2 = mod === "M2" ? null : view.methodPicks?.[mod] ?? null;
+      const words = pick2 ? SUBMETHOD_WORDS[pick2.sub_method] ?? pick2.sub_method : "Consumed input \u2014 used as given";
+      const [chipText, chipCls] = FIT_CHIP[fit.status] ?? FIT_CHIP.yellow;
+      const chipColors = { g: "background:var(--green-bg);color:var(--green)", a: "background:var(--amber-bg);color:var(--amber)", r: "background:var(--red-bg);color:var(--red)" }[chipCls];
+      p.style.borderLeft = chipCls === "g" ? "" : chipCls === "r" ? "3px solid var(--red)" : "3px solid var(--amber)";
+      p.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-weight:700;font-size:13.5px;flex:0 0 165px">${esc(label)}<small style="display:block;font-weight:400;color:var(--faint);font-size:10px;margin-top:1px">${esc(sub)}</small></div>
+        <div style="flex:1;font-size:12px;line-height:1.45"><b>${esc(words)}.</b> <span style="color:var(--muted)">${esc(fit.available ?? "")}</span></div>
+        <span style="font-size:9.5px;font-weight:700;border-radius:10px;padding:3px 9px;white-space:nowrap;${chipColors}">${esc(chipText)}</span>
+      </div>
+      ${fit.status !== "green" ? `<div class="reason-line"${fit.status === "red" ? ' style="background:var(--red-bg);color:#7a1f1a"' : ""}><b>${fit.status === "red" ? "Fell back / low confidence:" : "On the record:"}</b> ${esc(fit.available ?? "")} <span class="log">source: ${esc(fit.source ?? "")} \xB7 confidence: ${esc(fit.confidence ?? "")}</span></div>` : ""}`;
+    });
+    const ctxPanel = methodPanels[5];
+    if (ctxPanel) {
+      ctxPanel.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;margin-bottom:4px">Market context <span style="font-family:var(--mono);font-size:9.5px;color:var(--faint);font-weight:400">\u2014 read-only echo of the research brief</span></div>
+      <p style="font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.5">${esc(view.provenanceNote ?? "No research brief is attached to this run.")} A real run echoes the M-R discovery brief here, provenanced \u2014 never edited in this screen.</p>`;
+    }
+    const worst = Object.entries(view.fitness).sort((a, b) => ({ red: 0, yellow: 1, green: 2 })[a[1].status] - { red: 0, yellow: 1, green: 2 }[b[1].status])[0];
+    const setupBanner = q("#chap-setup .banner");
+    if (worst && setupBanner) {
+      const [wk, wf] = worst;
+      const isRed = wf.status === "red";
+      setupBanner.className = "banner";
+      setupBanner.style.cssText = isRed ? "background:var(--red-bg);border-color:#e3a8a3;border-left-color:var(--red)" : "";
+      setupBanner.innerHTML = `<span class="ic">\u26A0</span><span class="t"${isRed ? ' style="color:#7a1f1a"' : ""}><b${isRed ? ' style="color:var(--red)"' : ""}>Needs attention: ${esc(wk.replace(/_/g, " "))} \u2014 ${esc(wf.status)}.</b> ${esc(wf.available ?? "")} The size is still computable, but its confidence is capped \u2014 and this flag follows through to every screen it touches.</span>`;
+    }
+    renderSofar(q("#chap-market .sofar"), view, ["size", "market", "targets"], "market", "how many prescribers");
+    q("#chap-market .sofar .s.cur .k").textContent = "\u2192 This chapter";
+    q("#chap-market .lead-claim").innerHTML = `<b>${num(chain.marketTotal)} prescribers</b> are in this market file (${num(chain.hcoTotal)} sites). Of those, <b>${num(chain.targetsTotal)} (${chain.targetsPct}%)</b> are on the call plan \u2014 together they hold ${num(chain.marketNrx)} new-start prescriptions a year.`;
+    const mkBars = q('#chap-market .twocol .panel > div[style*="flex-direction:column"]');
+    mkBars.innerHTML = barRow("In the market file", num(chain.marketTotal), 100, "#cfe1ee") + barRow("On the call plan", `<span style="color:var(--accent)">${num(chain.targetsTotal)} (${chain.targetsPct}%)</span>`, chain.targetsPct, "var(--accent)");
+    const mkBelow = q('#chap-market .twocol .panel > p[style*="margin-top:12px"]');
+    if (mkBelow) mkBelow.textContent = `The other ${100 - chain.targetsPct}% are off the call plan in this run's declared targeting. They stay on the map but off the plan.`;
+    const mkAssume = q("#chap-market .assume");
+    mkAssume.innerHTML = `
+    <p class="ph">The assumptions behind this count</p>
+    <p class="psub">Every value shows where it came from.</p>
+    <div class="arow"><div class="lbl"><span class="cdot meas"></span>Universe source<small>${esc(view.fitness.m1_universe?.source ?? "run packet")}</small></div><div class="val">file-supplied</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Grain<small>${esc(view.fitness.m1_universe?.available ?? "")}</small></div><div class="val">${esc(view.fitness.m1_universe?.confidence ?? "")}</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot meas"></span>Market volume<small>annual new-start prescriptions in file</small></div><div class="val">${num(chain.marketNrx)}</div></div>`;
+    renderSofar(q("#chap-targets .sofar"), view, ["market", "targets", "plan"], "plan", chain.blendedFreqWords);
+    q("#chap-targets .lead-claim").innerHTML = `Targets get <b>${esc(chain.blendedFreqWords.replace("~", "about "))}</b> on average, weighted toward higher-value prescribers. The segment plan is a <b>declared input</b> to this run \u2014 shown here for traceability, not re-derived.`;
+    const maxFreq = Math.max(...ch.segments.map((s) => s.frequency));
+    const tierBox = q('#chap-targets .twocol .panel > div[style*="flex-direction:column"]');
+    const segColors = ["var(--accent)", "#5b9bd5", "#9aa5b1"];
+    tierBox.innerHTML = ch.segments.map((s, i) => barRow(`${s.id} \u2014 ${num(s.count)} targets`, `${s.frequency} calls / yr`, Math.round(s.frequency / maxFreq * 100), segColors[i % 3])).join("");
+    q("#chap-targets .assume").innerHTML = `
+    <p class="ph">The assumptions behind this plan</p>
+    <p class="psub">Declared in the run packet; shown for traceability.</p>
+    <div class="arow"><div class="lbl"><span class="cdot meas"></span>Target list completeness<small>every target carries a segment</small></div><div class="val">${num(chain.targetsTotal)} rows</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot meas"></span>Frequency by segment<small>declared per segment</small></div><div class="val">${ch.segments.length} segments</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Blended average frequency<small>workload \xF7 targets \u2014 the engine's own seam value</small></div><div class="val">${esc(chain.blendedFreqWords)}</div></div>`;
+    renderSofar(q("#chap-capacity .sofar"), view, ["market", "targets", "plan", "capacity"], "capacity", chain.capacityWords);
+    q("#chap-capacity .lead-claim").innerHTML = `After admin time and no-see attrition, one rep makes <b>about ${num(ch.capacity.perRepYear)} quality calls a year</b> \u2014 the engine's capacity number, computed from the declared inputs below.`;
+    const capBox = q('#chap-capacity .twocol .panel > div[style*="flex-direction:column"]');
+    const raw = ch.capacity.rawCallsYear;
+    capBox.innerHTML = barRow(`Planned call slots (${ch.capacity.callsPerDay}/day \xD7 ${ch.capacity.sellingDays} days)`, num(raw), 100, "#cfe1ee") + barRow(`Less admin time (\u2212${Math.round(ch.capacity.adminPct * 100)}%)`, num(raw * (1 - ch.capacity.adminPct)), Math.round((1 - ch.capacity.adminPct) * 100), "#5b9bd5") + barRow("Quality calls a year (engine capacity)", `<span style="color:var(--warn)">~${num(ch.capacity.perRepYear)}</span>`, Math.round(ch.capacity.perRepYear / raw * 100), "var(--warn)");
+    q("#chap-capacity .assume").innerHTML = `
+    <p class="ph">The assumptions behind capacity</p>
+    <p class="psub">Declared inputs \u2014 the capacity number itself comes from the engine.</p>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Calls per selling day<small>declared (run packet)</small></div><div class="val">${ch.capacity.callsPerDay}</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Selling days a year<small>declared (run packet)</small></div><div class="val">${ch.capacity.sellingDays}</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot est"></span>Admin / no-see adjustments<small>assumed where no split exists \u2014 on the record</small></div><div class="val">\u2212${Math.round(ch.capacity.adminPct * 100)}% / \u2212${Math.round(ch.capacity.noSeePct * 100)}%</div></div>`;
+    const capOverride = q("#chap-capacity .reason-line");
+    if (capOverride) capOverride.innerHTML = `<b>On the record:</b> admin and no-see splits are assumed (${Math.round(ch.capacity.adminPct * 100)}% / ${Math.round(ch.capacity.noSeePct * 100)}%) \u2014 no measured split exists in this run's inputs.<span class="log">assumption register \xB7 this run</span>`;
+    renderSofar(q("#chap-response .sofar"), view, ["market", "targets", "capacity", "lift"], "lift", "lift per call");
+    q("#chap-response .chart").innerHTML = responseChartSvg(view);
+    q("#chap-response .leg").innerHTML = view.curves.map((c, i) => `<span class="li"><span class="sw" style="border-color:${["#0e7c6b", "#5b9bd5", "#9aa5b1"][i % 3]}"></span>${esc(c.segment)}<span class="conf">\u25CB ${esc(ch.grounding === "analog_only" ? "analog estimate" : "modeled")}</span></span>`).join("");
+    q("#chap-response .assume").innerHTML = `
+    <p class="ph">The assumptions behind this curve</p>
+    <p class="psub">Per segment \u2014 every value from the run packet's response block.</p>
+    ${ch.segments.map((s) => s.curve ? `
+      <div class="arow"><div class="lbl"><span class="cdot est"></span>${esc(s.id)} \u2014 organic floor / ceiling<small>response at zero calls \u2192 most calls can drive</small></div><div class="val">${s.curve.baseline_nrx} \u2192 ${s.curve.saturation_nrx}/yr</div></div>
+      <div class="arow"><div class="lbl"><span class="cdot mod"></span>${esc(s.id)} \u2014 half the lift by<small>EC50 \xB7 curve shape n=${s.curve.slope_n}</small></div><div class="val">~${s.curve.ec50_effort} calls/yr</div></div>` : "").join("")}`;
+    const respSeam = q("#chap-response .seam");
+    respSeam.innerHTML = `<span class="sd"></span>${ch.grounding === "analog_only" ? "analog priors \u2014 assumption-grounded \xB7 flag follows through" : esc(ch.grounding ?? "")}`;
+    renderSofar(q("#chap-economics .sofar"), view, ["capacity", "lift", "economics"], "economics", `${chain.gpPerRxWords} / start \xB7 ${chain.flcWords.replace(" / yr", "")} / rep`);
+    q("#chap-economics .lead-claim").innerHTML = `Each new-patient start is worth <b>${esc(chain.gpPerRxWords)} in gross profit</b> on the ${esc(moneyWords)}; a fully-loaded rep costs <b>${esc(chain.flcWords)}</b>. Every economic input here carries its assumption tag.`;
+    const econCalc = q("#chap-economics .calc");
+    econCalc.innerHTML = `
+    <div class="line"><span class="lbl">Net price per patient-month<small>declared (decomposed composite)</small></span><span class="num">${fmtMoney(ch.economics.netPrice)}</span></div>
+    <div class="line"><span class="op">\xD7</span><span class="lbl">Gross margin<small>declared</small></span><span class="num">${Math.round(ch.economics.marginPct * 100)}%</span></div>
+    <div class="line"><span class="op">\xD7</span><span class="lbl">Fill rate \xB7 persistence \xB7 ${ch.economics.horizonYears}-yr NPV<small>${ch.economics.rxToFill} \xB7 ${ch.economics.persistence}/yr \xB7 ${Math.round(ch.economics.discount * 100)}% discount</small></span><span class="num">engine</span></div>
+    <div class="total"><span class="lbl">= Value per new-patient start</span><span class="num">${esc(chain.gpPerRxWords)}</span></div>
+    <p class="read">A gross-profit figure, never labeled revenue. It carries "${esc(moneyWords)}" everywhere it appears.</p>`;
+    q("#chap-economics .assume").innerHTML = `
+    <p class="ph">What a rep costs</p>
+    <p class="psub">Fully-loaded field cost \u2014 harvested from the incumbent tool's cost stack.</p>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Fully loaded, per year<small>salary + overhead + management allocation</small></div><div class="val">${esc(chain.flcWords)}</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot mod"></span>Value per new-patient start<small>${esc(moneyWords)}</small></div><div class="val">${esc(chain.gpPerRxWords)}</div></div>
+    <div class="arow"><div class="lbl"><span class="cdot est"></span>Price decomposition<small>composite split by assumption \u2014 Finance SME replaces</small></div><div class="val">assumed</div></div>`;
+    renderSofar(q("#chap-recommendation .sofar"), view, ["market", "targets", "capacity", "economics", "size"], "size", `${chain.N_lo}\u2013${chain.N_hi} (${chain.N_star} best)`);
+    const hero = view.hero;
+    const rough = hero.soft ? "roughly " : "";
+    q(".rangehero h2").innerHTML = hero.N_lo === hero.N_hi ? `<b>${hero.N_star} reps</b> is the profit-max size \u2014 the curve has a genuine peak here.` : `Any size from ${rough}<b>${hero.N_lo} to ${hero.N_hi} reps</b> earns about the same profit.`;
+    q(".rangehero .plateaunote").innerHTML = hero.soft ? `<b>The flat zone is wide</b> \u2014 so the size itself is <b>not the sensitive choice here. The response estimate is.</b> Because the sales-response inputs are ${ch.grounding === "analog_only" ? "assumption-grounded analogs" : "low-confidence"}, the edges of this range are soft (read them as "${rough}${hero.N_lo}\u2013${hero.N_hi}", not exact).` : `<b>The plateau is narrow</b> \u2014 the optimum is well-determined on these inputs.`;
+    q(".rangehero .capchip").innerHTML = `\u25D0 ${hero.soft ? `capped confidence \u2014 profit inherits the ${ch.grounding === "analog_only" ? "assumption-grounded response curve" : "low-confidence response inputs"}` : "confidence per the data-fitness map"}`;
+    q(".rangehero .pointnote").innerHTML = `
+    <div class="pn"><span class="star">\u2605 ${hero.N_star}</span> \u2014 <b>the profit-max point.</b> The single size that earns the most, before the last rep stops paying their way.</div>
+    <div class="pn"><b>${hero.N_lo}</b> \u2014 <b>same profit, lowest cost.</b> The low end of the flat zone; the tool's tie-break default when profit is flat.</div>`;
+    const pc = profitCurveSvg(view);
+    q(".rangehero .curve").innerHTML = pc.svg + `<span class="ann" style="left:6px;bottom:5px">fewer reps</span><span class="ann" style="right:6px;bottom:5px">more reps</span><span class="ann annw" style="left:${Math.max(4, pc.anns.loLeft - 8)}px;bottom:5px">${hero.N_lo}</span><span class="ann" style="left:${pc.anns.starLeft - 12}px;top:5px">\u2605${hero.N_star}</span>`;
+    q("#chap-recommendation .banner .t").innerHTML = `<b>Why the answer is a range, not a point.</b> Past about ${hero.N_lo} reps, each additional rep adds almost no profit \u2014 that's the flat top of the curve. So <b>${hero.N_lo} to ${hero.N_hi} all land near the same profit;</b> ${hero.N_star} is the precise peak, and the lower end trades a little profit for meaningfully lower cost.${hero.soft ? " The honest uncertainty here is the response estimate, not the choice of size within the range." : ""}`;
+    const vis = view.visibility;
+    const met = (name, numHtml, gloss, qual, heroTile) => `
+    <div class="met ${heroTile ? "hero" : ""}"><div class="name">${esc(name)}</div><div class="num">${numHtml}</div><div class="gloss">${esc(gloss)}</div>${qual ? `<span class="qual">${esc(qual)}</span>` : ""}</div>`;
+    q(".metrics5").innerHTML = met("Reach", `${num(chain.targetsTotal)}<span style="font-size:12px;color:var(--muted)"> of ${num(chain.marketTotal)}</span>`, `prescribers on the call plan (${chain.targetsPct}%)`, null, false) + met("Revenue", `<span class="tx" style="font-size:11px">engine does not yet emit</span>`, "W-1 \u2014 honest placeholder, never a fake number", null, false) + met("Profit", esc(view.hero.profitWords), "after paying for the field force", `${moneyWords}${hero.soft ? " \xB7 \u25D0 capped" : ""}`, true) + met("Last-rep payback", `<span class="tx">${esc(fmtMoney(hero.mrvAtStar))}</span>`, "what the final rep adds vs. their cost (net)", null, false) + met("Expansion return", `<span class="tx" style="font-size:11px">engine does not yet emit</span>`, "W-1 \u2014 honest placeholder", null, false);
+    q("#chap-recommendation .mh").innerHTML = `What this size delivers <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint)">(figures shown at the ${hero.N_star} profit-max point)</span>`;
+    bindReality(view);
+    if (typeof window !== "undefined") window.renderReality = () => {
+    };
+    q("#leadership .lv-hero h1").innerHTML = `${rough}${hero.N_lo}\u2013${hero.N_hi} reps works \u2014 we recommend ${hero.N_star}, and here's why we stand behind it`;
+    q("#leadership .big").innerHTML = `${hero.N_star}<small> reps</small>`;
+    q("#leadership .biglab").textContent = `recommended \xB7 the profit-max point inside a ${rough}${hero.N_lo}\u2013${hero.N_hi} flat zone`;
+    q("#leadership .lv-hero .metrics").innerHTML = `
+    <div class="met"><div class="n">Reach</div><div class="v">${num(chain.targetsTotal)}<span style="font-size:12px;color:var(--muted);font-weight:600"> / ${num(chain.marketTotal)}</span></div><div class="q">prescribers on the call plan (${chain.targetsPct}%)</div></div>
+    <div class="met"><div class="n">Revenue</div><div class="v" style="font-size:12px;color:var(--muted)">not yet emitted (W-1)</div><div class="q">honest placeholder</div></div>
+    <div class="met"><div class="n">Profit</div><div class="v hero2">${esc(view.hero.profitWords)}</div><div class="q">after field-force cost \xB7 ${esc(moneyWords)}</div></div>
+    <div class="met"><div class="n">Last-rep payback</div><div class="v">${esc(fmtMoney(hero.mrvAtStar))}</div><div class="q">net of the rep's own cost</div></div>`;
+    q("#leadership .lv-caution span").innerHTML = `<b>Note:</b> profit is flat from ${hero.N_lo} to ${hero.N_hi} reps \u2014 ${hero.N_star} is the precise peak; the lower end of the range delivers nearly the same profit for less cost.${hero.soft ? " The size is not the sensitive choice here; the response estimate is." : ""}`;
+    q("#leadership .lv-capchip").innerHTML = `\u25D0 ${hero.soft ? "capped confidence \u2014 profit inherits an assumption-grounded response curve" : "confidence per data-fitness map"}`;
+    const chainSteps = [
+      ["1", "The market:", `${num(chain.marketTotal)} prescribers in the file; ${num(chain.targetsTotal)} on the call plan.`, `${(chain.marketTotal / 1e3).toFixed(1)}k`, "generic-market"],
+      ["2", "The call plan:", `targets get ${chain.blendedFreqWords.replace("~", "about ")} on average, weighted to higher-value segments.`, chain.blendedFreqWords.replace(" calls / yr", "/yr"), "generic-targets"],
+      ["3", "Rep capacity:", `a rep makes about ${num(chain.capacityPerRep)} quality calls a year after the declared adjustments.`, num(chain.capacityPerRep), "generic-capacity"],
+      ["4", "Sales response:", `each call lifts prescribing, but flattens \u2014 ${ch.grounding === "analog_only" ? "assumption-grounded analog estimate" : "modeled"}.`, "curve", "response"],
+      ["5", "The economics:", `${chain.gpPerRxWords} gross profit per new-patient start; ${chain.flcWords} fully-loaded per rep.`, chain.gpPerRxWords, "economics"],
+      ["\u2605", "The size:", `profit is flat from ${hero.N_lo}\u2013${hero.N_hi}; ${hero.N_star} is the peak, where the last rep added still pays its way.`, String(hero.N_star), "response"],
+      ["\u2713", "Reality check:", view.reality.verdict === "FEASIBLE" ? `\u2026and it splits into ${view.reality.nTerritories} workable territories \u2014 all clear.` : view.reality.verdict === "FEASIBLE_WITH_FLAGS" ? `\u2026and it splits into ${view.reality.nTerritories} workable territories (${view.reality.drivers.length} dimension${view.reality.drivers.length === 1 ? "" : "s"} to watch).` : `\u2026but the map does NOT close at this size \u2014 binding: ${esc((view.reality.bindingConstraint ?? "").replace(/_/g, " "))}.`, view.reality.verdict === "FEASIBLE" ? "all clear" : view.reality.verdict === "FEASIBLE_WITH_FLAGS" ? "watch-items" : "not as drawn", "reality"]
+    ];
+    q("#leadership .chain").innerHTML = chainSteps.map(([m, lead, det, n, drawer]) => `
+    <div class="cstep"><div class="mark">${m}</div><div class="txt"><span class="clead">${esc(lead)}</span> <span class="cdet">${esc(det)}</span><span class="drill detailslink" onclick="openDrawer('${drawer}')">details \u203A</span></div><div class="cnum"${m === "\u2605" ? ' style="color:var(--accent)"' : m === "\u2713" ? ' style="color:var(--warn)"' : ""}>${esc(n)}</div></div>`).join("");
+    q("#leadership .box.warn ul").innerHTML = `
+    <li><b>Sales response is ${ch.grounding === "analog_only" ? "an assumption-grounded analog" : "modeled"}</b> \u2014 not this product's own data. Confidence is capped until grounded.</li>
+    <li><b>Every gap was filled by a recorded assumption</b> \u2014 the register travels with the run packet.</li>
+    <li>All dollar figures are a <b>${esc(moneyWords)}</b>.</li>`;
+    const landCol = qa("#leadership .land");
+    if (landCol.length) {
+      landCol[0].insertAdjacentHTML(
+        "beforebegin",
+        '<p style="font-size:10px;color:var(--faint);font-style:italic;margin:0 0 6px">illustrative \u2014 a demo run carries no real alignment record</p>'
+      );
+    }
+    const mkShow = q("#chap-market .showmath");
+    if (mkShow) mkShow.innerHTML = `\u{1F50D} Details \u2014 the source, the grain, and the targeting cut behind the ${num(chain.targetsTotal)} on the plan`;
+    const ecShow = q("#chap-economics .showmath");
+    if (ecShow) ecShow.innerHTML = `\u{1F50D} Show me the math \u2014 the full unit-economics stack behind ${esc(chain.gpPerRxWords)} per new start`;
+    const lvH3 = q("#leadership .lv-h3");
+    if (lvH3) lvH3.textContent = `How we got to ${hero.N_star}`;
+    qa("#leadership .land .said").forEach((el) => {
+      if (el.textContent.includes("620")) el.textContent = "confirmed rep capacity from field data.";
+    });
+    const lvRec = q("#leadership .foot .rec");
+    if (lvRec) lvRec.textContent = "Generated by the deterministic engine running in this page \xB7 provisional demo run \xB7 assumptions on the record";
+    bindDrawers(view);
+  }
+  function bindReality(view) {
+    const r = view.reality;
+    const live = r.verdict === "FEASIBLE" ? "green" : r.verdict === "FEASIBLE_WITH_FLAGS" ? "amber" : "red";
+    const ce = r.coverageEconomics;
+    const checks = Object.keys(CHECK_WORDS).map((dim) => {
+      const status = r.drivers.includes(dim) ? live === "red" && r.bindingConstraint === dim ? "r" : live === "red" ? "r" : "a" : "g";
+      const [label, tag] = checkWordsFor(dim);
+      const detail = r.drivers.includes(dim) ? `flagged by the engine's realism gate \u2014 driver: ${dim.replace(/_/g, " ")}` : checkWordsFor(dim)[2]() + " \u2014 passes";
+      return [status, label, tag, detail];
+    });
+    const verdictWords = {
+      green: { vic: "\u2705", title: "Yes \u2014 staffable as drawn.", body: `${view.hero.N_star} reps splits this market into ${r.nTerritories} territories, and every one clears the engine's checks. There is no binding constraint \u2014 the size and the map agree.`, sofar: "yes, staffable", sofarCls: "cur" },
+      amber: { vic: "\u26A0\uFE0F", title: `Workable \u2014 with watch-items (${r.drivers.map((d) => d.replace(/_/g, " ")).join(", ")}).`, body: `${view.hero.N_star} reps splits this market into ${r.nTerritories} territories. The flagged dimension${r.drivers.length === 1 ? " is" : "s are"} ${r.drivers.map((d) => d.replace(/_/g, " ")).join(", ")} \u2014 watch-items, not failures.`, sofar: `workable \xB7 ${r.drivers.length} to watch`, sofarCls: "curw" },
+      red: { vic: "\u26D4", title: `Not as drawn \u2014 change something. Binding constraint: ${(r.bindingConstraint ?? "").replace(/_/g, " ")}.`, body: `At ${view.hero.N_star} reps the carve fails the ${(r.bindingConstraint ?? "").replace(/_/g, " ")} rule. The routes out: ${r.realismRoutes.map((x) => x.replace(/_/g, " ")).join(" \xB7 ")}. Pick one before this size can be staffed.`, sofar: "not as drawn", sofarCls: "curw" }
+    }[live];
+    const vstates = `<div class="vstates"><div class="sh">the three possible answers <span style="text-transform:none;letter-spacing:0">(this run: ${live})</span></div>
+    <div class="vchip gc ${live === "green" ? "live" : ""}"><span class="m">\u2713</span> Yes, staffable${live === "green" ? " \u2014 this run" : ""}</div>
+    <div class="vchip ac ${live === "amber" ? "live" : ""}"><span class="m">\u26A0</span> Workable, with watch-items${live === "amber" ? " \u2014 this run" : ""}</div>
+    <div class="vchip rc ${live === "red" ? "live" : ""}"><span class="m">\u2715</span> Not as drawn${live === "red" ? " \u2014 this run" : ""}</div></div>`;
+    q("#verdictHost").innerHTML = `<div class="verdict ${live === "green" ? "g" : live === "amber" ? "a" : "r"}"><span class="vic">${verdictWords.vic}</span><div class="vt"><b>${esc(verdictWords.title)}</b><br>${esc(verdictWords.body)}</div>${vstates}</div>`;
+    renderSofar(q("#chap-reality .sofar"), view, ["market", "targets", "capacity", "size", "verdict"], "verdict", verdictWords.sofar);
+    q("#chap-reality .sofar .s.cur .k").textContent = "staffable?";
+    if (live !== "green") q("#chap-reality .sofar .s.cur").className = "s curw";
+    q("#checksHost").innerHTML = checks.map(([s, label, tag, detail]) => `<div class="crow"><span class="chk ${s}"></span><div class="lbl">${esc(label)} ${tag ? `<span class="ruletag">${tag}</span>` : ""}<small>${esc(detail)}</small></div></div>`).join("");
+    q("#mapSub").textContent = "Illustrative region view \u2014 real carve geometry ships with the engine's territory-geometry emission (W-1 family). Color = territory health.";
+    q("#mapNote").textContent = `${r.nTerritories} territories drawn at the marked size \xB7 verdict ${r.verdict} \xB7 per-dimension detail in the drawer`;
+    const hov = q("#mapHover");
+    if (hov) hov.remove();
+    if (window.tilesFor) {
+      q("#mapHost").innerHTML = window.tilesFor(live).replace(/Territory 47/g, "illustrative");
+    }
+    const cs = q("#costStory");
+    cs.className = "banner" + (live === "green" ? " green" : "");
+    const unrealized = ce && ce.unrealizedGp > 0 ? ce.unrealizedWords : null;
+    cs.innerHTML = `<span class="ic">${verdictWords.vic}</span><div class="t"${live === "red" ? ' style="color:#6e1c17"' : live === "green" ? ' style="color:#155b3c"' : ""}>
+    <b>${live === "green" ? "No staffing penalty." : live === "amber" ? "What the flagged territories cost." : "The map cannot be staffed at this size as drawn."}</b>
+    ${ce ? `The carve covers ${num(ce.covered)} sites with ${num(ce.stranded)} prescribers stranded${unrealized ? ` \u2192 about <b>${esc(unrealized)}</b> of the idealized profit would not materialize as drawn` : " \u2014 the planned coverage is fully reachable as drawn"}.` : ""}
+    ${view.hero.soft ? '<div class="confnote"><span class="half">\u25D0</span> dollar figures inherit the assumption-grounded response curve \u2014 confidence capped.</div>' : ""}
+    ${live !== "green" ? `<div class="fixrow">${(r.realismRoutes.length ? r.realismRoutes : ["resize", "relax_constraint", "accept_with_override"]).map((x) => `<span class="fix2">${esc(x.replace(/_/g, " "))}</span>`).join("")}</div>` : ""}</div>`;
+    q("#leadLine").innerHTML = live === "green" ? `The story gains its final line: <b>"\u2026and it splits into ${r.nTerritories} workable territories \u2014 all clear."</b> The verdict travels with the recommendation everywhere it goes.` : live === "amber" ? `The story gains its final line: <b>"\u2026and it splits into ${r.nTerritories} workable territories (${r.drivers.length} to watch)."</b> The verdict travels with the recommendation everywhere it goes.` : `The story <b>cannot close yet</b> \u2014 the leadership view reads <b>"staffing: not as drawn \u2014 change pending"</b> until one of the routes is taken. A red verdict never travels quietly.`;
+    const compare = q("#chap-reality .minirow .mini");
+    if (compare) compare.innerHTML = `<div class="mh2">compared to today's territories</div>No current-territory assignment was supplied in this run, so disruption vs. today is <b>not computed</b> \u2014 supply current assignments (optional M3 input) to see it. Conversations with affected reps are for managers, not this tool.`;
+  }
+  function bindDrawers(view) {
+    const D = window.DRAWERS;
+    if (!D) return;
+    const ch = view.chapters;
+    const chain = ch.chain;
+    const hero = view.hero;
+    const moneyWords = view.headlineWords;
+    if (D.response) {
+      D.response.chip = ch.grounding === "analog_only" ? "assumption-grounded" : "modeled";
+      D.response.body = `
+      <div class="sect"><p class="st">The calculation <span class="pulled">why this sets the size</span></p><div class="calc">
+      <div class="line"><span class="lbl">Last rep's marginal value<small>profit(N*) \u2212 profit(N*\u22121), net of the rep's cost \u2014 the engine's number</small></span><span class="num">${esc(fmtMoney(hero.mrvAtStar))}</span></div>
+      <div class="line"><span class="op">\xB7</span><span class="lbl">Value per new-patient start<small>${esc(moneyWords)}</small></span><span class="num">${esc(chain.gpPerRxWords)}</span></div>
+      <div class="line"><span class="op">\xB7</span><span class="lbl">Cost of that rep<small>fully loaded, per year</small></span><span class="num">${esc(chain.flcWords)}</span></div>
+      <div class="total"><span class="lbl">= Why the size lands at ${hero.N_star}</span><span class="num">last rep still pays</span></div>
+      <p class="read">Reps are added while each new one still pays its way. Past ~${hero.N_lo}, profit goes flat (the ${hero.N_lo}\u2013${hero.N_hi} zone) \u2014 which is why the answer is a range.</p></div></div>
+      <div class="sect dassume"><p class="st">The assumptions behind the curves</p>
+      ${ch.segments.map((s) => s.curve ? `<div class="da"><span class="lbl"><span class="cdot est"></span>${esc(s.id)}: floor \u2192 ceiling \xB7 EC50 \xB7 shape</span><span class="v">${s.curve.baseline_nrx}\u2192${s.curve.saturation_nrx}/yr \xB7 ${s.curve.ec50_effort} \xB7 n=${s.curve.slope_n}</span></div>` : "").join("")}</div>
+      <div class="sect"><p class="st">Why confidence is capped</p><div class="dconf">${ch.grounding === "analog_only" ? "These curves are assumption-grounded analogs (register entries A-CURVE-1..4 class) \u2014 directional, not measured. Ground with in-market call/Rx variation or a vacant-territory comparison." : "Response inputs carry the fitness map's declared confidence."}</div></div>`;
+    }
+    if (D.economics) {
+      D.economics.body = `
+      <div class="sect"><p class="st">The calculation <span class="pulled">the unit-economics stack</span></p><div class="calc">
+      <div class="line"><span class="lbl">Net price per patient-month<small>declared</small></span><span class="num">${fmtMoney(ch.economics.netPrice)}</span></div>
+      <div class="line"><span class="op">\xD7</span><span class="lbl">Gross margin<small>declared</small></span><span class="num">${Math.round(ch.economics.marginPct * 100)}%</span></div>
+      <div class="line"><span class="op">\xD7</span><span class="lbl">Fill \xB7 persistence \xB7 ${ch.economics.horizonYears}-yr NPV<small>${ch.economics.rxToFill} \xB7 ${ch.economics.persistence}/yr \xB7 ${Math.round(ch.economics.discount * 100)}%</small></span><span class="num">engine</span></div>
+      <div class="total"><span class="lbl">= Value per new-patient start</span><span class="num">${esc(chain.gpPerRxWords)}</span></div>
+      <p class="read">A gross-profit figure, never labeled revenue \u2014 it carries "${esc(moneyWords)}" everywhere, including the ${esc(view.hero.profitWords)} headline.</p></div></div>
+      <div class="sect"><p class="st">And the cost side</p><div class="calc">
+      <div class="total"><span class="lbl">Fully-loaded cost per rep</span><span class="num">${esc(chain.flcWords)}</span></div>
+      <p class="read">Harvested from the incumbent tool's cost stack (rep base + overhead + management spans).</p></div></div>`;
+    }
+    if (D.reality) {
+      const r = view.reality;
+      D.reality.body = `
+      <div class="sect"><p class="st">How it was drawn <span class="pulled">the splitting method</span></p><div class="calc">
+      <div class="line"><span class="lbl">Start from site locations<small>each site on the call plan, placed on the map</small></span><span class="num">${num(chain.hcoTotal)}</span></div>
+      <div class="line"><span class="lbl">Group into balanced territories<small>deterministic seeded carve \u2014 same seed, same map</small></span><span class="num">${r.nTerritories}</span></div>
+      <div class="line"><span class="lbl">Realism gate<small>worst dimension drives the verdict (never a smoothed composite)</small></span><span class="num">${esc(r.verdict ?? "")}</span></div>
+      <div class="total"><span class="lbl">= Binding driver${r.drivers.length === 1 ? "" : "s"}</span><span class="num">${r.drivers.length ? esc(r.drivers.map((d) => d.replace(/_/g, " ")).join(", ")) : "none"}</span></div>
+      <p class="read">The split is deterministic \u2014 same seed, same map. ${r.coverageEconomics ? `${num(r.coverageEconomics.covered)} sites covered, ${num(r.coverageEconomics.stranded)} prescribers stranded.` : ""}</p></div></div>`;
+    }
+    const generic = (kick, title, lines) => ({
+      kick: `Detail \xB7 ${kick}`,
+      title,
+      chip: "live",
+      chipCls: "g",
+      lede: "Live values from this run.",
+      cta: "Close",
+      body: `<div class="sect"><p class="st">This run <span class="pulled">engine + run packet</span></p><div class="calc">${lines.map(([l, v]) => `<div class="line"><span class="lbl">${esc(l)}</span><span class="num">${esc(v)}</span></div>`).join("")}</div></div>`
+    });
+    D["generic-market"] = generic("the market", "The market, live", [
+      ["Prescribers in file", num(chain.marketTotal)],
+      ["Sites", num(chain.hcoTotal)],
+      ["On the call plan", `${num(chain.targetsTotal)} (${chain.targetsPct}%)`],
+      ["Annual market new starts", num(chain.marketNrx)]
+    ]);
+    D["generic-targets"] = generic(
+      "the call plan",
+      "Targets & call plan, live",
+      ch.segments.map((s) => [`${s.id} \u2014 ${num(s.count)} targets`, `${s.frequency} calls/yr`]).concat([["Blended average", chain.blendedFreqWords]])
+    );
+    D["generic-capacity"] = generic("rep capacity", "Rep capacity, live", [
+      ["Calls per day (declared)", String(ch.capacity.callsPerDay)],
+      ["Selling days (declared)", String(ch.capacity.sellingDays)],
+      ["Adjustments (assumed)", `\u2212${Math.round(ch.capacity.adminPct * 100)}% admin \xB7 \u2212${Math.round(ch.capacity.noSeePct * 100)}% no-see`],
+      ["Quality calls / rep / yr (engine)", num(chain.capacityPerRep)]
+    ]);
+    if (D.setup) {
+      D.setup.body = `<div class="sect dfit"><p class="st">Data-fitness map <span class="pulled">declared in the run packet</span></p>` + Object.entries(view.fitness).map(([k, f]) => `<div class="fitrow"><span class="fdot ${f.status === "green" ? "g" : f.status === "yellow" ? "a" : "r"}"></span><div class="fl">${esc(k.replace(/_/g, " "))}<small>${esc(f.available ?? "")} \u2014 ${esc(f.source ?? "")} (${esc(f.confidence ?? "")})</small></div></div>`).join("") + "</div>";
+    }
+  }
+  function bindBlocked(view) {
+    const host = q("#stageHost");
+    qa(".chapter", host).forEach((c) => c.classList.add("hidden"));
+    host.insertAdjacentHTML("afterbegin", `
+    <div class="chapter" id="chap-blocked"><div class="stage">
+      <h1>The tool will not pick a size on this input</h1>
+      <p class="ask">\u2014 and here is exactly why. ${esc(view.headlineWords)} \xB7 the run this would have been.</p>
+      <div class="verdict r" style="margin-top:14px"><span class="vic">\u26D4</span><div class="vt">
+        <b>Blocked at: ${esc(view.stage)}.</b><br>${esc(view.reasonWords)}
+        <div class="routes">${view.routes.map((r) => `<span class="rt">${esc(r)}</span>`).join("")}</div>
+      </div></div>
+      <div class="guardnote" style="margin-top:14px"><b>No recommended size appears anywhere on a blocked run</b> \u2014 a structured refusal with routes is the deliverable (SC-22).</div>
+    </div></div>`);
+    qa(".rail .chap").forEach((c) => c.classList.add("off"));
+  }
+  return __toCommonJS(product_entry_exports);
 })();
 
 </script>
@@ -143611,163 +145373,19 @@ const FIXTURE_BLOCKED = {
  "TR": {
   "deployment_model": "geographic_carve"
  }
-};</script>
-<script>
-const { runCanonical, mapResultToView, fmtMoney } = WIRE;
-
-const FIXTURES = { healthy: FIXTURE_HEALTHY, blocked: FIXTURE_BLOCKED };
-const cache = {};
-
-async function show(which) {
-  document.getElementById('btnHealthy').classList.toggle('on', which === 'healthy');
-  document.getElementById('btnBlocked').classList.toggle('on', which === 'blocked');
-  if (!cache[which]) {
-    const canonical = JSON.parse(JSON.stringify(FIXTURES[which]));
-    const { engine, result } = runCanonical(canonical);
-    cache[which] = mapResultToView(result, canonical, engine);
+};
+(function () {
+  try {
+    const which = new URLSearchParams(location.search).get('fixture') === 'blocked' ? FIXTURE_BLOCKED : FIXTURE_HEALTHY;
+    const canonical = JSON.parse(JSON.stringify(which));
+    const { engine, result } = PRODUCT.runCanonical(canonical);
+    PRODUCT.bindAll(PRODUCT.mapResultToView(result, canonical, engine));
+    document.getElementById('engineLoading').remove();
+  } catch (e) {
+    document.getElementById('engineLoading').innerHTML = '<div style="color:#b3261e;font-size:13px;max-width:520px">' + String(e) + '</div>';
+    throw e;
   }
-  render(cache[which]);
-}
-
-function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-function profitCurveSvg(view) {
-  const pts = view.profitCurve;
-  const W = 560, H = 190, padL = 46, padB = 26, padT = 12, padR = 12;
-  const maxP = Math.max(...pts.map(p => p.profit)), minP = Math.min(0, ...pts.map(p => p.profit));
-  const maxN = pts[pts.length - 1].N;
-  const x = n => padL + (n / maxN) * (W - padL - padR);
-  const y = p => padT + (1 - (p - minP) / (maxP - minP || 1)) * (H - padT - padB);
-  const path = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.N).toFixed(1)},${y(p.profit).toFixed(1)}`).join(' ');
-  const h = view.hero;
-  const band = `<rect x="${x(h.N_lo)}" y="${padT}" width="${Math.max(2, x(h.N_hi) - x(h.N_lo))}" height="${H - padT - padB}" fill="#0d948818"/>`;
-  const star = `<line x1="${x(h.N_star)}" y1="${padT}" x2="${x(h.N_star)}" y2="${H - padB}" stroke="var(--teal)" stroke-dasharray="4 3"/>
-    <circle cx="${x(h.N_star)}" cy="${y(h.profitAtStar)}" r="4" fill="var(--teal)"/>`;
-  return `<svg viewBox="0 0 ${W} ${H}">
-    ${band}
-    <line class="axis" x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}"/>
-    <line class="axis" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>
-    <path d="${path}" fill="none" stroke="var(--navy2)" stroke-width="2"/>
-    ${star}
-    <text class="axlab" x="${W - padR}" y="${H - 8}" text-anchor="end">field size N (reps)</text>
-    <text class="axlab" x="${padL}" y="${padT + 2}" transform="rotate(-90 ${padL - 34} ${H / 2})" text-anchor="middle" dx="-${H/2 - padL}" dy="0"></text>
-    <text class="axlab" x="${x(view.hero.N_star)}" y="${H - 8}" text-anchor="middle">${view.hero.N_star}</text>
-    <text class="axlab" x="${padL - 4}" y="${y(maxP) + 4}" text-anchor="end">${fmtMoney(maxP)}</text>
-    <text class="axlab" x="${padL - 4}" y="${y(0) + 4}" text-anchor="end">$0</text>
-  </svg>`;
-}
-
-function curveSvg(c) {
-  const W = 320, H = 150, padL = 34, padB = 22, padT = 10, padR = 8;
-  const maxR = Math.max(...c.points.map(p => p.response));
-  const maxE = c.points[c.points.length - 1].effort;
-  const x = e => padL + (e / maxE) * (W - padL - padR);
-  const y = r => padT + (1 - r / (maxR || 1)) * (H - padT - padB);
-  const path = c.points.map((p, i) => `${i ? 'L' : 'M'}${x(p.effort).toFixed(1)},${y(p.response).toFixed(1)}`).join(' ');
-  const alloc = c.allocated != null
-    ? `<line x1="${x(c.allocated)}" y1="${padT}" x2="${x(c.allocated)}" y2="${H - padB}" stroke="var(--amber)" stroke-dasharray="3 3"/>
-       <text class="axlab" x="${x(c.allocated)}" y="${H - 6}" text-anchor="middle" fill="var(--amber)">${c.allocated.toFixed(1)}</text>` : '';
-  return `<svg viewBox="0 0 ${W} ${H}">
-    <line class="axis" x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}"/>
-    <line class="axis" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>
-    <path d="${path}" fill="none" stroke="var(--sky)" stroke-width="2"/>
-    ${alloc}
-    <text class="axlab" x="${W - padR}" y="${H - 6}" text-anchor="end">calls/target/yr</text>
-  </svg>`;
-}
-
-function fitnessRow(view) {
-  // Honesty note (CI challenger F1): these chips render the run packet's DECLARED
-  // data_fitness_map — analyst/M0 assertions, not engine computation. Labeled as such.
-  const f = view.fitness || {};
-  const cells = Object.entries(f).map(([k, v]) =>
-    `<span class="fit ${esc(v.status)}">${esc(k)}: ${esc(v.status)}</span>`).join('');
-  return cells ? `<div class="fitness"><span class="fit" style="background:#eef2f7;color:var(--text3)">data fitness — declared in run packet</span>${cells}</div>` : '';
-}
-
-function render(view) {
-  const banner = document.getElementById('modeBanner');
-  banner.style.display = view.modeBanner ? '' : 'none';
-  banner.textContent = view.modeBanner ?? '';
-  const root = document.getElementById('root');
-
-  if (view.kind === 'blocked') {
-    // SC-22: no promotable N anywhere on this screen.
-    root.innerHTML = `
-      <div class="card blocked">
-        <h2>The tool will not pick a size on this input — and here is exactly why</h2>
-        <div class="hwords" style="margin-bottom:8px">${esc(view.headlineWords)} · the run this would have been (SC-11 label travels with blocks too)</div>
-        <div style="font-size:14px;margin-bottom:4px"><b>Blocked at: ${esc(view.stage)}</b></div>
-        <div style="font-size:13.5px;color:var(--text2)">${esc(view.reasonWords)}</div>
-        <h2 style="margin-top:16px">The ways forward</h2>
-        ${view.routes.map(r => `<div class="route">${esc(r)}</div>`).join('')}
-        ${fitnessRow(view)}
-        <div class="flagrow">${view.flags.map(esc).join(' · ')}</div>
-      </div>`;
-    document.getElementById('foot').textContent =
-      `engine: products/ff_sizing/engine/index.js · fixture provenance: ${view.provenanceNote ?? '—'}`;
-    return;
-  }
-
-  const h = view.hero;
-  const plateauChip = `<span class="chip ${h.plateauStatus === 'green' ? 'green' : h.plateauStatus === 'yellow' ? 'amber' : 'red'}">plateau: ${esc(h.plateauStatus)}${h.soft ? ' — edges are soft' : ''}</span>`;
-  const vis = view.visibility;
-  const tile = (k, t) => t.missing
-    ? `<div class="tile missing"><div class="k">${esc(k)}</div><div class="v">${esc(t.note)}</div></div>`
-    : `<div class="tile ${k === 'Profit' ? 'hero-tile' : ''}"><div class="k">${esc(k)}</div><div class="v">${esc(t.words)}</div>${t.note ? `<div class="flagrow">${esc(t.note)}</div>` : ''}</div>`;
-
-  const ce = view.reality.coverageEconomics;
-  root.innerHTML = `
-    <div class="card">
-      <h1>The recommended field size</h1>
-      <div class="hwords">${esc(view.headlineWords)} · ${esc(view.project.product)} · ${esc(view.project.cycle)}</div>
-      <div class="hero-range">${esc(h.rangeSentence)} ${plateauChip}</div>
-      <div class="hero-sub">Profit at the marked point: <b>${esc(h.profitWords)}</b> · the final rep adds about ${esc(fmtMoney(h.mrvAtStar))} ${h.oversizing ? '· <b style="color:var(--amber)">over-sizing flag is up</b>' : ''}</div>
-      ${profitCurveSvg(view)}
-      <div class="tiles">
-        ${tile('Profit', vis.profit)}
-        ${tile('Last-rep payback', vis.lastRepPayback)}
-        ${tile('Coverage', vis.coverage)}
-        ${tile('Reach', vis.reach)}
-        ${tile('Revenue', vis.revenue)}
-        ${tile('Expansion return (iROI)', vis.iROI)}
-      </div>
-      ${fitnessRow(view)}
-      <div class="flagrow">${view.flags.map(esc).join(' · ')}</div>
-    </div>
-
-    <div class="card">
-      <h2>Sales response — the engine of the size (engine-sampled curves)</h2>
-      <div class="seg">
-        ${view.curves.map(c => `
-          <div class="one">
-            <div style="font-size:12.5px;font-weight:700">${esc(c.segment)} <span style="color:var(--text3);font-weight:400">· plan frequency ${esc(c.baseline_frequency)}/yr · allocated ${c.allocated != null ? esc(c.allocated.toFixed(1)) : '—'} calls/target</span></div>
-            ${curveSvg(c)}
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Reality check — can we actually staff it?</h2>
-      <div class="verdict ${esc(view.reality.verdict)}">${esc(view.reality.verdictWords)}</div>
-      <div class="hero-sub">${esc(String(view.reality.nTerritories))} territories drawn at the marked size.</div>
-      ${ce ? `<div class="hero-sub" style="margin-top:6px">Coverage economics: ${esc(String(ce.covered))} sites covered, ${esc(String(ce.stranded))} HCPs stranded · about <b>${esc(ce.unrealizedWords)}</b> of idealized profit would not materialize as drawn.</div>` : ''}
-      <div style="max-height:220px;overflow:auto;margin-top:10px">
-        <table>
-          <tr><th>Territory</th><th>HCOs</th><th>GP rollup</th></tr>
-          ${view.reality.territories.map(t => `<tr><td>${esc(t.id)}</td><td>${esc(String(t.hcoCount))}</td><td>${esc(fmtMoney(t.gp))}</td></tr>`).join('')}
-        </table>
-      </div>
-      ${view.ramp ? `<div class="flagrow">Year-1 ramp: ${esc(String(view.ramp.effective_fte_y1))} effective FTE-equivalents (forecast adjustment, never an optimization driver).</div>` : ''}
-    </div>`;
-
-  document.getElementById('foot').textContent =
-    `engine: products/ff_sizing/engine/index.js · fixture provenance: ${view.provenanceNote ?? '—'}`;
-}
-
-document.getElementById('btnHealthy').onclick = () => show('healthy');
-document.getElementById('btnBlocked').onclick = () => show('blocked');
-show('healthy');
+})();
 </script>
 </body>
 </html>
